@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\E-Lang.Application\E-Lang.Application.csproj" />
+      <ProjectReference Include="..\E-Lang.Persistence\E-Lang.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

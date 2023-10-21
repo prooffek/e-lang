@@ -8,12 +8,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Mapster.DependencyInjection" Version="1.0.2-pre01" />
+      <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjectionFixed" Version="5.1.2" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0-rc.2.23480.1" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.2.23479.6" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\E-Lang.Domain\E-Lang.Domain.csproj" />
-      <ProjectReference Include="..\E-Lang.Persistence\E-Lang.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,15 +1,16 @@
-using E_Lang_Domain;
 using E_Lang.Application;
+using E_Lang.Domain;
 using E_Lang.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
+var config = builder.Configuration;
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddApplication();
 services.AddDomain();
-services.AddPersistence();
+services.AddPersistence(config.GetConnectionString(AppDbContextFactory.CONNECTION_STRING));
 
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
@@ -27,8 +28,3 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int) (TemperatureC / 0.5556);
-}

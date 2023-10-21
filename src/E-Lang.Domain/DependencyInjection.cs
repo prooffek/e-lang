@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace E_Lang_Domain;
+namespace E_Lang.Domain;
 
 public static class DependencyInjection
 {
@@ -8,4 +8,6 @@ public static class DependencyInjection
     {
         return services;
     }
+    
+
 }
