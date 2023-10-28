@@ -40,7 +40,7 @@ stages:
           
           - task: PublishBuildArtifacts@1
             displayName: "Publishing WebApi"
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'develop')
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'develop'))
             inputs:
               PathtoPublish: 'drop'
               publishLocation: Container
