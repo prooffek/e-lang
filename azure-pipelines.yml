@@ -22,13 +22,6 @@ stages:
         workspace: 
           clean: all
         steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET Core sdk'
-            inputs:
-              packageType: sdk
-              version: 8.0.0
-              installationPath: $(Agent.ToolsDirectory)/dotnet
-
           - task: NuGetCommand@2
             displayName: "Restoring NuGets"
             inputs:
