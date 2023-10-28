@@ -1,0 +1,47 @@
+trigger:
+- develop
+- merge
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  major: '0'
+  minor: '0'
+  patch: '1'
+  version: $(major).$(minor).$(patch)
+
+stages:
+  - stage: WebApi
+    displayName: "Build nad publish WebApi"
+    pool:
+      vmImage: 'windows-latest'
+    jobs:
+      - job: BuildSolution
+        timeoutInMinutes: 30
+        workspace: 
+          clean: all
+        steps:
+          - task: NuGetCommand@2
+            displayName: "Restoring NuGets"
+            inputs:
+              command: restore
+              restoreSolution: $(solution)
+              feedsToUse: select
+              versioningScheme: byEnvVar
+              versionEnvVar: $(version)
+              
+          - task: DotNetCoreCLI@2
+            displayName: "Building projects"
+            inputs:
+              command: build
+              versioningScheme: byEnvVar
+              versionEnvVar: $(version)
+          
+          - task: PublishBuildArtifacts@1
+            displayName: "Publishing WebApi"
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'develop')
+            inputs:
+              PathtoPublish: 'drop'
+              publishLocation: Container
+              ArtifactName: 'WebApi'
