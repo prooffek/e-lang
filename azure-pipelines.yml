@@ -37,11 +37,18 @@ stages:
               command: build
               versioningScheme: byEnvVar
               versionEnvVar: $(version)
+
+          - task: DotNetCoreCLI@2
+            displayName: "Publishing projects"
+            inputs:
+              projects: '/src/E-Lang.WebApi/E-Lang.WebApi.csproj'
+              arguments: '-o $(Build.ArtifactStagingDirectory)/WebApi'
+              zipAfterPublish: true
           
           - task: PublishBuildArtifacts@1
             displayName: "Publishing WebApi"
             condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
             inputs:
-              PathtoPublish: 'drop'
+              PathtoPublish: $(Build.ArtifactStagingDirectory)/WebApi
               publishLocation: Container
               ArtifactName: 'WebApi'
