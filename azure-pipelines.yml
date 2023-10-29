@@ -41,7 +41,7 @@ stages:
           - task: DotNetCoreCLI@2
             displayName: "Publishing projects"
             inputs:
-              projects: '/src/E-Lang.WebApi/E-Lang.WebApi.csproj'
+              projects: '**/E-Lang.WebApi.csproj'
               arguments: '-o $(Build.ArtifactStagingDirectory)/WebApi'
               zipAfterPublish: true
           
