@@ -11,20 +11,25 @@ var config = builder.Configuration;
 services.AddApplication();
 services.AddDomain();
 services.AddPersistence(config.GetConnectionString(AppDbContextFactory.CONNECTION_STRING));
-
 services.AddEndpointsApiExplorer();
+services.AddSwaggerDocument(c => c.Title = "E-Lang WebApi");
 services.AddSwaggerGen();
 services.AddControllers();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseOpenApi();
+app.UseSwaggerUi3();
 
 app.UseHttpsRedirection();
 
+app.MapControllers();
+
 app.Run();
+
+
+namespace E_Lang.WebApi
+{
+    public partial class Program { }
+}

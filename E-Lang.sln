@@ -1,14 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6CE7FF68-8A09-4B84-AC68-AA56D9770173}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Application", "src\E-Lang.Application\E-Lang.Application.csproj", "{06BA7AF9-7656-42AF-8533-FA3E38801802}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Application", "src\E-Lang.Application\E-Lang.Application.csproj", "{06BA7AF9-7656-42AF-8533-FA3E38801802}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Domain", "src\E-Lang.Domain\E-Lang.Domain.csproj", "{E4F158DA-CCFB-4DB9-A350-7D6EC0B9337C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Domain", "src\E-Lang.Domain\E-Lang.Domain.csproj", "{E4F158DA-CCFB-4DB9-A350-7D6EC0B9337C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Persistence", "src\E-Lang.Persistence\E-Lang.Persistence.csproj", "{516F35F4-5947-46C7-81D4-20652F31EBE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Persistence", "src\E-Lang.Persistence\E-Lang.Persistence.csproj", "{516F35F4-5947-46C7-81D4-20652F31EBE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.WebApi", "src\E-Lang.WebApi\E-Lang.WebApi.csproj", "{9E6EA753-6FEA-425E-975A-37F29C4A3B29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.WebApi", "src\E-Lang.WebApi\E-Lang.WebApi.csproj", "{9E6EA753-6FEA-425E-975A-37F29C4A3B29}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FBA84B6B-61BE-4971-9873-7C33239DEDE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Tests.Common", "tests\E-Lang.Tests.Common\E-Lang.Tests.Common.csproj", "{0C2355CD-3844-41EF-B06A-8BAAD1A0DED3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Application.UnitTests", "tests\E-Lang.Application.UnitTests\E-Lang.Application.UnitTests.csproj", "{94B50B01-6B20-4A82-862B-2B32F137BB41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Application.IntegrationTests", "tests\E-Lang.Application.IntegrationTests\E-Lang.Application.IntegrationTests.csproj", "{D99DC180-F920-4DC8-8B3F-C303E87B094B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,11 +43,32 @@ Global
 		{9E6EA753-6FEA-425E-975A-37F29C4A3B29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E6EA753-6FEA-425E-975A-37F29C4A3B29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E6EA753-6FEA-425E-975A-37F29C4A3B29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C2355CD-3844-41EF-B06A-8BAAD1A0DED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C2355CD-3844-41EF-B06A-8BAAD1A0DED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C2355CD-3844-41EF-B06A-8BAAD1A0DED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2355CD-3844-41EF-B06A-8BAAD1A0DED3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94B50B01-6B20-4A82-862B-2B32F137BB41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94B50B01-6B20-4A82-862B-2B32F137BB41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94B50B01-6B20-4A82-862B-2B32F137BB41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94B50B01-6B20-4A82-862B-2B32F137BB41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D99DC180-F920-4DC8-8B3F-C303E87B094B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99DC180-F920-4DC8-8B3F-C303E87B094B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99DC180-F920-4DC8-8B3F-C303E87B094B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99DC180-F920-4DC8-8B3F-C303E87B094B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{06BA7AF9-7656-42AF-8533-FA3E38801802} = {6CE7FF68-8A09-4B84-AC68-AA56D9770173}
 		{E4F158DA-CCFB-4DB9-A350-7D6EC0B9337C} = {6CE7FF68-8A09-4B84-AC68-AA56D9770173}
 		{516F35F4-5947-46C7-81D4-20652F31EBE2} = {6CE7FF68-8A09-4B84-AC68-AA56D9770173}
 		{9E6EA753-6FEA-425E-975A-37F29C4A3B29} = {6CE7FF68-8A09-4B84-AC68-AA56D9770173}
+		{0C2355CD-3844-41EF-B06A-8BAAD1A0DED3} = {FBA84B6B-61BE-4971-9873-7C33239DEDE1}
+		{94B50B01-6B20-4A82-862B-2B32F137BB41} = {FBA84B6B-61BE-4971-9873-7C33239DEDE1}
+		{D99DC180-F920-4DC8-8B3F-C303E87B094B} = {FBA84B6B-61BE-4971-9873-7C33239DEDE1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {048B8A68-22E6-4E98-AC35-B9CBB6F6D844}
 	EndGlobalSection
 EndGlobal
