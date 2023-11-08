@@ -1,4 +1,6 @@
 ﻿using E_Lang.Application.Common.Interfaces;
+using E_Lang.Application.Common.Interfaces.Repositories;
+using E_Lang.Persistence.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace E_Lang.Persistence;
@@ -12,6 +14,15 @@ public static class DependencyInjection
         
         services.AddNpgsql<AppDbContext>(connectionString);
         services.AddScoped<IAppDbContext, AppDbContext>();
+
+        #region Repositories
+        
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ICollectionRepository, CollectionRepository>();
+        services.AddScoped<IFlashcardRepository, FlashcardRepository>();
+        
+        #endregion
+        
         return services;
     }
 }

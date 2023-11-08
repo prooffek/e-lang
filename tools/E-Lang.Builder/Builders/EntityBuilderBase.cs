@@ -2,7 +2,7 @@
 using E_Lang.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace E_Lang.Tests.Common.Builders
+namespace E_Lang.Builder.Builders
 {
     public abstract class EntityBuilderBase<TEntity, TParentBuilder> : BuilderBase<TEntity, TParentBuilder>
         where TEntity : EntityBase, new()
