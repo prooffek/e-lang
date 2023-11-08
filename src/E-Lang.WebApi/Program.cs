@@ -1,5 +1,6 @@
 using E_Lang.Application;
 using E_Lang.Domain;
+using E_Lang.Infrastructure;
 using E_Lang.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,16 +12,27 @@ var config = builder.Configuration;
 services.AddApplication();
 services.AddDomain();
 services.AddPersistence(config.GetConnectionString(AppDbContextFactory.CONNECTION_STRING));
+services.AddInfrastructure();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerDocument(c => c.Title = "E-Lang WebApi");
 services.AddSwaggerGen();
 services.AddControllers();
+services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseOpenApi();
-app.UseSwaggerUi3();
+app.UseSwaggerUi3(options =>
+{
+    options.DocExpansion = "list";
+});
+
+app.UseCors(policy =>
+    policy.AllowAnyHeader()
+        .AllowAnyMethod()
+        .WithOrigins(config.GetSection("UiUrls").Get<string[]>()
+                     ?? new string[] {"http://localhost:4200"}));
 
 app.UseHttpsRedirection();
 

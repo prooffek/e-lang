@@ -1,6 +1,6 @@
 ﻿using E_Lang.Application.Common.Interfaces;
+using E_Lang.Builder.Builders;
 using E_Lang.Persistence;
-using E_Lang.Tests.Common.Builders;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,9 +17,9 @@ namespace E_Lang.Application.IntegrationTests
         protected static IServiceScope? _contextScope;
         protected static IServiceScope? _applicationScope;
 
-        protected static TestBuilder? _testBuilder;
-        protected static AppDbContext? _appDbContext;
-        protected static IMediator? _mediator;
+        protected static BaseBuilder _testBuilder;
+        protected static AppDbContext _appDbContext;
+        protected static IMediator _mediator;
 
         public static void InitClass()
         {
@@ -38,7 +38,7 @@ namespace E_Lang.Application.IntegrationTests
             _contextScope = scopeFactory.CreateScope();
             _appDbContext = (AppDbContext)_contextScope.ServiceProvider.GetRequiredService<IAppDbContext>();
 
-            _testBuilder = new TestBuilder(_appDbContext);
+            _testBuilder = new BaseBuilder(_appDbContext);
 
             _applicationScope = scopeFactory.CreateScope();
             _mediator = _applicationScope.ServiceProvider.GetRequiredService<IMediator>();

@@ -1,4 +1,4 @@
-﻿namespace E_Lang.Tests.Common.Interfaces
+﻿namespace E_Lang.Builder.Interfaces
 {
     public interface IBuilder<TParentBuilder> where TParentBuilder : class
     {

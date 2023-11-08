@@ -1,6 +1,6 @@
-﻿using E_Lang.Tests.Common.Interfaces;
+﻿using E_Lang.Builder.Interfaces;
 
-namespace E_Lang.Tests.Common.Builders
+namespace E_Lang.Builder.Builders
 {
     public abstract class BuilderBase<T, TParentBuilder> : IBuilder<TParentBuilder> 
         where T: class 
