@@ -1,6 +1,7 @@
 using E_Lang.Application.Common.DTOs;
 using E_Lang.Application.Common.Interfaces;
 using E_Lang.Application.Common.Interfaces.Repositories;
+using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ namespace E_Lang.Persistence.Repositories;
 
 public class UserRepository : Repository<User, UserDto>, IUserRepository
 {
-    public UserRepository(IAppDbContext dbContext) : base(dbContext)
+    public UserRepository(IAppDbContext dbContext, IDateTimeProvider dateTimeProvider) : base(dbContext, dateTimeProvider)
     {
     }
 

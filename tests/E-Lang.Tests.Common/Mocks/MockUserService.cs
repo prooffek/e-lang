@@ -15,12 +15,7 @@ public class MockUserService : IUserService
 
     public static MockUserService GetInstance()
     {
-        if (_instance is null)
-        {
-            _instance = new MockUserService();
-        }
-
-        return _instance;
+        return _instance ??= new MockUserService();
     }
     
     public Task<User?> GetCurrentUser(CancellationToken cancellationToken)

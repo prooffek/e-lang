@@ -4,9 +4,12 @@ namespace E_Lang.Domain.Entities;
 
 public class Collection : EntityBase
 {
+    public const int NAME_MIN_LENGTH = 1;
+    public const int NAME_MAX_LENGTH = 120;
+    
     [Required]
-    [MaxLength(50)]
-    [MinLength(50)]
+    [MaxLength(NAME_MAX_LENGTH)]
+    [MinLength(NAME_MIN_LENGTH)]
     public string Name { get; set; }
     
     public Guid? ParentId { get; set; }

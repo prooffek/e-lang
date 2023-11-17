@@ -19,7 +19,7 @@ public class CollectionService : ICollectionService
             throw new ArgumentNullException(nameof(GetCollectionRequest.CollectionId),
                 "Parent collection Id cannot be null or empty.");
 
-        if (!await _collectionRepository.IsUserCollectionOwner(userId, collectionId.Value,
+        if (!await _collectionRepository.IsUserCollectionOwnerAsync(userId, collectionId.Value,
                 cancellationToken))
             throw new ArgumentException(
                 $"User with Id {userId} does not have collection with Id {collectionId.Value}");

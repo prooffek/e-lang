@@ -1,4 +1,5 @@
 ﻿using E_Lang.Application.Common.Interfaces;
+using E_Lang.Application.Interfaces;
 using E_Lang.Tests.Common;
 using E_Lang.Tests.Common.Mocks;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +18,7 @@ namespace E_Lang.Application.IntegrationTests
         {
             base.MockServices(services);
             services.Replace(ServiceDescriptor.Transient<IUserService>(sp => MockUserService.GetInstance()));
+            services.Replace(ServiceDescriptor.Transient<IDateTimeProvider>(sp => MockDateTimeProvider.GetInstance()));
         }
     }
 }
