@@ -1,6 +1,7 @@
 using E_Lang.Application.Common.DTOs;
 using E_Lang.Application.Common.Interfaces;
 using E_Lang.Application.Common.Interfaces.Repositories;
+using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ namespace E_Lang.Persistence.Repositories;
 
 public class FlashcardRepository : Repository<Flashcard, FlashcardDto>, IFlashcardRepository
 {
-    public FlashcardRepository(IAppDbContext dbContext) : base(dbContext)
+    public FlashcardRepository(IAppDbContext dbContext, IDateTimeProvider dateTimeProvider) : base(dbContext, dateTimeProvider)
     {
     }
 

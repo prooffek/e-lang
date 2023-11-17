@@ -2,6 +2,7 @@ using E_Lang.Application;
 using E_Lang.Domain;
 using E_Lang.Infrastructure;
 using E_Lang.Persistence;
+using Microsoft.AspNetCore.OData;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -16,7 +17,8 @@ services.AddInfrastructure();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerDocument(c => c.Title = "E-Lang WebApi");
 services.AddSwaggerGen();
-services.AddControllers();
+services.AddControllers()
+    .AddOData((options) => options.Select().Filter().Count().OrderBy().Expand());
 services.AddHttpContextAccessor();
 
 var app = builder.Build();

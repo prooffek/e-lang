@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using E_Lang.Application.Common.Interfaces;
 using E_Lang.Application.Common.Interfaces.Repositories;
+using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,13 +12,15 @@ public abstract class Repository<TEntity, TDto> : IRepository<TEntity, TDto>
     where TDto : IMapper<TEntity>
 {
     protected readonly IAppDbContext _dbContext;
+    private readonly IDateTimeProvider _dateTimeProvider;
     protected readonly DbSet<TEntity> _entity;
     
     protected IQueryable<TEntity> _queryWithIncludes => GetQueryWithIncludes();
 
-    public Repository(IAppDbContext dbContext)
+    public Repository(IAppDbContext dbContext, IDateTimeProvider dateTimeProvider)
     {
         _dbContext = dbContext;
+        _dateTimeProvider = dateTimeProvider;
         _entity = _dbContext.GetDbSet<TEntity>();
     }
     
@@ -38,6 +41,8 @@ public abstract class Repository<TEntity, TDto> : IRepository<TEntity, TDto>
 
     public virtual void Add(TEntity entity)
     {
+        entity.CreatedOn = _dateTimeProvider.UtcNow;
+        entity.ModifiedOn = _dateTimeProvider.UtcNow;
         _entity.Add(entity);
     }
 
@@ -54,6 +59,11 @@ public abstract class Repository<TEntity, TDto> : IRepository<TEntity, TDto>
     public virtual void UpdateRange(IEnumerable<TEntity> entities)
     {
         _entity.UpdateRange(entities);
+    }
+
+    public virtual void Delete(TEntity entity)
+    {
+        _entity.Remove(entity);
     }
 
     public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)

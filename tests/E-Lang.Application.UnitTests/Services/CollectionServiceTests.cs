@@ -1,5 +1,6 @@
 using E_Lang.Application.Collections.Requests;
 using E_Lang.Application.Common.Interfaces.Repositories;
+using E_Lang.Application.Interfaces;
 using E_Lang.Application.Services;
 using FluentAssertions;
 using Moq;
@@ -16,7 +17,6 @@ public class CollectionServiceTests : Setup
     {
         InitClass();
         _mockCollectionRepository = new Mock<ICollectionRepository>();
-    
     }
 
     [TestInitialize]
@@ -39,7 +39,7 @@ public class CollectionServiceTests : Setup
         // Arrange
         Guid? collectionId = isEmpty ? Guid.Empty : null;
 
-        var collectionService = new Mock<CollectionService>(_mockCollectionRepository.Object).Object;
+        var collectionService = new CollectionService(_mockCollectionRepository.Object);
         
         var expectedErrorMessage = $"Parent collection Id cannot be null or empty. (Parameter '{nameof(GetCollectionRequest.CollectionId)}')";
         
@@ -58,10 +58,10 @@ public class CollectionServiceTests : Setup
     {
         // Arrange
         _mockCollectionRepository.Setup(m => 
-            m.IsUserCollectionOwner(It.IsAny<Guid>(), It.IsAny<Guid>(), default))
+            m.IsUserCollectionOwnerAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), default))
             .Returns(Task.FromResult(false));
         
-        var collectionService = new Mock<CollectionService>(_mockCollectionRepository.Object).Object;
+        var collectionService = new CollectionService(_mockCollectionRepository.Object);
         var userId = Guid.NewGuid();
         var collectionId = Guid.NewGuid();
         var expectedErrorMessage = $"User with Id {userId} does not have collection with Id {collectionId}";

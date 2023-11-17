@@ -1,6 +1,7 @@
 using E_Lang.Application.Common.DTOs;
 using E_Lang.Application.Common.Interfaces;
 using E_Lang.Application.Common.Interfaces.Repositories;
+using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ namespace E_Lang.Persistence.Repositories;
 
 public class CollectionRepository : Repository<Collection, CollectionCardDto>, ICollectionRepository
 {
-    public CollectionRepository(IAppDbContext dbContext) : base(dbContext)
+    public CollectionRepository(IAppDbContext dbContext, IDateTimeProvider dateTimeProvider) : base(dbContext, dateTimeProvider)
     {
     }
 
@@ -28,6 +29,12 @@ public class CollectionRepository : Repository<Collection, CollectionCardDto>, I
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<Collection?> GetWithExtensionsByIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        return await _queryWithIncludes
+            .SingleOrDefaultAsync(c => c.Id == userId, cancellationToken);
+    }
+
     public async Task<IEnumerable<CollectionCardDto>> GetCollectionCardsAsync(Guid userId, Guid? parentCollectionId, CancellationToken cancellationToken)
     {
         return await _queryWithIncludes
@@ -44,9 +51,26 @@ public class CollectionRepository : Repository<Collection, CollectionCardDto>, I
             .FirstOrDefaultAsync(c => c.Id == collectionId, cancellationToken);
     }
 
-    public async Task<bool> IsUserCollectionOwner(Guid userId, Guid collectionId, CancellationToken cancellationToken)
+    public async Task<bool> IsUserCollectionOwnerAsync(Guid userId, Guid collectionId, CancellationToken cancellationToken)
     {
         return await _entity.AnyAsync(c => c.OwnerId == userId && c.Id == collectionId, cancellationToken);
+    }
+
+    public async Task<bool> IsNameAlreadyUsedAsync(Guid userId, string collectionName, CancellationToken cancellationToken, Guid? collectionId = null)
+    {
+        return await _entity
+            .AnyAsync(c => c.OwnerId == userId 
+                           && c.Id != collectionId 
+                           && c.Name.ToLower() == collectionName.ToLower(), 
+                cancellationToken);
+    }
+
+    public async Task<IEnumerable<CollectionAutocompleteDto>> GetAutocompleteData(Guid userId, CancellationToken cancellationToken)
+    {
+        return await _entity
+            .Where(e => e.OwnerId == userId)
+            .ProjectToType<CollectionAutocompleteDto>()
+            .ToListAsync(cancellationToken);
     }
 
     protected override IQueryable<Collection> GetQueryWithIncludes()

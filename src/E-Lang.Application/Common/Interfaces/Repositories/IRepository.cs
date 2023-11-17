@@ -15,6 +15,7 @@ public interface IRepository<TEntity, TDto>
     void AddRange(IEnumerable<TEntity> entities);
     void Update(TEntity entity);
     void UpdateRange(IEnumerable<TEntity> entities);
+    void Delete(TEntity entity);
     Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default);
     Task SaveAsync(CancellationToken cancellationToken = default);
 }
