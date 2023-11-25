@@ -1,7 +1,9 @@
 using E_Lang.Application.Common.DTOs;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Application.Common.Interfaces;
 using E_Lang.Application.Common.Interfaces.Repositories;
 using E_Lang.Application.Interfaces;
+using E_Lang.Domain.Entities;
 using MediatR;
 
 namespace E_Lang.Application.Collections.Commands;
@@ -26,24 +28,12 @@ public class UpdateCollectionRequestHandler : IRequestHandler<UpdateCollectionRe
     }
 
     public async Task<CollectionDto?> Handle(UpdateCollectionRequest request, CancellationToken cancellationToken)
-    {
-        if (request.UpdateDto.Id == request.UpdateDto.ParentCollectionId)
-        {
-            throw new ArgumentException("Collection cannot be its own subcollection.");
-        } 
-        
+    {        
         var user = await _userService.GetCurrentUser(cancellationToken)
-                   ?? throw new AggregateException("User not found");
-
-        if (await _collectionRepository.IsNameAlreadyUsedAsync(user.Id, request.UpdateDto.Name, cancellationToken,
-                request.UpdateDto.Id))
-        {
-            throw new ArgumentException($"Collection with name {request.UpdateDto.Name} already exists.");
-        }
+                   ?? throw new UserNotFoundException();
         
         var collection = await _collectionRepository.GetByIdAsync(request.UpdateDto.Id, cancellationToken)
-                         ?? throw new ArgumentException(
-                             $"Collection with name {request.UpdateDto.Name} not found.");
+                         ?? throw new NotFoundValidationException(nameof(Collection), nameof(Collection.Name), request.UpdateDto.Name);
 
         collection.Name = request.UpdateDto.Name;
         collection.ParentId = request.UpdateDto.ParentCollectionId;

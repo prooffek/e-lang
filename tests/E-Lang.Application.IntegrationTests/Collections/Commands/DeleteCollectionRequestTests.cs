@@ -1,4 +1,6 @@
 using E_Lang.Application.Collections.Commands;
+using E_Lang.Application.Common.Enums;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Domain.Entities;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
@@ -37,18 +39,23 @@ public class DeleteCollectionRequestTests : Setup
             Id = isNull ? null : Guid.Empty
         };
 
-        var exceptionName = $"Collection id cannot be null or empty. (Parameter '{nameof(Collection.Id)}')";
+        var expectedException = new NullOrEmptyValidationException(nameof(Collection), nameof(Collection.Id), ActionTypes.Delete);
+
         
         // Act
         var exception =
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await _mediator.Send(request));
+            await Assert.ThrowsExceptionAsync<NullOrEmptyValidationException>(async () => await _mediator.Send(request));
         
         // Assert
         exception.Should().NotBeNull();
-        exception.ParamName.Should().Be(nameof(Collection.Id));
-        exception.Message.Should().Be(exceptionName);
+        exception.EntityName.Should().Be(nameof(Collection));
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+        exception.PropertyName.Should().Be(nameof(Collection.Id));
+        exception.ActionType.Should().Be(ActionTypes.Delete);
+
     }
-    
+
     [TestMethod]
     public async Task DeleteCollectionRequest_Handle_ShouldThrowIfCollectionNotFound()
     {
@@ -67,15 +74,19 @@ public class DeleteCollectionRequestTests : Setup
             Id = Guid.NewGuid()
         };
 
-        var exceptionName = $"Collection with id {request.Id.Value.ToString()} not found.";
+        var expectedException = new NotFoundValidationException(nameof(Collection), nameof(Collection.Id), request.Id.Value.ToString());
         
         // Act
         var exception =
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _mediator.Send(request));
-        
+            await Assert.ThrowsExceptionAsync<NotFoundValidationException>(async () => await _mediator.Send(request));
+
         // Assert
         exception.Should().NotBeNull();
-        exception.Message.Should().Be(exceptionName);
+        exception.EntityName.Should().Be(nameof(Collection));
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+        exception.AttributeName.Should().Be(nameof(Collection.Id));
+        exception.Value.Should().Be(expectedException.Value);
     }
     
     [TestMethod]
@@ -102,16 +113,19 @@ public class DeleteCollectionRequestTests : Setup
             Id = subcollection.Id
         };
 
-        var exceptionName = $"Access denied. User with id ${user2.Id} is not allowed to remove the collection.";
+        var expectedException = new UnauthorizedException(user2.Id, ActionTypes.Delete);
         
         // Act
         var exception =
-            await Assert.ThrowsExceptionAsync<UnauthorizedAccessException>(async () => await _mediator.Send(request));
-        
+            await Assert.ThrowsExceptionAsync<UnauthorizedException>(async () => await _mediator.Send(request));
+
         // Assert
         exception.Should().NotBeNull();
-        exception.Message.Should().Be(exceptionName);
-        }
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+        exception.UserId.Should().Be(user2.Id);
+        exception.ActionType.Should().Be(ActionTypes.Delete);
+    }
     
     [TestMethod]
     public async Task DeleteCollectionRequest_Handle_ShouldThrowIfCollectionHasSubcollections()
@@ -133,15 +147,20 @@ public class DeleteCollectionRequestTests : Setup
             Id = collection.Id
         };
 
-        var exceptionName = "Cannot delete collection. Delete its subcollections before proceeding.";
+        var instruction = "Delete all subcollections and try again.";
+
+        var expectedException = new RelatedRecordValidationException(nameof(Collection), instruction);
         
         // Act
         var exception =
-            await Assert.ThrowsExceptionAsync<Exception>(async () => await _mediator.Send(request));
-        
+            await Assert.ThrowsExceptionAsync<RelatedRecordValidationException>(async () => await _mediator.Send(request));
+
         // Assert
         exception.Should().NotBeNull();
-        exception.Message.Should().Be(exceptionName);
+        exception.EntityName.Should().Be(nameof(Collection));
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+        exception.Instruction.Should().Be(instruction);
     }
     
     [TestMethod]

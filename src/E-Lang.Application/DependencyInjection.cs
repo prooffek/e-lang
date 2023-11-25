@@ -20,7 +20,6 @@ public static class DependencyInjection
         services.AddMapster();
         services.AddMapsterConfig(Assembly.GetExecutingAssembly());
         services.AddScoped<IMapper, ServiceMapper>();
-        services.AddScoped<IUserValidationService, UserValidationService>();
         services.AddScoped<ICollectionService, CollectionService>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddValidatorsFromAssemblyContaining<CreateCollectionDtoValidator>();

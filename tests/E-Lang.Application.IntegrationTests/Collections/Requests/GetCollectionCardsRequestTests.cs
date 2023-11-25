@@ -1,4 +1,5 @@
 using E_Lang.Application.Collections.Requests;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Domain.Entities;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
@@ -34,16 +35,16 @@ public class GetCollectionCardsRequestTests : Setup
 
         var request = new GetCollectionCardsRequest();
 
-        var expectedErrorMassage = $"User not found. (Parameter '{nameof(User.Id)}')";
-        
+        var expectedException = new UserNotFoundException();
+
         // Act
         var exception =
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await _mediator.Send(request));
-        
+            await Assert.ThrowsExceptionAsync<UserNotFoundException>(async () => await _mediator.Send(request));
+
         // Assert
         exception.Should().NotBeNull();
-        exception.ParamName.Should().Be(nameof(User.Id));
-        exception.Message.Should().Be(expectedErrorMassage);
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
     }
     
     [TestMethod]

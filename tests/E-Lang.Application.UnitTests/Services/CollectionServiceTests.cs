@@ -1,7 +1,10 @@
 using E_Lang.Application.Collections.Requests;
+using E_Lang.Application.Common.Enums;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Application.Common.Interfaces.Repositories;
 using E_Lang.Application.Interfaces;
 using E_Lang.Application.Services;
+using E_Lang.Domain.Entities;
 using FluentAssertions;
 using Moq;
 
@@ -32,29 +35,42 @@ public class CollectionServiceTests : Setup
     }
 
     [TestMethod]
-    [DataRow(true)]
-    [DataRow(false)]
-    public async Task CollectionService_ValidateUserCollectionId_ShouldThrowIfCollectionIdNullOrEmpty(bool isEmpty)
+    [DataRow(true, 0)]
+    [DataRow(false, 0)]
+    [DataRow(true, 1)]
+    [DataRow(false, 1)]
+    [DataRow(true, 2)]
+    [DataRow(false, 2)]
+    [DataRow(true, 3)]
+    [DataRow(false, 3)]
+    public async Task CollectionService_ValidateUserCollectionId_ShouldThrowIfCollectionIdNullOrEmpty(bool isEmpty, int actionType)
     {
         // Arrange
         Guid? collectionId = isEmpty ? Guid.Empty : null;
 
         var collectionService = new CollectionService(_mockCollectionRepository.Object);
-        
-        var expectedErrorMessage = $"Parent collection Id cannot be null or empty. (Parameter '{nameof(GetCollectionRequest.CollectionId)}')";
+
+        var expectedException = new NullOrEmptyValidationException(nameof(Collection), nameof(Collection.Id), (ActionTypes)actionType);
         
         // Act
-        var exception = await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
-            await collectionService.ValidateUserCollectionId(Guid.NewGuid(), collectionId, default));
-        
+        var exception = await Assert.ThrowsExceptionAsync<NullOrEmptyValidationException>(async () =>
+            await collectionService.ValidateUserCollectionId(Guid.NewGuid(), collectionId, (ActionTypes)actionType, default));
+
         // Assert
         exception.Should().NotBeNull();
-        exception.ParamName.Should().Be(nameof(GetCollectionRequest.CollectionId));
-        exception.Message.Should().Be(expectedErrorMessage);
+        exception.EntityName.Should().Be(nameof(Collection));
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+        exception.PropertyName.Should().Be(nameof(Collection.Id));
+        exception.ActionType.Should().Be((ActionTypes)actionType);
     }
     
     [TestMethod]
-    public async Task CollectionService_ValidateUserCollectionId_ShouldThrowIfCollectionOwnedByAnotherUser()
+    [DataRow(0)]
+    [DataRow(1)]
+    [DataRow(2)]
+    [DataRow(3)]
+    public async Task CollectionService_ValidateUserCollectionId_ShouldThrowIfCollectionOwnedByAnotherUser(int actionType)
     {
         // Arrange
         _mockCollectionRepository.Setup(m => 
@@ -64,14 +80,19 @@ public class CollectionServiceTests : Setup
         var collectionService = new CollectionService(_mockCollectionRepository.Object);
         var userId = Guid.NewGuid();
         var collectionId = Guid.NewGuid();
-        var expectedErrorMessage = $"User with Id {userId} does not have collection with Id {collectionId}";
-        
+
+        var expectedException = new NotFoundValidationException(nameof(Collection), nameof(Collection.Id), collectionId.ToString());
+
         // Act
-        var exception = await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
-            await collectionService.ValidateUserCollectionId(userId, collectionId, default));
-        
+        var exception = await Assert.ThrowsExceptionAsync<NotFoundValidationException>(async () =>
+            await collectionService.ValidateUserCollectionId(userId, collectionId, (ActionTypes)actionType, default));
+
         // Assert
         exception.Should().NotBeNull();
-        exception.Message.Should().Be(expectedErrorMessage);
+        exception.EntityName.Should().Be(nameof(Collection));
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+        exception.AttributeName.Should().Be(nameof(Collection.Id));
+        exception.Value.Should().Be(expectedException.Value);
     }
 }

@@ -1,6 +1,6 @@
-using System.Data;
 using E_Lang.Application.Collections.Commands;
 using E_Lang.Application.Common.DTOs;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
 
@@ -55,16 +55,16 @@ public class AddCollectionRequestTests : Setup
             CollectionDto = dto
         };
 
-        var exceptionMessage =
-            "User not found.";
+        var expectedException = new UserNotFoundException();
 
         // Act
-        var exception = await Assert.ThrowsExceptionAsync<DataException>(async () =>
+        var exception = await Assert.ThrowsExceptionAsync<UserNotFoundException>(async () =>
             await _mediator.Send(request));
-        
+
         // Assert
         exception.Should().NotBeNull();
-        exception.Message.Should().Be(exceptionMessage);
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
     }
     
     [TestMethod]

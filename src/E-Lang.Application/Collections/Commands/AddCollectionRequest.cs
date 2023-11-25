@@ -1,8 +1,7 @@
-using System.Data;
 using E_Lang.Application.Common.DTOs;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Application.Common.Interfaces;
 using E_Lang.Application.Common.Interfaces.Repositories;
-using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 using MapsterMapper;
 using MediatR;
@@ -31,7 +30,7 @@ public class AddCollectionRequestHandler : IRequestHandler<AddCollectionRequest,
     public async Task<CollectionDto> Handle(AddCollectionRequest request, CancellationToken cancellationToken)
     {
         var user = await _userService.GetCurrentUser(cancellationToken)
-                   ?? throw new DataException("User not found.");
+                   ?? throw new UserNotFoundException();
         
         var newCollection = _mapper.Map<Collection>(request.CollectionDto);
         newCollection.OwnerId = user.Id;
@@ -40,6 +39,6 @@ public class AddCollectionRequestHandler : IRequestHandler<AddCollectionRequest,
         await _collectionRepository.SaveAsync(cancellationToken);
 
         return await _collectionRepository.GetCollectionAsDtoAsync(newCollection.Id, cancellationToken)
-            ?? throw new ArgumentException($"New collection ${newCollection.Name} not found.");
+            ?? throw new NotFoundValidationException(nameof(Collection), nameof(Collection.Id), newCollection.Id.ToString());
     }
 }

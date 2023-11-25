@@ -1,6 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Reflection;
+using E_Lang.Application.Interfaces;
+using E_Lang.Application.Services;
 using E_Lang.Domain;
 using E_Lang.Persistence;
 using E_Lang.Seeder.Interfaces;
@@ -36,6 +38,7 @@ namespace E_Lang.Seeder
             var services = new ServiceCollection()
                 .AddSingleton<IConfiguration>(config)
                 .AddScoped<ISeederRunner, SeederRunner>()
+                .AddScoped<IDateTimeProvider, DateTimeProvider>()
                 .AddDomain()
                 .AddPersistence(config.GetConnectionString(AppDbContextFactory.CONNECTION_STRING));
 

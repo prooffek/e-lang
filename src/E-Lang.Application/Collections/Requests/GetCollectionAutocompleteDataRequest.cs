@@ -1,4 +1,5 @@
 using E_Lang.Application.Common.DTOs;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Application.Common.Interfaces;
 using E_Lang.Application.Common.Interfaces.Repositories;
 using MediatR;
@@ -24,7 +25,7 @@ public class GetCollectionAutocompleteDataRequestHandler : IRequestHandler<GetCo
     public async Task<IEnumerable<CollectionAutocompleteDto>> Handle(GetCollectionAutocompleteDataRequest request, CancellationToken cancellationToken)
     {
         var user = await _userService.GetCurrentUser(cancellationToken)
-            ?? throw new AggregateException("User not found.");
+            ?? throw new UserNotFoundException();
         
         return await _collectionRepository.GetAutocompleteData(user.Id, cancellationToken);
     }

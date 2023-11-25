@@ -1,4 +1,6 @@
 using E_Lang.Application.Collections.Requests;
+using E_Lang.Application.Common.Enums;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Domain.Entities;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
@@ -46,16 +48,19 @@ public class GetCollectionRequestTests : Setup
             CollectionId = CollectionId
         };
 
-        var expectedErrorMassage = $"Parent collection Id cannot be null or empty. (Parameter '{nameof(request.CollectionId)}')";
-        
+        var expectedException = new NullOrEmptyValidationException(nameof(Collection), nameof(Collection.Id), ActionTypes.Get);
+
         // Act
         var exception =
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await _mediator.Send(request));
-        
+            await Assert.ThrowsExceptionAsync<NullOrEmptyValidationException>(async () => await _mediator.Send(request));
+
         // Assert
         exception.Should().NotBeNull();
-        exception.ParamName.Should().Be(nameof(request.CollectionId));
-        exception.Message.Should().Be(expectedErrorMassage);
+        exception.EntityName.Should().Be(nameof(Collection));
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+        exception.PropertyName.Should().Be(nameof(Collection.Id));
+        exception.ActionType.Should().Be(ActionTypes.Get);
     }
     
     [TestMethod]
@@ -77,15 +82,16 @@ public class GetCollectionRequestTests : Setup
             CollectionId = collection.Id
         };
 
-        var expectedErrorMassage = $"User not found. (Parameter '{nameof(User.Id)}')";
-        
+        var expectedException = new UserNotFoundException();
+
         // Act
         var exception =
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await _mediator.Send(request));
-        
+            await Assert.ThrowsExceptionAsync<UserNotFoundException>(async () => await _mediator.Send(request));
+
         // Assert
         exception.Should().NotBeNull();
-        exception.Message.Should().Be(expectedErrorMassage);
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
     }
     
     [TestMethod]
@@ -171,16 +177,20 @@ public class GetCollectionRequestTests : Setup
         {
             CollectionId = collection1.Id
         };
-        
-        var expectedErrorMassage = $"User with Id {user2.Id} does not have collection with Id {collection1.Id}";
 
+        var expectedException = new NotFoundValidationException(nameof(Collection), nameof(Collection.Id), collection1.Id.ToString());
+        
         // Act
         var exception =
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _mediator.Send(request));
-        
+            await Assert.ThrowsExceptionAsync<NotFoundValidationException>(async () => await _mediator.Send(request));
+
         // Assert
         exception.Should().NotBeNull();
-        exception.Message.Should().Be(expectedErrorMassage);
+        exception.EntityName.Should().Be(nameof(Collection));
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+        exception.AttributeName.Should().Be(nameof(Collection.Id));
+        exception.Value.Should().Be(expectedException.Value);
     }
 
     [TestMethod]

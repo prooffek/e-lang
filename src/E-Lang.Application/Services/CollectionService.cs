@@ -1,6 +1,8 @@
-using E_Lang.Application.Collections.Requests;
+using E_Lang.Application.Common.Enums;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Application.Common.Interfaces.Repositories;
 using E_Lang.Application.Interfaces;
+using E_Lang.Domain.Entities;
 
 namespace E_Lang.Application.Services;
 
@@ -13,15 +15,13 @@ public class CollectionService : ICollectionService
         _collectionRepository = collectionRepository;
     }
     
-    public async Task ValidateUserCollectionId(Guid userId, Guid? collectionId, CancellationToken cancellationToken)
+    public async Task ValidateUserCollectionId(Guid userId, Guid? collectionId, ActionTypes actionType, CancellationToken cancellationToken)
     {
         if (!collectionId.HasValue || collectionId.Value == Guid.Empty)
-            throw new ArgumentNullException(nameof(GetCollectionRequest.CollectionId),
-                "Parent collection Id cannot be null or empty.");
+            throw new NullOrEmptyValidationException(nameof(Collection), nameof(Collection.Id), actionType);
 
         if (!await _collectionRepository.IsUserCollectionOwnerAsync(userId, collectionId.Value,
                 cancellationToken))
-            throw new ArgumentException(
-                $"User with Id {userId} does not have collection with Id {collectionId.Value}");
+            throw new NotFoundValidationException(nameof(Collection), nameof(Collection.Id), collectionId.Value.ToString());
     }
 }

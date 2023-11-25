@@ -2,6 +2,7 @@ using E_Lang.Application;
 using E_Lang.Domain;
 using E_Lang.Infrastructure;
 using E_Lang.Persistence;
+using E_Lang.WebApi.Middleware;
 using Microsoft.AspNetCore.OData;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,8 @@ app.UseSwaggerUi3(options =>
 {
     options.DocExpansion = "list";
 });
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(policy =>
     policy.AllowAnyHeader()

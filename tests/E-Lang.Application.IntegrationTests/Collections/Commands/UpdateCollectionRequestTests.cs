@@ -1,5 +1,7 @@
 using E_Lang.Application.Collections.Commands;
 using E_Lang.Application.Common.DTOs;
+using E_Lang.Application.Common.Errors;
+using E_Lang.Domain.Entities;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
 
@@ -27,6 +29,47 @@ public class UpdateCollectionRequestTests : Setup
     }
 
     [TestMethod]
+    public async Task UpdateCollectionRequest_Handle_ShouldThrowIfUserNotFound()
+    {
+        // Arrange 
+        await _testBuilder
+            .AddUser(out var user)
+                .AddCollection(out var collection)
+                    .SetName("Collection 1")
+                    .AddSubcollection(out var subcollection)
+                        .SetName("Subcollection 1")
+                        .Build()
+                    .Build()
+                .Build()
+            .SaveAsync();
+
+        MockUserService.CurrentUser = null;
+
+        var dto = new UpdateCollectionDto()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Updated name",
+            ParentCollectionId = collection.Id
+        };
+
+        var request = new UpdateCollectionRequest()
+        {
+            UpdateDto = dto
+        };
+
+        var expectedException = new UserNotFoundException();
+
+        // Act
+        var exception = await Assert.ThrowsExceptionAsync<UserNotFoundException>(async () =>
+            await _mediator.Send(request));
+
+        // Assert
+        exception.Should().NotBeNull();
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+    }
+
+    [TestMethod]
     public async Task UpdateCollectionRequest_Handle_ShouldThrowIfCollectionNotFound()
     {
          // Arrange
@@ -51,95 +94,19 @@ public class UpdateCollectionRequestTests : Setup
              UpdateDto = dto
          };
 
-         var exceptionMessage = $"Collection with name {dto.Name} not found.";
+        var expectedException = new NotFoundValidationException(nameof(Collection), nameof(Collection.Name), dto.Name);
          
          // Act
          var exception =
-             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _mediator.Send(request));
-         
-         // Assert
-         exception.Should().NotBeNull();
-         exception.Message.Should().Be(exceptionMessage);
-    }
-    
-     [TestMethod]
-    public async Task UpdateCollectionRequest_Handle_ShouldThrowIfIsOwnParent()
-    {
-         // Arrange
-         await _testBuilder
-             .AddUser(out var user)
-                .AddCollection(out var collection)
-                    .Build()
-                .Build()
-             .SaveAsync();
+             await Assert.ThrowsExceptionAsync<NotFoundValidationException>(async () => await _mediator.Send(request));
 
-         MockUserService.CurrentUser = user;
-
-         var dto = new UpdateCollectionDto()
-         {
-             Id = collection.Id,
-             Name = "New Updated name",
-             ParentCollectionId = collection.Id
-         };
-
-         var request = new UpdateCollectionRequest()
-         {
-             UpdateDto = dto
-         };
-
-         var exceptionMessage = $"Collection cannot be its own subcollection.";
-         
-         // Act
-         var exception =
-             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _mediator.Send(request));
-         
-         // Assert
-         exception.Should().NotBeNull();
-         exception.Message.Should().Be(exceptionMessage);
-    }
-
-    [TestMethod]
-    public async Task UpdateCollectionRequest_Handle_ShouldThrowIfNameAlreadyInUsed()
-    {
-        _now = new DateTime(2023, 09, 17, 08, 00, 00);
-        
-        // Arrange
-        await _testBuilder
-            .AddUser(out var user)
-                .AddCollection(out var collection)
-                    .AddSubcollection(out var subcollection)
-                        .SetName("Subcollection")
-                        .AddSubcollection(out var subcollection2)
-                            .SetName("Subcollection")
-                            .Build()
-                        .Build()
-                    .Build()
-                .Build()
-            .SaveAsync();
-
-        MockUserService.CurrentUser = user;
-
-        var dto = new UpdateCollectionDto()
-        {
-            Id = subcollection2.Id,
-            Name = collection.Name,
-            ParentCollectionId = collection.Id
-        };
-
-        var request = new UpdateCollectionRequest()
-        {
-            UpdateDto = dto
-        };
-        
-        var exceptionMessage = $"Collection with name {dto.Name} already exists.";
-        
-        // Act  
-        var exception =
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _mediator.Send(request));
-         
         // Assert
         exception.Should().NotBeNull();
-        exception.Message.Should().Be(exceptionMessage);
+        exception.EntityName.Should().Be(nameof(Collection));
+        exception.Message.Should().Be(expectedException.Message);
+        exception.StatusCode.Should().Be(expectedException.StatusCode);
+        exception.AttributeName.Should().Be(nameof(Collection.Name));
+        exception.Value.Should().Be(expectedException.Value);
     }
     
     [TestMethod]

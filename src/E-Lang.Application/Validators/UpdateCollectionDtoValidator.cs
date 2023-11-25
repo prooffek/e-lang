@@ -1,4 +1,5 @@
 using E_Lang.Application.Common.DTOs;
+using E_Lang.Application.Common.Errors;
 using E_Lang.Application.Common.Interfaces;
 using E_Lang.Application.Common.Interfaces.Repositories;
 using E_Lang.Domain.Entities;
@@ -29,6 +30,17 @@ public class UpdateCollectionDtoValidator : AbstractValidator<UpdateCollectionDt
         RuleFor(c => c.Name)
             .MaximumLength(Collection.NAME_MAX_LENGTH)
             .WithMessage($"Collection name cannot be longer than {Collection.NAME_MAX_LENGTH} characters");
+
+        RuleFor(c => new { c.Id, c.Name })
+            .MustAsync(async (collection, cancellationToken) =>
+            {
+                var user = await userService.GetCurrentUser(cancellationToken)
+                    ?? throw new UserNotFoundException();
+
+                return !await collectionRepository.IsNameAlreadyUsedAsync(user.Id, collection.Name, cancellationToken,
+                collection.Id);
+            })
+            .WithMessage($"Collection with this name already exists.");
 
         RuleFor(c => new { c.Id, c.ParentCollectionId })
             .Must((ids) => ids.Id != ids.ParentCollectionId)
