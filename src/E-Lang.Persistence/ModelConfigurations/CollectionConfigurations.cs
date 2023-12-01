@@ -9,21 +9,19 @@ public static class CollectionConfigurations
     {
         modelBuilder.Entity<Collection>(entity =>
         {
+            entity.HasIndex(e => e.OwnerId);
+            
             entity.HasIndex(e =>
                     new {e.Id, e.ParentId},
                 $"{nameof(Collection)}_{nameof(Collection.Id)}_{nameof(Collection.ParentId)}");
 
             entity.HasMany(c => c.Flashcards)
-                .WithMany(fc => fc.Collections)
-                .UsingEntity<CollectionFlashcard>(
-                    r => r
-                        .HasOne<Flashcard>()
-                        .WithMany()
-                        .HasForeignKey(e => e.FlashcardId),
-                    l => l
-                        .HasOne<Collection>()
-                        .WithMany()
-                        .HasForeignKey(e => e.CollectionId));
+                .WithOne(f => f.Collection)
+                .HasForeignKey(f => f.CollectionId);
+
+            entity.HasMany(c => c.Subcollections)
+                .WithOne(c => c.Parent)
+                .HasForeignKey(c => c.ParentId);
         });
 
         return modelBuilder;

@@ -37,4 +37,11 @@ public class CollectionBuilder<TParentBuilder> : EntityBuilderBase<Collection, T
         subcollection.Parent = _entity;
         return new CollectionBuilder<CollectionBuilder<TParentBuilder>>(subcollection, this, _context);
     }
+
+    public FlashcardBuilder<CollectionBuilder<TParentBuilder>> AddFlashcard(out Flashcard flashcard)
+    {
+        flashcard = Entities.GetFlashcard(_entity.Id, _entity.OwnerId);
+        _entity.Flashcards.Add(flashcard);
+        return new FlashcardBuilder<CollectionBuilder<TParentBuilder>>(flashcard, this, _context);
+    }
 }

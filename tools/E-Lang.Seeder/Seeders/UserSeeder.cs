@@ -1,6 +1,6 @@
 using E_Lang.Application.Common.Interfaces.Repositories;
 using E_Lang.Domain.Entities;
-using Microsoft.Extensions.Configuration;
+using E_Lang.Seeder.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace E_Lang.Seeder.Seeders;
@@ -9,8 +9,8 @@ public class UserSeeder : SeederBase
 {
     private readonly IUserRepository _userRepository;
 
-    public UserSeeder(IServiceProvider serviceProvider, IConfiguration config)
-        : base(serviceProvider, config)
+    public UserSeeder(IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
         _userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
     }
@@ -37,13 +37,7 @@ public class UserSeeder : SeederBase
 
     private User GetAdminUser()
     {
-        var admin = _config.GetSection("SeederSettings:DefaultUser").Get<User>()
-                    ?? new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "Admin",
-                        Email = "admin@e-lang.com"
-                    };
+        var admin = _userService.GetUser();
         
         admin.CreatedOn = DateTime.UtcNow;
         admin.ModifiedOn = DateTime.UtcNow;

@@ -1,10 +1,10 @@
-using Microsoft.Extensions.Configuration;
+using E_Lang.Seeder.Interfaces;
 
 namespace E_Lang.Seeder.Seeders;
 
 public class CollectionSeeder : SeederBase
 {
-    public CollectionSeeder(IServiceProvider serviceProvider, IConfiguration config) : base(serviceProvider, config)
+    public CollectionSeeder(IServiceProvider serviceProvider) : base(serviceProvider)
     {
     }
     
@@ -15,7 +15,7 @@ public class CollectionSeeder : SeederBase
 
     private async Task SeedCollections()
     {
-        var userId = new Guid(_config.GetSection("SeederSettings:DefaultUser:Id").Value!);
+        var userId = _userService.GetUserId();
 
         await Builder
             .AddCollection(out var _, userId)

@@ -25,6 +25,12 @@ namespace E_Lang.Builder.Builders
             return new CollectionBuilder<BaseBuilder>(collection, this, _context);
         }
 
+        public FlashcardBuilder<BaseBuilder> AddFlashcard(out Flashcard flashcard, Guid collectionId, Guid userId)
+        {
+            flashcard = Entities.GetFlashcard(collectionId, userId);
+            return new FlashcardBuilder<BaseBuilder>(flashcard, this, _context);
+        }
+
         public void Save()
         {
             _context.SaveChanges();

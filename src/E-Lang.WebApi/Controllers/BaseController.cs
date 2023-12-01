@@ -24,7 +24,7 @@ public class BaseController<TEntity, TDto> : ControllerBase
 
     [HttpGet()]
     [EnableQuery]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<IEnumerable<TDto>>> GetAll()
     {
         var entities = await _repository.GetAllAsDtoAsync(default);
         return Ok(entities);

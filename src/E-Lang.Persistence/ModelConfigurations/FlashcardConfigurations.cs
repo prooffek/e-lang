@@ -12,6 +12,12 @@ public static class FlashcardConfigurations
             entity.HasIndex(fc => 
                 new {fc.Id, fc.OwnerId},
                 $"{nameof(Flashcard)}_{nameof(Flashcard.Id)}_{nameof(Flashcard.OwnerId)}");
+
+            entity.HasIndex(e => e.CollectionId);
+
+            entity.HasOne(f => f.FlashcardBase)
+                .WithMany()
+                .HasForeignKey(f => f.FlashcardBaseId);
         });
         
         return modelBuilder;

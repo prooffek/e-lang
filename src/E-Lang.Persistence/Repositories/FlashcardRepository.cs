@@ -17,6 +17,9 @@ public class FlashcardRepository : Repository<Flashcard, FlashcardDto>, IFlashca
     public override async Task<FlashcardDto?> GetByIdAsDtoAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _entity
+            .Include(f => f.FlashcardBase)
+                .ThenInclude(f => f.Meanings)
+            .Include(f => f.Collection)
             .Where(fc => fc.Id == id)
             .ProjectToType<FlashcardDto>()
             .SingleOrDefaultAsync(cancellationToken);
@@ -25,6 +28,9 @@ public class FlashcardRepository : Repository<Flashcard, FlashcardDto>, IFlashca
     public override async Task<IEnumerable<FlashcardDto>> GetAllAsDtoAsync(CancellationToken cancellationToken = default)
     {
         return await _entity
+            .Include(f => f.FlashcardBase)
+                .ThenInclude(f => f.Meanings)
+            .Include(f => f.Collection)
             .ProjectToType<FlashcardDto>()
             .ToListAsync(cancellationToken);
     }

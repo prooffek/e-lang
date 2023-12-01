@@ -14,9 +14,10 @@ public class Collection : EntityBase
     
     public Guid? ParentId { get; set; }
     public Collection? Parent { get; set; }
+
     public ICollection<Collection>? Subcollections { get; set; }
     
-    public ICollection<Flashcard>? Flashcards { get; set; }
+    public ICollection<Flashcard> Flashcards { get; set; }
     
     [Required]
     public Guid OwnerId { get; set; }

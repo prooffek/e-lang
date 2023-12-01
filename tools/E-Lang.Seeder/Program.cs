@@ -39,6 +39,7 @@ namespace E_Lang.Seeder
                 .AddSingleton<IConfiguration>(config)
                 .AddScoped<ISeederRunner, SeederRunner>()
                 .AddScoped<IDateTimeProvider, DateTimeProvider>()
+                .AddScoped<IUserService, Services.UserService>()
                 .AddDomain()
                 .AddPersistence(config.GetConnectionString(AppDbContextFactory.CONNECTION_STRING));
 
