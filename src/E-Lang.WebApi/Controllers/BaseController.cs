@@ -1,5 +1,4 @@
 using E_Lang.Application.Common.Interfaces;
-using E_Lang.Application.Common.Interfaces.Repositories;
 using E_Lang.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +13,9 @@ public class BaseController<TEntity, TDto> : ControllerBase
     where TDto: IMapper<TEntity>
 {
     protected readonly IMediator _mediator;
-    private readonly IRepository<TEntity, TDto> _repository;
+    private readonly IRepositoryWithDto<TEntity, TDto> _repository;
 
-    public BaseController(IMediator mediator, IRepository<TEntity, TDto> repository)
+    public BaseController(IMediator mediator, IRepositoryWithDto<TEntity, TDto> repository)
     {
         _mediator = mediator;
         _repository = repository;

@@ -13,8 +13,6 @@ namespace E_Lang.Application.IntegrationTests
 {
     public abstract class Setup
     {
-        private static bool _isInitialised = false;
-
         protected static IConfiguration? _config;
 
         protected static IServiceScope? _contextScope;
@@ -26,6 +24,8 @@ namespace E_Lang.Application.IntegrationTests
         protected static IDateTimeProvider _dateTimeProvider;
 
         protected static ICollectionRepository _collectionRepository;
+        protected static IFlashcardRepository _flashcardRepository;
+        protected static IFlashcardBaseRepository _flashcardBaseRepository;
 
         protected static DateTime _now
         {
@@ -35,8 +35,6 @@ namespace E_Lang.Application.IntegrationTests
 
         public static void InitClass()
         {
-            if (_isInitialised) return;
-
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -49,28 +47,29 @@ namespace E_Lang.Application.IntegrationTests
 
             _contextScope = scopeFactory.CreateScope();
             _appDbContext = (AppDbContext)_contextScope.ServiceProvider.GetRequiredService<IAppDbContext>();
-
-            _testBuilder = new BaseBuilder(_appDbContext);
+            
+            _testBuilder = new BaseBuilder(_appDbContext, MockDateTimeProvider.GetInstance());
 
             _applicationScope = scopeFactory.CreateScope();
             _mediator = _applicationScope.ServiceProvider.GetRequiredService<IMediator>();
             _dateTimeProvider = _applicationScope.ServiceProvider.GetRequiredService<IDateTimeProvider>();
             
             _collectionRepository = _applicationScope.ServiceProvider.GetRequiredService<ICollectionRepository>();
-
-            _isInitialised = true;
+            _flashcardRepository = _applicationScope.ServiceProvider.GetRequiredService<IFlashcardRepository>();
+            _flashcardBaseRepository = _applicationScope.ServiceProvider.GetRequiredService<IFlashcardBaseRepository>();
         }
 
         public static void InitTest()
         {
+            _appDbContext.Database.EnsureDeleted();
+            _appDbContext.Database.Migrate();
         }
 
         public static void CleanupTest()
         {
-            _appDbContext?.ChangeTracker.Clear();
-
             GC.Collect();
             GC.WaitForPendingFinalizers();
+            EnsureDataBase();
         }
 
         private static void EnsureDataBase()
@@ -80,8 +79,8 @@ namespace E_Lang.Application.IntegrationTests
                 throw new NullReferenceException(nameof(AppDbContext));
             }
 
+            _appDbContext?.ChangeTracker.Clear();
             _appDbContext.Database.EnsureDeleted();
-            _appDbContext.Database.Migrate();
         }
     }
 }

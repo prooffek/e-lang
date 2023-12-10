@@ -32,7 +32,7 @@ namespace E_Lang.Builder
             };
         }
 
-        public static Meaning GetMeaning()
+        public static Meaning GetMeaning(Guid flashcardBaseId)
         {
             return new Meaning()
             {
@@ -40,7 +40,7 @@ namespace E_Lang.Builder
                 CreatedOn = DateTime.UtcNow,
                 ModifiedOn = DateTime.UtcNow,
                 Value = "Test vaue",
-                FlashcardBases = new List<FlashcardBase>()
+                FlashcardBaseId = flashcardBaseId
             };
         }
 

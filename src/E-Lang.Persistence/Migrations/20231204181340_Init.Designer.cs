@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace E_Lang.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231103093618_Init")]
+    [Migration("20231204181340_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -39,8 +39,8 @@ namespace E_Lang.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
@@ -50,6 +50,8 @@ namespace E_Lang.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OwnerId");
+
                     b.HasIndex("ParentId");
 
                     b.HasIndex(new[] { "Id", "ParentId" }, "Collection_Id_ParentId");
@@ -57,22 +59,48 @@ namespace E_Lang.Persistence.Migrations
                     b.ToTable("Collections");
                 });
 
-            modelBuilder.Entity("E_Lang.Domain.Entities.CollectionFlashcard", b =>
+            modelBuilder.Entity("E_Lang.Domain.Entities.Flashcard", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("CollectionId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("FlashcardId")
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("FlashcardBaseId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("CollectionId", "FlashcardId");
+                    b.Property<DateTime?>("LastSeenOn")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.HasIndex("FlashcardId");
+                    b.Property<DateTime?>("LastStatusChangedOn")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.ToTable("CollectionFlashcard");
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CollectionId");
+
+                    b.HasIndex("FlashcardBaseId");
+
+                    b.HasIndex(new[] { "Id", "OwnerId" }, "Flashcard_Id_OwnerId");
+
+                    b.ToTable("Flashcards");
                 });
 
-            modelBuilder.Entity("E_Lang.Domain.Entities.Flashcard", b =>
+            modelBuilder.Entity("E_Lang.Domain.Entities.FlashcardBase", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -84,14 +112,41 @@ namespace E_Lang.Persistence.Migrations
                     b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("WordOrPhrase")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Id", "OwnerId" }, "Flashcard_Id_OwnerId");
+                    b.ToTable("FlashcardBase");
+                });
 
-                    b.ToTable("Flashcards");
+            modelBuilder.Entity("E_Lang.Domain.Entities.Meaning", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("FlashcardBaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlashcardBaseId");
+
+                    b.ToTable("Meaning");
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.User", b =>
@@ -116,9 +171,13 @@ namespace E_Lang.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex(new[] { "Email" }, "User_Email")
+                        .IsUnique();
+
                     b.HasIndex(new[] { "Id" }, "User_Id");
 
-                    b.HasIndex(new[] { "UserName" }, "User_UserName");
+                    b.HasIndex(new[] { "UserName" }, "User_UserName")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -132,24 +191,46 @@ namespace E_Lang.Persistence.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("E_Lang.Domain.Entities.CollectionFlashcard", b =>
+            modelBuilder.Entity("E_Lang.Domain.Entities.Flashcard", b =>
                 {
-                    b.HasOne("E_Lang.Domain.Entities.Collection", null)
-                        .WithMany()
+                    b.HasOne("E_Lang.Domain.Entities.Collection", "Collection")
+                        .WithMany("Flashcards")
                         .HasForeignKey("CollectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("E_Lang.Domain.Entities.Flashcard", null)
+                    b.HasOne("E_Lang.Domain.Entities.FlashcardBase", "FlashcardBase")
                         .WithMany()
-                        .HasForeignKey("FlashcardId")
+                        .HasForeignKey("FlashcardBaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Collection");
+
+                    b.Navigation("FlashcardBase");
+                });
+
+            modelBuilder.Entity("E_Lang.Domain.Entities.Meaning", b =>
+                {
+                    b.HasOne("E_Lang.Domain.Entities.FlashcardBase", "FlashcardBase")
+                        .WithMany("Meanings")
+                        .HasForeignKey("FlashcardBaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FlashcardBase");
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.Collection", b =>
                 {
+                    b.Navigation("Flashcards");
+
                     b.Navigation("Subcollections");
+                });
+
+            modelBuilder.Entity("E_Lang.Domain.Entities.FlashcardBase", b =>
+                {
+                    b.Navigation("Meanings");
                 });
 #pragma warning restore 612, 618
         }

@@ -128,7 +128,7 @@ namespace E_Lang.Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("FlashcardId")
+                    b.Property<Guid>("FlashcardBaseId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("ModifiedOn")
@@ -140,6 +140,8 @@ namespace E_Lang.Persistence.Migrations
                         .HasColumnType("character varying(10000)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FlashcardBaseId");
 
                     b.ToTable("Meaning");
                 });
@@ -177,21 +179,6 @@ namespace E_Lang.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("FlashcardBaseMeaning", b =>
-                {
-                    b.Property<Guid>("FlashcardBasesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("MeaningsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("FlashcardBasesId", "MeaningsId");
-
-                    b.HasIndex("MeaningsId");
-
-                    b.ToTable("FlashcardBaseMeaning");
-                });
-
             modelBuilder.Entity("E_Lang.Domain.Entities.Collection", b =>
                 {
                     b.HasOne("E_Lang.Domain.Entities.Collection", "Parent")
@@ -220,19 +207,15 @@ namespace E_Lang.Persistence.Migrations
                     b.Navigation("FlashcardBase");
                 });
 
-            modelBuilder.Entity("FlashcardBaseMeaning", b =>
+            modelBuilder.Entity("E_Lang.Domain.Entities.Meaning", b =>
                 {
-                    b.HasOne("E_Lang.Domain.Entities.FlashcardBase", null)
-                        .WithMany()
-                        .HasForeignKey("FlashcardBasesId")
+                    b.HasOne("E_Lang.Domain.Entities.FlashcardBase", "FlashcardBase")
+                        .WithMany("Meanings")
+                        .HasForeignKey("FlashcardBaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("E_Lang.Domain.Entities.Meaning", null)
-                        .WithMany()
-                        .HasForeignKey("MeaningsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("FlashcardBase");
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.Collection", b =>
@@ -240,6 +223,11 @@ namespace E_Lang.Persistence.Migrations
                     b.Navigation("Flashcards");
 
                     b.Navigation("Subcollections");
+                });
+
+            modelBuilder.Entity("E_Lang.Domain.Entities.FlashcardBase", b =>
+                {
+                    b.Navigation("Meanings");
                 });
 #pragma warning restore 612, 618
         }

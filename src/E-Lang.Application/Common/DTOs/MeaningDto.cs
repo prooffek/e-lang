@@ -5,6 +5,7 @@ namespace E_Lang.Application.Common.DTOs
 {
     public class MeaningDto : IMapper<Meaning>
     {
+        public Guid Id { get; set; }
         public string Value { get; set; }
     }
 }

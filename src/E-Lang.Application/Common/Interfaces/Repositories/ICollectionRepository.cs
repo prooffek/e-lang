@@ -3,7 +3,7 @@ using E_Lang.Domain.Entities;
 
 namespace E_Lang.Application.Common.Interfaces.Repositories;
 
-public interface ICollectionRepository : IRepository<Collection, CollectionCardDto>
+public interface ICollectionRepository : IRepository<Collection>, IRepositoryWithDto<Collection, CollectionCardDto>
 {
     Task<Collection?> GetWithExtensionsByIdAsync(Guid userId, CancellationToken cancellationToken);
     Task<IEnumerable<CollectionCardDto>> GetCollectionCardsAsync(Guid userId, Guid? parentCollectionId, CancellationToken cancellationToken);

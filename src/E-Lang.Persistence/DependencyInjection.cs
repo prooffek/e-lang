@@ -20,6 +20,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICollectionRepository, CollectionRepository>();
         services.AddScoped<IFlashcardRepository, FlashcardRepository>();
+        services.AddScoped<IFlashcardBaseRepository, FlashcardBaseRepository>();
         
         #endregion
         

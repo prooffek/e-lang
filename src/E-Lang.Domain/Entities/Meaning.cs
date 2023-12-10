@@ -9,11 +9,8 @@ namespace E_Lang.Domain.Entities
         [MaxLength(10000)]
         public string Value { get; set; }
 
-        // If not null => the meaning is restricted to the collection specified
-        // If null => the meaning is always loaded for the flashcard
-        [Required]
-        public Guid FlashcardId { get; set; }
+        public Guid FlashcardBaseId { get; set; }
 
-        public ICollection<FlashcardBase> FlashcardBases { get; set; }
+        public FlashcardBase? FlashcardBase { get; set; }
     }
 }

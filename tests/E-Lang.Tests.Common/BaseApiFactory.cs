@@ -1,5 +1,6 @@
 ﻿using E_Lang.Application.Common.Interfaces;
 using E_Lang.Persistence;
+using E_Lang.Tests.Common.Mocks;
 using E_Lang.WebApi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,7 +14,7 @@ namespace E_Lang.Tests.Common
 {
     public class BaseApiFactory : WebApplicationFactory<Program>
     {
-        private const string DATABASE_NAME = "test_Db";
+        private const string CONNECTION_STRING = "Data Source=test.db";
         private readonly IConfiguration _config;
 
         public BaseApiFactory(IConfiguration config)
@@ -31,8 +32,8 @@ namespace E_Lang.Tests.Common
             services.Replace(ServiceDescriptor.Scoped(_ =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder();
-                optionsBuilder.UseInMemoryDatabase(DATABASE_NAME);
-                var context = new AppDbContext(optionsBuilder.Options);
+                optionsBuilder.UseSqlite(CONNECTION_STRING);
+                var context = new AppDbContext(optionsBuilder.Options, MockDateTimeProvider.GetInstance());
                 return context;
             }));
 

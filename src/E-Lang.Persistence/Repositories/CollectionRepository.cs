@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_Lang.Persistence.Repositories;
 
-public class CollectionRepository : Repository<Collection, CollectionCardDto>, ICollectionRepository
+public class CollectionRepository : RepositoryWithDto<Collection, CollectionCardDto>, ICollectionRepository
 {
     public CollectionRepository(IAppDbContext dbContext, IDateTimeProvider dateTimeProvider) : base(dbContext, dateTimeProvider)
     {

@@ -1,4 +1,5 @@
 using E_Lang.Application.Common.Interfaces;
+using E_Lang.Application.Interfaces;
 using E_Lang.Builder.Builders;
 using E_Lang.Seeder.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,8 @@ public abstract class SeederBase : ISeeder
     protected readonly IServiceProvider _serviceProvider;
     protected readonly IUserService _userService;
 
-    protected BaseBuilder Builder => new BaseBuilder(_serviceProvider.GetRequiredService<IAppDbContext>());
+    protected BaseBuilder Builder => new BaseBuilder(_serviceProvider.GetRequiredService<IAppDbContext>(),
+        _serviceProvider.GetRequiredService<IDateTimeProvider>());
 
     protected SeederBase(IServiceProvider serviceProvider)
     {

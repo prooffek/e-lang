@@ -12,8 +12,9 @@ public class FlashcardDto : IMapper<Flashcard>
     public string WordOrPhrase { get; set; }
     public ICollection<MeaningDto> Meanings { get; set; }
     public DateTime CreatedOn { get; set; }
-    public DateTime LastSeenOn { get; set; }
+    public DateTime? LastSeenOn { get; set; }
     public FlashcardStatus Status { get; set; }
+    public Guid FlashcardBaseId { get; set; }
 
     public void Map(TypeAdapterConfig config)
     {

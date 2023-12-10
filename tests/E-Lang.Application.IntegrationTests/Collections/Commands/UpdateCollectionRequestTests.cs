@@ -127,6 +127,8 @@ public class UpdateCollectionRequestTests : Setup
                     .Build()
                 .Build()
             .AddUser(out var user2)
+                .SetUsername("User 2")
+                .SetEmail("User2@test.pl")
                 .AddCollection(out var collection2)
                     .SetName("Collection 2")
                     .AddSubcollection(out var subcollection3)

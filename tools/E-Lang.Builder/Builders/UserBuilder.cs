@@ -1,12 +1,13 @@
 using E_Lang.Application.Common.Interfaces;
+using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 
 namespace E_Lang.Builder.Builders;
 
 public class UserBuilder : EntityBuilderBase<User, BaseBuilder>
 {
-    public UserBuilder(User entity, BaseBuilder parentBuilder, IAppDbContext context) 
-        : base(entity, parentBuilder, context)
+    public UserBuilder(User entity, BaseBuilder parentBuilder, IAppDbContext context, IDateTimeProvider dateTimeProvider) 
+        : base(entity, parentBuilder, context, dateTimeProvider)
     {
     }
 
@@ -25,6 +26,6 @@ public class UserBuilder : EntityBuilderBase<User, BaseBuilder>
     public CollectionBuilder<UserBuilder> AddCollection(out Collection collection)
     {
         collection = Entities.GetCollection(_entity.Id);
-        return new CollectionBuilder<UserBuilder>(collection, this, _context);
+        return new CollectionBuilder<UserBuilder>(collection, this, _context, _dateTimeProvider);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using E_Lang.Application.Common.Interfaces;
+using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,8 +12,8 @@ namespace E_Lang.Builder.Builders
         protected readonly IAppDbContext _context;
         protected readonly DbSet<TEntity> _dbSet;
 
-        public EntityBuilderBase(TEntity entity, TParentBuilder parentBuilder, IAppDbContext context)
-            : base(entity, parentBuilder)
+        public EntityBuilderBase(TEntity entity, TParentBuilder parentBuilder, IAppDbContext context, IDateTimeProvider dateTimeProvider)
+            : base(entity, parentBuilder, dateTimeProvider)
         {
             _context = context;
             _dbSet = _context.GetDbSet<TEntity>();

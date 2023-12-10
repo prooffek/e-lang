@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_Lang.Persistence.Repositories;
 
-public class FlashcardRepository : Repository<Flashcard, FlashcardDto>, IFlashcardRepository
+public class FlashcardRepository : RepositoryWithDto<Flashcard, FlashcardDto>, IFlashcardRepository
 {
     public FlashcardRepository(IAppDbContext dbContext, IDateTimeProvider dateTimeProvider) : base(dbContext, dateTimeProvider)
     {

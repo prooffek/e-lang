@@ -7,9 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_Lang.Persistence.Repositories;
 
-public abstract class Repository<TEntity, TDto> : IRepository<TEntity, TDto> 
+public abstract class Repository<TEntity> : IRepository<TEntity> 
     where TEntity : EntityBase
-    where TDto : IMapper<TEntity>
 {
     protected readonly IAppDbContext _dbContext;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -30,19 +29,13 @@ public abstract class Repository<TEntity, TDto> : IRepository<TEntity, TDto>
             .SingleOrDefaultAsync(e => e.Id == id, cancellationToken);
     }
 
-    public abstract Task<TDto?> GetByIdAsDtoAsync(Guid id, CancellationToken cancellationToken = default);
-
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _entity.ToListAsync(cancellationToken);
     }
 
-    public abstract Task<IEnumerable<TDto>> GetAllAsDtoAsync(CancellationToken cancellationToken = default);
-
     public virtual void Add(TEntity entity)
     {
-        entity.CreatedOn = _dateTimeProvider.UtcNow;
-        entity.ModifiedOn = _dateTimeProvider.UtcNow;
         _entity.Add(entity);
     }
 

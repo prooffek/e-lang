@@ -3,6 +3,6 @@ using E_Lang.Domain.Entities;
 
 namespace E_Lang.Application.Common.Interfaces.Repositories;
 
-public interface IFlashcardRepository : IRepository<Flashcard, FlashcardDto>
+public interface IFlashcardRepository : IRepository<Flashcard>, IRepositoryWithDto<Flashcard, FlashcardDto>
 {
 }

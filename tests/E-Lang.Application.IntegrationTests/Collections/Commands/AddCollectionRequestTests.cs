@@ -123,7 +123,7 @@ public class AddCollectionRequestTests : Setup
                     .Build()
                 .Build()
             .SaveAsync();
-
+         
          MockUserService.CurrentUser = user;
 
          var name = "New subcollection";

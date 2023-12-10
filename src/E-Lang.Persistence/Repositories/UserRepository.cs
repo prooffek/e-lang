@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_Lang.Persistence.Repositories;
 
-public class UserRepository : Repository<User, UserDto>, IUserRepository
+public class UserRepository : RepositoryWithDto<User, UserDto>, IUserRepository
 {
     public UserRepository(IAppDbContext dbContext, IDateTimeProvider dateTimeProvider) : base(dbContext, dateTimeProvider)
     {

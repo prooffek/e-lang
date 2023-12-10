@@ -14,16 +14,8 @@ public static class FlashcardBaseConfigurations
                entity.HasIndex(e => e.Id);
                
                entity.HasMany(f => f.Meanings)
-                    .WithMany()
-                    .UsingEntity<FlashcardBaseMeaning>(
-                    r => r
-                         .HasOne<Meaning>()
-                         .WithMany()
-                         .HasForeignKey(e => e.MeaningId),
-                    l => l
-                         .HasOne<FlashcardBase>()
-                         .WithMany()
-                         .HasForeignKey(e => e.FlashcardBaseId));
+                    .WithOne(m => m.FlashcardBase)
+                    .HasForeignKey(m => m.FlashcardBaseId);
           });
           
           return modelBuilder;

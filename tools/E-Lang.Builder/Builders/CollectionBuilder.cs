@@ -1,4 +1,5 @@
 using E_Lang.Application.Common.Interfaces;
+using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 
 namespace E_Lang.Builder.Builders;
@@ -6,8 +7,8 @@ namespace E_Lang.Builder.Builders;
 public class CollectionBuilder<TParentBuilder> : EntityBuilderBase<Collection, TParentBuilder>
     where TParentBuilder : class
 {
-    public CollectionBuilder(Collection entity, TParentBuilder parentBuilder, IAppDbContext context) 
-        : base(entity, parentBuilder, context)
+    public CollectionBuilder(Collection entity, TParentBuilder parentBuilder, IAppDbContext context, IDateTimeProvider dateTimeProvider) 
+        : base(entity, parentBuilder, context, dateTimeProvider)
     {
     }
 
@@ -35,13 +36,13 @@ public class CollectionBuilder<TParentBuilder> : EntityBuilderBase<Collection, T
         subcollection = Entities.GetCollection(_entity.OwnerId);
         subcollection.ParentId = _entity.Id;
         subcollection.Parent = _entity;
-        return new CollectionBuilder<CollectionBuilder<TParentBuilder>>(subcollection, this, _context);
+        return new CollectionBuilder<CollectionBuilder<TParentBuilder>>(subcollection, this, _context, _dateTimeProvider);
     }
 
     public FlashcardBuilder<CollectionBuilder<TParentBuilder>> AddFlashcard(out Flashcard flashcard)
     {
         flashcard = Entities.GetFlashcard(_entity.Id, _entity.OwnerId);
         _entity.Flashcards.Add(flashcard);
-        return new FlashcardBuilder<CollectionBuilder<TParentBuilder>>(flashcard, this, _context);
+        return new FlashcardBuilder<CollectionBuilder<TParentBuilder>>(flashcard, this, _context, _dateTimeProvider);
     }
 }

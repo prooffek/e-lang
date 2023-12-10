@@ -19,7 +19,7 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerDocument(c => c.Title = "E-Lang WebApi");
 services.AddSwaggerGen();
 services.AddControllers()
-    .AddOData((options) => options.Select().Filter().Count().OrderBy().Expand());
+    .AddOData((options) => options.Select().Filter().Count().OrderBy().Expand().SetMaxTop(100));
 services.AddHttpContextAccessor();
 
 var app = builder.Build();

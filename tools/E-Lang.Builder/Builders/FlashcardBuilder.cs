@@ -1,4 +1,5 @@
 ﻿using E_Lang.Application.Common.Interfaces;
+using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 using E_Lang.Domain.Enums;
 
@@ -7,7 +8,8 @@ namespace E_Lang.Builder.Builders
     public class FlashcardBuilder<TParentBuilder> : EntityBuilderBase<Flashcard, TParentBuilder>
         where TParentBuilder : class
     {
-        public FlashcardBuilder(Flashcard entity, TParentBuilder parentBuilder, IAppDbContext context) : base(entity, parentBuilder, context)
+        public FlashcardBuilder(Flashcard entity, TParentBuilder parentBuilder, IAppDbContext context
+            , IDateTimeProvider dateTimeProvider) : base(entity, parentBuilder, context, dateTimeProvider)
         {
         }
 
@@ -15,14 +17,13 @@ namespace E_Lang.Builder.Builders
         {
             flashcardBase = Entities.GetFlashcardBase();
             _entity.FlashcardBaseId = flashcardBase.Id;
-            return new FlashcardBaseBuilder<TParentBuilder>(flashcardBase, this, _context);
+            return new FlashcardBaseBuilder<TParentBuilder>(flashcardBase, this, _context, _dateTimeProvider);
         }
 
-        public MeaningBuilder<FlashcardBuilder<TParentBuilder>> AddMeaning(out Meaning meaning)
+        public MeaningBuilder<FlashcardBuilder<TParentBuilder>> AddMeaning(out Meaning meaning, Guid flashcardbaseId)
         {
-            meaning = Entities.GetMeaning();
-            meaning.FlashcardId = _entity.Id;
-            return new MeaningBuilder<FlashcardBuilder<TParentBuilder>>(meaning, this, _context);
+            meaning = Entities.GetMeaning(flashcardbaseId);
+            return new MeaningBuilder<FlashcardBuilder<TParentBuilder>>(meaning, this, _context, _dateTimeProvider);
         }
 
         public FlashcardBuilder<TParentBuilder> SetOwner(Guid ownerId)

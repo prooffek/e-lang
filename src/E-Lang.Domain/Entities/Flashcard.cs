@@ -18,13 +18,13 @@ public class Flashcard : EntityBase
     [Required]
     public Guid CollectionId { get; set; }
 
-    public Collection Collection { get; set; }
+    public Collection? Collection { get; set; }
 
 
     [Required]
     public Guid FlashcardBaseId { get; set; }
 
-    public FlashcardBase FlashcardBase { get; set; }
+    public FlashcardBase? FlashcardBase { get; set; }
 
     [Required]
     public Guid OwnerId { get; set; }

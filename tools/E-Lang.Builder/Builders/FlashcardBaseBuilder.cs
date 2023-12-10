@@ -1,4 +1,5 @@
 ﻿using E_Lang.Application.Common.Interfaces;
+using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 
 namespace E_Lang.Builder.Builders
@@ -6,7 +7,8 @@ namespace E_Lang.Builder.Builders
     public class FlashcardBaseBuilder<TParentBuilder> : EntityBuilderBase<FlashcardBase, FlashcardBuilder<TParentBuilder>>
         where TParentBuilder : class
     {
-        public FlashcardBaseBuilder(FlashcardBase entity, FlashcardBuilder<TParentBuilder> parentBuilder, IAppDbContext context) : base(entity, parentBuilder, context)
+        public FlashcardBaseBuilder(FlashcardBase entity, FlashcardBuilder<TParentBuilder> parentBuilder, IAppDbContext context,
+            IDateTimeProvider dateTimeProvider) : base(entity, parentBuilder, context, dateTimeProvider)
         {
         }
 
@@ -16,12 +18,11 @@ namespace E_Lang.Builder.Builders
             return this;
         }
 
-        public  MeaningBuilder<FlashcardBaseBuilder<TParentBuilder>> AddMeaning(out Meaning meaning, Guid flashcardId)
+        public  MeaningBuilder<FlashcardBaseBuilder<TParentBuilder>> AddMeaning(out Meaning meaning)
         {
-            meaning = Entities.GetMeaning();
-            meaning.FlashcardId = flashcardId;
+            meaning = Entities.GetMeaning(_entity.Id);
             _entity.Meanings.Add(meaning);
-            return new MeaningBuilder<FlashcardBaseBuilder<TParentBuilder>>(meaning, this, _context);
+            return new MeaningBuilder<FlashcardBaseBuilder<TParentBuilder>>(meaning, this, _context, _dateTimeProvider);
         }
 
         public FlashcardBaseBuilder<TParentBuilder> AddMeaning(Meaning meaning)
