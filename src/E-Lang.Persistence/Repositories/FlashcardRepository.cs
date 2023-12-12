@@ -34,4 +34,12 @@ public class FlashcardRepository : RepositoryWithDto<Flashcard, FlashcardDto>, I
             .ProjectToType<FlashcardDto>()
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<Guid?> GetFlashcardBaseIdAsync(Guid flashcardId, CancellationToken cancellationToken)
+    {
+        return (await _entity
+            .AsNoTracking()
+            .FirstOrDefaultAsync(f => f.Id == flashcardId, cancellationToken))
+            ?.FlashcardBaseId;
+    }
 }

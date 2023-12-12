@@ -21,9 +21,10 @@ public static class DependencyInjection
         services.AddScoped<ICollectionRepository, CollectionRepository>();
         services.AddScoped<IFlashcardRepository, FlashcardRepository>();
         services.AddScoped<IFlashcardBaseRepository, FlashcardBaseRepository>();
-        
+        services.AddScoped<IMeaningRepository, MeaningRepository>();
+
         #endregion
-        
+
         return services;
     }
 }

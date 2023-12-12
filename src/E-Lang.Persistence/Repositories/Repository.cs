@@ -59,6 +59,11 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
         _entity.Remove(entity);
     }
 
+    public void DeleteRange(IEnumerable<TEntity> entities)
+    {
+        _entity.RemoveRange(entities);
+    }
+
     public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
     {
         return await _entity.AnyAsync(expression, cancellationToken);

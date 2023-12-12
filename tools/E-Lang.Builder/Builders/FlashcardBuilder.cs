@@ -26,6 +26,13 @@ namespace E_Lang.Builder.Builders
             return new MeaningBuilder<FlashcardBuilder<TParentBuilder>>(meaning, this, _context, _dateTimeProvider);
         }
 
+        public FlashcardBuilder<TParentBuilder> SetFlashcardBase(FlashcardBase flashcardBase)
+        {
+            _entity.FlashcardBaseId = flashcardBase.Id;
+            _entity.FlashcardBase = flashcardBase;
+            return this;
+        }
+
         public FlashcardBuilder<TParentBuilder> SetOwner(Guid ownerId)
         {
             _entity.OwnerId = ownerId;

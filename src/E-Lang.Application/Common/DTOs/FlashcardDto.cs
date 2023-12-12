@@ -8,6 +8,7 @@ namespace E_Lang.Application.Common.DTOs;
 public class FlashcardDto : IMapper<Flashcard>
 {
     public Guid Id { get; set; }
+    public Guid CollectionId { get; set; }
     public string CollectionName { get; set; }
     public string WordOrPhrase { get; set; }
     public ICollection<MeaningDto> Meanings { get; set; }
