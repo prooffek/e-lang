@@ -42,4 +42,11 @@ public class FlashcardRepository : RepositoryWithDto<Flashcard, FlashcardDto>, I
             .FirstOrDefaultAsync(f => f.Id == flashcardId, cancellationToken))
             ?.FlashcardBaseId;
     }
+
+    public async Task<IEnumerable<Flashcard>> GetFlashcardsByIdAsync(HashSet<Guid> ids, CancellationToken cancellationToken)
+    {
+        return await _entity
+            .Where(f => ids.Contains(f.Id))
+            .ToListAsync(cancellationToken);
+    }
 }

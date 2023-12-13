@@ -18,5 +18,19 @@ namespace E_Lang.WebApi.Controllers
         {
             return await _mediator.Send(new AddOrUpdateFlashcardRequest { Flashcard = flashcard });
         }
+
+        [HttpDelete("remove-flashcard")]
+        public async Task<IActionResult> DeleteFlashcard([FromBody] Guid? flashcardId)
+        {
+            await _mediator.Send(new RemoveFlashcardRequest { FlashcardId = flashcardId });
+            return Ok();
+        }
+
+        [HttpDelete("remove-flashcards")]
+        public async Task<IActionResult> DeleteFlashcards([FromBody] IEnumerable<Guid>? flashcardIds)
+        {
+            await _mediator.Send(new RemoveFlashcardsRequest { FlashcardIds = flashcardIds });
+            return Ok();
+        }
     }
 }

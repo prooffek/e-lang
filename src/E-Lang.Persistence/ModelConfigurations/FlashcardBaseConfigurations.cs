@@ -15,7 +15,8 @@ public static class FlashcardBaseConfigurations
                
                entity.HasMany(f => f.Meanings)
                     .WithOne(m => m.FlashcardBase)
-                    .HasForeignKey(m => m.FlashcardBaseId);
+                    .HasForeignKey(m => m.FlashcardBaseId)
+                    .OnDelete(DeleteBehavior.Cascade);
           });
           
           return modelBuilder;

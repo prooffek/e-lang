@@ -20,18 +20,16 @@ public class AddOrUpdateFlashcardRequestHandler : IRequestHandler<AddOrUpdateFla
     private readonly IFlashcardRepository _flashcardRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IMapper _mapper;
-    private readonly IMeaningRepository _meaningRepository;
-    private readonly IFlashcardBaseRepository _flashcardBaseRepository;
+    private readonly IFlashcardService _flashcardService;
 
     public AddOrUpdateFlashcardRequestHandler(IUserService userService, IFlashcardRepository flashcardRepository,
-        IDateTimeProvider dateTimeProvider, IMapper mapper, IMeaningRepository meaningRepository, IFlashcardBaseRepository flashcardBaseRepository)
+        IDateTimeProvider dateTimeProvider, IMapper mapper, IFlashcardService flashcardService)
     {
         _userService = userService;
         _flashcardRepository = flashcardRepository;
         _dateTimeProvider = dateTimeProvider;
         _mapper = mapper;
-        _meaningRepository = meaningRepository;
-        _flashcardBaseRepository = flashcardBaseRepository;
+        _flashcardService = flashcardService;
     }
     
     public async Task<FlashcardDto> Handle(AddOrUpdateFlashcardRequest request, CancellationToken cancellationToken)
@@ -46,12 +44,11 @@ public class AddOrUpdateFlashcardRequestHandler : IRequestHandler<AddOrUpdateFla
         FillInMissingProperties(flashcard, user.Id);
 
         _flashcardRepository.Update(flashcard);
-
-        await RemoveUnusedMeanings(flashcard.FlashcardBaseId, request.Flashcard.Meanings, cancellationToken);
-
+        await _flashcardService.RemoveUnusedMeanings(flashcard.FlashcardBaseId, request.Flashcard.Meanings, cancellationToken);
         await _flashcardRepository.SaveAsync(cancellationToken);
 
-        RemoveUnusedFlashcardBase(flashcard.FlashcardBaseId, prevFlashcardBaseId, cancellationToken);
+        await _flashcardService.RemoveUnusedFlashcardBase(flashcard.FlashcardBaseId, prevFlashcardBaseId, cancellationToken);
+        await _flashcardRepository.SaveAsync();
 
         return await _flashcardRepository.GetByIdAsDtoAsync(flashcard.Id)
             ?? throw new NotFoundValidationException(nameof(Flashcard), nameof(Flashcard.Id), flashcard.Id.ToString());
@@ -71,33 +68,5 @@ public class AddOrUpdateFlashcardRequestHandler : IRequestHandler<AddOrUpdateFla
         }
 
         return null;
-    }
-
-    private async Task RemoveUnusedMeanings(Guid flashcardBaseId, IEnumerable<AddOrUpdateMeaningDto> meanings, CancellationToken cancellationToken)
-    {
-        if (flashcardBaseId != Guid.Empty)
-        {
-            var meaningsToDelete = (await _meaningRepository.GetByFlashcardBaseIdAsync(flashcardBaseId, cancellationToken))
-                .Where(x => !meanings.Select(m => m.Id).Contains(x.Id));
-
-            if (meaningsToDelete.Any())
-            {
-                _meaningRepository.DeleteRange(meaningsToDelete);
-            }
-        }
-    }
-
-    private async void RemoveUnusedFlashcardBase(Guid flashcardBaseId, Guid? prevFlashcardBaseId, CancellationToken cancellationToken)
-    {
-        if (prevFlashcardBaseId.HasValue 
-            && flashcardBaseId != prevFlashcardBaseId.Value 
-            && !await _flashcardRepository.AnyAsync(f => f.FlashcardBaseId == prevFlashcardBaseId, cancellationToken))
-        {
-            var flashcardBase = await _flashcardBaseRepository.GetByIdAsync(prevFlashcardBaseId.Value, cancellationToken)
-            ?? throw new ArgumentNullException(nameof(Flashcard.FlashcardBaseId));
-
-            _flashcardBaseRepository.Delete(flashcardBase);
-            await _flashcardBaseRepository.SaveAsync();
-        }
     }
 }

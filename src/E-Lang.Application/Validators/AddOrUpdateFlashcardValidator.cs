@@ -43,7 +43,7 @@ public class AddOrUpdateFlashcardValidator: AbstractValidator<AddOrUpdateFlashca
 
         RuleFor(f => f.Meanings)
             .Must((meanings) =>
-                meanings.DistinctBy(f => f.Value).Count() == meanings.Count)
+                meanings.DistinctBy(f => f.Value.ToLower()).Count() == meanings.Count)
             .WithMessage("Conflict: Two or more meanings have the same value.");
     }
 }
