@@ -11,6 +11,7 @@ public class CollectionDto : IMapper<Collection>
     public Guid? ParentId { get; set; }
     public string? ParentName { get; set; }
     public IEnumerable<CollectionCardDto>? Subcollections { get; set; }
+    public IEnumerable<FlashcardDto>? Flashcards { get; set; }
 
     public void Map(TypeAdapterConfig config)
     {
