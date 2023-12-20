@@ -19,6 +19,22 @@ public static class FlashcardConfigurations
                 .WithMany()
                 .HasForeignKey(f => f.FlashcardBaseId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(f => f.MeaningRelations)
+                .WithOne()
+                .HasForeignKey(r => r.Meaning1Id);
+
+            entity.HasMany(f => f.MeaningRelations)
+                .WithOne()
+                .HasForeignKey(r => r.Meaning2Id);
+
+            entity.HasMany(f => f.PropertyRelaions)
+                .WithOne()
+                .HasForeignKey(r => r.Property1Id);
+
+            entity.HasMany(f => f.PropertyRelaions)
+                .WithOne()
+                .HasForeignKey(r => r.Property2Id);
         });
         
         return modelBuilder;

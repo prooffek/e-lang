@@ -28,4 +28,8 @@ public class Flashcard : EntityBase
 
     [Required]
     public Guid OwnerId { get; set; }
+
+    public IEnumerable<MeaningsRelation>? MeaningRelations { get; set; }
+
+    public ICollection<CustomPropertyRelation>? PropertyRelaions { get; set; }
 }

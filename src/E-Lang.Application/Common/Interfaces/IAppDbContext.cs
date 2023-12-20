@@ -8,6 +8,20 @@ public interface IAppDbContext
     public DbSet<Collection> Collections { get; }
     public DbSet<Flashcard> Flashcards { get; }
     public DbSet<User> Users { get; }
+    public DbSet<Attempt> Attempts { get; }
+    public DbSet<AttemptStage> AttemptStages { get; }
+    public DbSet<InitAttemptStage> InitAttemptStages { get; }
+    public DbSet<CustomProperty> CustomProperties { get; }
+    public DbSet<FlashcardState> FlashcardStates { get; }
+    public DbSet<InitFlashcardState> InitFlashcardStates { get; }
+    public DbSet<MeaningsRelation> MeaningsRelations { get; }
+    public DbSet<QuizType> QuizTypes { get; }
+    public DbSet<RelationType> RelationTypes { get; }
+    public DbSet<AttemptProperty> AttemptProperties { get; }
+    public DbSet<AttemptQuizType> AttemptQuizTypes { get; }
+    public DbSet<AttemptStageFlashcardState> AttemptStageFlashcardStates { get; }
+    public DbSet<CompletedQuizType> CompletedQuizTypes { get; }
+
     
     DbSet<T> GetDbSet<T>() where T : class;
 

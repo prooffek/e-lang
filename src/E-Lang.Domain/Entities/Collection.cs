@@ -21,4 +21,6 @@ public class Collection : EntityBase
     
     [Required]
     public Guid OwnerId { get; set; }
+
+    public ICollection<Attempt>? Attempts { get; set; }
 }

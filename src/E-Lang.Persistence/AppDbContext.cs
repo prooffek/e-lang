@@ -13,7 +13,20 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Collection> Collections { get; set; }
     public DbSet<Flashcard> Flashcards { get; set; }
     public DbSet<User> Users { get; set; }
-    
+    public DbSet<Attempt> Attempts { get; set; }
+    public DbSet<AttemptStage> AttemptStages { get; set; }
+    public DbSet<InitAttemptStage> InitAttemptStages { get; set; }
+    public DbSet<CustomProperty> CustomProperties { get; set; }
+    public DbSet<FlashcardState> FlashcardStates { get; set; }
+    public DbSet<InitFlashcardState> InitFlashcardStates { get; set; }
+    public DbSet<MeaningsRelation> MeaningsRelations { get; set; }
+    public DbSet<QuizType> QuizTypes { get; set; }
+    public DbSet<RelationType> RelationTypes { get; set; }
+    public DbSet<AttemptProperty> AttemptProperties { get; set; }
+    public DbSet<AttemptQuizType> AttemptQuizTypes { get; set; }
+    public DbSet<AttemptStageFlashcardState> AttemptStageFlashcardStates { get; set; }
+    public DbSet<CompletedQuizType> CompletedQuizTypes { get; set; }
+
     public AppDbContext(DbContextOptions option, IDateTimeProvider dateTimeProvider) : base(option)
     {
         _dateTimeProvider = dateTimeProvider;
