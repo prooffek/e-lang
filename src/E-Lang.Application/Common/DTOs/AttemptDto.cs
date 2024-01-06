@@ -11,6 +11,7 @@ namespace E_Lang.Application.Common.DTOs
         public string Name { get; set; }
         public Guid CollectionId { get; set; }
         public string CollectionName { get; set; }
+        public DateTime CreatedOn { get; set; }
         public AttemptStageDto CurrentStage { get; set; }
         public int MaxFlashcardsPerStage { get; set; }
         public int MaxQuizTypesPerFlashcard { get; set; }
