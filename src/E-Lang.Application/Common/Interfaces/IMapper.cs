@@ -8,5 +8,6 @@ public interface IMapper<TEntity> where TEntity : class
     {
         config.NewConfig(typeof(TEntity), GetType());
         config.NewConfig(GetType(), GetType());
+        config.NewConfig(GetType(), typeof(TEntity));
     }
 }

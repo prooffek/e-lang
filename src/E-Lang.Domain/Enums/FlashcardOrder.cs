@@ -2,8 +2,10 @@
 {
     public enum FlashcardOrder
     {
-        Alphabetical,
-        CreationDate,
+        AlphabeticalDesc,
+        AlphabeticalAsc,
+        CreationDateDesc,
+        CreationDateAsc,
         Random
     }
 }

@@ -10,10 +10,10 @@ public interface IAppDbContext
     public DbSet<User> Users { get; }
     public DbSet<Attempt> Attempts { get; }
     public DbSet<AttemptStage> AttemptStages { get; }
-    public DbSet<InitAttemptStage> InitAttemptStages { get; }
     public DbSet<CustomProperty> CustomProperties { get; }
     public DbSet<FlashcardState> FlashcardStates { get; }
     public DbSet<InitFlashcardState> InitFlashcardStates { get; }
+    public DbSet<InProgressFlashcardState> InProgressFlashcardStates { get; }
     public DbSet<MeaningsRelation> MeaningsRelations { get; }
     public DbSet<QuizType> QuizTypes { get; }
     public DbSet<RelationType> RelationTypes { get; }

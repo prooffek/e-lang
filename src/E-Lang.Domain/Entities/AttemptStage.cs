@@ -1,7 +1,13 @@
-﻿namespace E_Lang.Domain.Entities
+﻿using E_Lang.Domain.Enums;
+using System.ComponentModel;
+
+namespace E_Lang.Domain.Entities
 {
-    public abstract class AttemptStage : EntityBase
+    public class AttemptStage : EntityBase
     {
+        [DefaultValue(AttemptStageType.Init)]
+        public AttemptStageType Stage { get; set; }
+
         public ICollection<FlashcardState>? Flashcards { get; set; }
     }
 }

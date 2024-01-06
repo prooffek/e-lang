@@ -9,6 +9,8 @@ public class MapsterConfig
     public static void ConfigureMapster(Assembly? assembly = null)
     {
         TypeAdapterConfig.GlobalSettings.RequireExplicitMapping = true;
+        TypeAdapterConfig.GlobalSettings.AllowImplicitSourceInheritance = true;
+        TypeAdapterConfig.GlobalSettings.AllowImplicitDestinationInheritance = true;
         assembly ??= Assembly.GetExecutingAssembly();
 
         var types = assembly.GetExportedTypes()

@@ -45,4 +45,15 @@ public class CollectionBuilder<TParentBuilder> : EntityBuilderBase<Collection, T
         _entity.Flashcards.Add(flashcard);
         return new FlashcardBuilder<CollectionBuilder<TParentBuilder>>(flashcard, this, _context, _dateTimeProvider);
     }
+
+    public AttemptBuilder<CollectionBuilder<TParentBuilder>> AddAttempt(out Attempt attempt)
+    {
+        attempt = Entities.GetAttempt(_entity);
+        if(_entity.Attempts is null)
+            _entity.Attempts = new List<Attempt>();
+
+        _entity.Attempts.Add(attempt);
+
+        return new AttemptBuilder<CollectionBuilder<TParentBuilder>>(attempt, this, _context, _dateTimeProvider);
+    }
 }

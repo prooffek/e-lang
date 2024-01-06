@@ -77,6 +77,7 @@ public class CollectionRepository : RepositoryWithDto<Collection, CollectionCard
     {
         return _entity
             .Include(c => c.Flashcards)
+                .ThenInclude(f => f.FlashcardBase)
             .Include(c => c.Parent)
             .Include(c => c.Subcollections);
     }

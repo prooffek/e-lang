@@ -27,6 +27,7 @@ namespace E_Lang.Application.IntegrationTests
         protected static IFlashcardRepository _flashcardRepository;
         protected static IFlashcardBaseRepository _flashcardBaseRepository;
         protected static IMeaningRepository _meaningRepostory;
+        protected static IAttemptRepository _attemptRepostory;
 
         protected static DateTime _now
         {
@@ -59,6 +60,7 @@ namespace E_Lang.Application.IntegrationTests
             _flashcardRepository = _applicationScope.ServiceProvider.GetRequiredService<IFlashcardRepository>();
             _flashcardBaseRepository = _applicationScope.ServiceProvider.GetRequiredService<IFlashcardBaseRepository>();
             _meaningRepostory = _applicationScope.ServiceProvider.GetRequiredService<IMeaningRepository>();
+            _attemptRepostory = _applicationScope.ServiceProvider.GetRequiredService<IAttemptRepository>();
         }
 
         public static void InitTest()

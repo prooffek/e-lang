@@ -6,6 +6,10 @@ namespace E_Lang.Domain.Entities
 {
     public class Attempt : EntityBase
     {
+        [Required]
+        [MaxLength(1000)]
+        public string Name { get; set; }
+
         [DefaultValue(10)]
         public int MaxFlashcardsPerStage { get; set; }
         
@@ -15,7 +19,7 @@ namespace E_Lang.Domain.Entities
         [DefaultValue(100)]
         public int MinCompletedQuizzesPerCent { get; set; }
         
-        [DefaultValue(FlashcardOrder.Alphabetical)]
+        [DefaultValue(FlashcardOrder.AlphabeticalDesc)]
         public FlashcardOrder Order { get; set; }
         
         [DefaultValue(true)]

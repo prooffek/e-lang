@@ -15,10 +15,10 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Attempt> Attempts { get; set; }
     public DbSet<AttemptStage> AttemptStages { get; set; }
-    public DbSet<InitAttemptStage> InitAttemptStages { get; set; }
     public DbSet<CustomProperty> CustomProperties { get; set; }
     public DbSet<FlashcardState> FlashcardStates { get; set; }
     public DbSet<InitFlashcardState> InitFlashcardStates { get; set; }
+    public DbSet<InProgressFlashcardState> InProgressFlashcardStates { get; set; }
     public DbSet<MeaningsRelation> MeaningsRelations { get; set; }
     public DbSet<QuizType> QuizTypes { get; set; }
     public DbSet<RelationType> RelationTypes { get; set; }

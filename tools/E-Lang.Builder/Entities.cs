@@ -70,5 +70,65 @@ namespace E_Lang.Builder
                 LastSeenOn = DateTime.UtcNow,
             };
         }
+
+        public static Attempt GetAttempt(Collection collection)
+        {
+            return new Attempt()
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+                CollectionId = collection.Id,
+                Collection = collection,
+                Name = "Test attempt",
+                MaxFlashcardsPerStage = 10,
+                MaxQuizTypesPerFlashcard = 3,
+                MinCompletedQuizzesPerCent = 100,
+                Order = FlashcardOrder.Random,
+                IncludeMeanings = true,
+            };
+        }
+
+        public static AttemptStage GetAttemptStage()
+        {
+            return new AttemptStage()
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+                Stage = AttemptStageType.Init,
+                Flashcards = new List<FlashcardState>()
+            };
+        }
+
+        public static QuizType GetQuizType() 
+        {
+            return new QuizType()
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+                Name = "Test quiz",
+                Instruction = "Chose the right answer",
+                IsSelect = true,
+                IsMultiselect = false,
+                IsSelectCorrect = true,
+                IsSelectMissing = false,
+                IsMatch = false,
+                IsArrange = false,
+                IsInput = false,
+                IsFillInBlank = false
+            };
+        }
+
+        public static FlashcardState GetInitFlashcardState(Flashcard flashcard)
+        {
+            return new InitFlashcardState(flashcard)
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+            };
+        }
     }
 }

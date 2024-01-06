@@ -49,4 +49,18 @@ public class FlashcardRepository : RepositoryWithDto<Flashcard, FlashcardDto>, I
             .Where(f => ids.Contains(f.Id))
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<IEnumerable<Flashcard>> GetFlashcardsByCollectionId(Guid collectionId, CancellationToken cancellationToken)
+    {
+        return await _queryWithIncludes
+            .Where(f => f.CollectionId == collectionId)
+            .ToListAsync(cancellationToken);
+    }
+
+    protected override IQueryable<Flashcard> GetQueryWithIncludes()
+    {
+        return _entity
+            .Include(f => f.FlashcardBase)
+                .ThenInclude(fb => fb.Meanings);
+    }
 }

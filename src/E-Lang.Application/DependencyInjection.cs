@@ -23,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<ICollectionService, CollectionService>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<IFlashcardService, FlashcardService>();
+        services.AddScoped<IAttemptStageService, AttemptStageService>();
         services.AddValidatorsFromAssemblyContaining<CreateCollectionDtoValidator>();
         services.AddFluentValidationAutoValidation();
         

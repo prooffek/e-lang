@@ -7,4 +7,5 @@ public interface IFlashcardRepository : IRepository<Flashcard>, IRepositoryWithD
 {
     Task<Guid?> GetFlashcardBaseIdAsync(Guid flashcardId, CancellationToken cancellationToken);
     Task<IEnumerable<Flashcard>> GetFlashcardsByIdAsync(HashSet<Guid> ids, CancellationToken cancellationToken);
+    Task<IEnumerable<Flashcard>> GetFlashcardsByCollectionId(Guid collectionId, CancellationToken cancellationToken);
 }
