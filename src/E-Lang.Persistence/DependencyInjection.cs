@@ -23,6 +23,9 @@ public static class DependencyInjection
         services.AddScoped<IFlashcardBaseRepository, FlashcardBaseRepository>();
         services.AddScoped<IMeaningRepository, MeaningRepository>();
         services.AddScoped<IAttemptRepository, AttemptRepository>();
+        services.AddScoped<IAttemptStageRepository, AttemptStageRepository>();
+        services.AddScoped<ICompletedFlashcardRepository, CompletedFlashcardRepository>();
+        services.AddScoped<IFlashcardStateRepository, FlashcardStateRepository>();
 
         #endregion
 

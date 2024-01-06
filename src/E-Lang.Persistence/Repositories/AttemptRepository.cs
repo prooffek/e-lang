@@ -35,6 +35,7 @@ public class AttemptRepository : RepositoryWithDto<Attempt, AttemptDto>, IAttemp
             .Include(a => a.QuizTypes)
             .Include(a => a.CompletedFlashcards)
             .Include(a => a.Collection)
-            .Include(a => a.CurrentStage);
+            .Include(a => a.CurrentStage)
+                .ThenInclude(s => s.Flashcards);
     }
 }

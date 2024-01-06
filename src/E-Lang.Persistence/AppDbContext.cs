@@ -26,6 +26,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<AttemptQuizType> AttemptQuizTypes { get; set; }
     public DbSet<AttemptStageFlashcardState> AttemptStageFlashcardStates { get; set; }
     public DbSet<CompletedQuizType> CompletedQuizTypes { get; set; }
+    public DbSet<CompletedFlashcard> CompletedFlashcards { get; set; }
 
     public AppDbContext(DbContextOptions option, IDateTimeProvider dateTimeProvider) : base(option)
     {

@@ -13,13 +13,13 @@ namespace E_Lang.Application.Flashcards.Commands
         public Guid? FlashcardId { get; set; }
     }
 
-    public class RemoveFlashcardRequestHanlder : IRequestHandler<RemoveFlashcardRequest>
+    public class RemoveFlashcardRequestHandler : IRequestHandler<RemoveFlashcardRequest>
     {
         private readonly IFlashcardRepository _flashcardRepository;
         private readonly IUserService _userService;
         private readonly IFlashcardService _flashcardService;
 
-        public RemoveFlashcardRequestHanlder(IFlashcardRepository flashcardRepository, IUserService userService, 
+        public RemoveFlashcardRequestHandler(IFlashcardRepository flashcardRepository, IUserService userService, 
             IFlashcardService flashcardService)
         {
             _flashcardRepository = flashcardRepository;
@@ -44,7 +44,7 @@ namespace E_Lang.Application.Flashcards.Commands
                 throw new UnauthorizedException(user.Id, ActionTypes.Delete);
 
             _flashcardRepository.Delete(flashcard);
-            await _flashcardService.RemoveUnusedFlashcardBase(flashcard.Id, flashcard.FlashcardBaseId, cancellationToken);
+            await _flashcardService.RemoveUnusedFlashcardBase(flashcard.Id, flashcard.FlashcardBase, cancellationToken);
             await _flashcardRepository.SaveAsync(cancellationToken);
 
             return Unit.Value;

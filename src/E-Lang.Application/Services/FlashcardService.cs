@@ -19,20 +19,20 @@ namespace E_Lang.Application.Services
             _flashcardBaseRepository = flashcardBaseRepository;
         }
 
-        public async Task RemoveUnusedFlashcardBase(Guid currentflashcardBaseId, Guid? prevFlashcardBaseId, CancellationToken cancellationToken)
+        public async Task RemoveUnusedFlashcardBase(Guid currentFlashcardBaseId, Guid? prevFlashcardBaseId, CancellationToken cancellationToken)
         {
-            if (prevFlashcardBaseId.HasValue && currentflashcardBaseId != prevFlashcardBaseId.Value
+            if (prevFlashcardBaseId.HasValue && currentFlashcardBaseId != prevFlashcardBaseId.Value
                 && !await _flashcardRepository.AnyAsync(f => f.FlashcardBaseId == prevFlashcardBaseId, cancellationToken))
             {
                 _flashcardBaseRepository.Delete(new FlashcardBase { Id = prevFlashcardBaseId.Value});
             }
         }
 
-        public async Task RemoveUnusedFlashcardBase(Guid flashcardId, Guid flashcardBaseId, CancellationToken cancellationToken)
+        public async Task RemoveUnusedFlashcardBase(Guid flashcardId, FlashcardBase? flashcardBase, CancellationToken cancellationToken)
         {
-            if (!await _flashcardRepository.AnyAsync(f => f.FlashcardBaseId == flashcardBaseId && f.Id != flashcardId, cancellationToken))
+            if (flashcardBase != null && !await _flashcardRepository.AnyAsync(f => f.FlashcardBaseId == flashcardBase.Id && f.Id != flashcardId, cancellationToken))
             {
-                _flashcardBaseRepository.Delete(new FlashcardBase { Id = flashcardBaseId });
+                _flashcardBaseRepository.Delete(flashcardBase);
             }
         }
 

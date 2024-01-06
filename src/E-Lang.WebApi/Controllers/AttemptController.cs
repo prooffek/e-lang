@@ -18,5 +18,12 @@ namespace E_Lang.WebApi.Controllers
         {
             return await _mediator.Send(new AddAttemptRequest { Attempt = attempt });
         }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteAttempt([FromBody] Guid attemptId)
+        {
+            await _mediator.Send(new DeleteAttemptRequest() {AttemptId = attemptId});
+            return Ok();
+        }
     }
 }
