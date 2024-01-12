@@ -24,6 +24,7 @@ public class SeederRunner : ISeederRunner
         await new UserSeeder(_serviceProvider).Seed();
         await new CollectionSeeder(_serviceProvider).Seed();
         await new FlashcardsSeeder(_serviceProvider).Seed();
+        await new GreekCollectionSeeder(_serviceProvider).Seed();
     }
 
     private void HandleDatabase()

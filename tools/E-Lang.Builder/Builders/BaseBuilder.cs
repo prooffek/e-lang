@@ -34,6 +34,13 @@ namespace E_Lang.Builder.Builders
             return new FlashcardBuilder<BaseBuilder>(flashcard, this, _context, _dateTimeProvider);
         }
 
+        public QuizTypeBuilder AddQuizType(Guid userId, out QuizType quizType)
+        {
+            quizType = Entities.GetQuizType();
+            quizType.OwnerId = userId;
+            return new QuizTypeBuilder(quizType, this, _context, _dateTimeProvider);
+        }
+
         public void Save()
         {
             _context.SaveChanges();

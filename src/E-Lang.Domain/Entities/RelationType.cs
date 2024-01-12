@@ -7,5 +7,7 @@ namespace E_Lang.Domain.Entities
         [Required]
         [MaxLength(250)]
         public string Name { get; set; }
+
+        public Guid OwnerId { get; set; }
     }
 }

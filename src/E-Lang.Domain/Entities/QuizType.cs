@@ -27,5 +27,7 @@ namespace E_Lang.Domain.Entities
         public bool IsInput { get; set; }
         
         public bool IsFillInBlank { get; set; }
+
+        public Guid OwnerId { get; set; }
     }
 }
