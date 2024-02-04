@@ -8,9 +8,15 @@ namespace E_Lang.Builder.Builders
     public class AttemptBuilder<TParentBuilder> : EntityBuilderBase<Attempt, TParentBuilder>
         where TParentBuilder : class
     {
-        public AttemptBuilder(Attempt entity, TParentBuilder parentBuilder, IAppDbContext context, IDateTimeProvider dateTimeProvider) 
+        public AttemptBuilder(Attempt entity, QuizType firstQuiz, TParentBuilder parentBuilder, IAppDbContext context, IDateTimeProvider dateTimeProvider) 
             : base(entity, parentBuilder, context, dateTimeProvider)
         {
+            if (_entity.QuizTypes is null)
+            {
+                _entity.QuizTypes = new List<QuizType>();
+            }
+
+            _entity.QuizTypes.Add(firstQuiz);
         }
 
         public AttemptBuilder<TParentBuilder> SetName(string name)
@@ -74,6 +80,33 @@ namespace E_Lang.Builder.Builders
 
             _entity.CompletedFlashcards.Add(flashcard);
             return new FlashcardBuilder<AttemptBuilder<TParentBuilder>>(flashcard, this, _context, _dateTimeProvider);
+        }
+
+        public AttemptBuilder<TParentBuilder> AddQuizType(QuizType quizType)
+        {
+            if (_entity.QuizTypes is null)
+            {
+                _entity.QuizTypes = new List<QuizType>();
+            }
+            
+            _entity.QuizTypes.Add(quizType);
+            return this;
+        }
+
+        public AttemptBuilder<TParentBuilder> AddQuizTypes(IEnumerable<QuizType> quizTypes)
+        {
+            if (_entity.QuizTypes is null)
+            {
+                _entity.QuizTypes = new List<QuizType>();
+            }
+
+            foreach (var quizType in quizTypes)
+            {
+                if (!_entity.QuizTypes.Any(q => q.Id == quizType.Id))
+                    _entity.QuizTypes.Add(quizType);
+            }
+
+            return this;
         }
     }
 }

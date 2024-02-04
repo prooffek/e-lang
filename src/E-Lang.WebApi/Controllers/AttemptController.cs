@@ -1,6 +1,7 @@
 ﻿using E_Lang.Application.Attempts.Commands;
 using E_Lang.Application.Common.DTOs;
 using E_Lang.Application.Common.Interfaces.Repositories;
+using E_Lang.Application.Exercises.Requests;
 using E_Lang.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,20 @@ namespace E_Lang.WebApi.Controllers
         {
             await _mediator.Send(new DeleteAttemptRequest() {AttemptId = attemptId});
             return Ok();
+        }
+
+        [HttpPost("get-exercise")]
+        public async Task<ActionResult<ExerciseDto>> GetExercise([FromBody] Guid attemptId, Guid? flashcardStateId,
+            bool? isAnswerCorrect)
+        {
+            GetNextExerciseRequest request = new()
+            {
+                AttemptId = attemptId,
+                FlashcardStateId = flashcardStateId,
+                IsAnswerCorrect = isAnswerCorrect
+            };
+
+            return Ok(await _mediator.Send(request));
         }
     }
 }

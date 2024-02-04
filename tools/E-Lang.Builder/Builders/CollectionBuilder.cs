@@ -46,7 +46,7 @@ public class CollectionBuilder<TParentBuilder> : EntityBuilderBase<Collection, T
         return new FlashcardBuilder<CollectionBuilder<TParentBuilder>>(flashcard, this, _context, _dateTimeProvider);
     }
 
-    public AttemptBuilder<CollectionBuilder<TParentBuilder>> AddAttempt(out Attempt attempt)
+    public AttemptBuilder<CollectionBuilder<TParentBuilder>> AddAttempt(out Attempt attempt, QuizType firstQuiz)
     {
         attempt = Entities.GetAttempt(_entity);
         if(_entity.Attempts is null)
@@ -54,6 +54,6 @@ public class CollectionBuilder<TParentBuilder> : EntityBuilderBase<Collection, T
 
         _entity.Attempts.Add(attempt);
 
-        return new AttemptBuilder<CollectionBuilder<TParentBuilder>>(attempt, this, _context, _dateTimeProvider);
+        return new AttemptBuilder<CollectionBuilder<TParentBuilder>>(attempt, firstQuiz, this, _context, _dateTimeProvider);
     }
 }

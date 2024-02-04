@@ -14,10 +14,12 @@ namespace E_Lang.Persistence.ModelConfigurations
                     .HasForeignKey(fs => fs.FlashcardId);
 
                 entity.HasMany(fs => fs.CompletedQuizTypes)
-                    .WithMany()
-                    .UsingEntity<CompletedQuizType>(
-                        l => l.HasOne<QuizType>().WithMany().HasForeignKey(e => e.QuizTypeId),
-                        r => r.HasOne<InProgressFlashcardState>().WithMany().HasForeignKey(e => e.FlashcardStateId));
+                    .WithOne()
+                    .HasForeignKey(x => x.InProgressFlashcardStateId);
+
+                entity.HasMany(fs => fs.SeenQuizTypes)
+                    .WithOne()
+                    .HasForeignKey(x => x.InProgressFlashcardStateId);
             });
 
             return modelBuilder;

@@ -16,27 +16,17 @@ namespace E_Lang.Persistence.ModelConfigurations
                     .WithMany(c => c.Attempts)
                     .HasForeignKey(a => a.CollectionId);
 
-                entity.HasOne(a => a.CurrentStage)
-                    .WithOne()
-                    .HasForeignKey<Attempt>(e => e.CurrentStageId);
-
                 entity.HasMany(a => a.CompletedFlashcards)
                     .WithMany()
-                    .UsingEntity<CompletedFlashcard>(
-                        r => r.HasOne<Flashcard>().WithMany().HasForeignKey(c => c.FlashcardId),
-                        l => l.HasOne<Attempt>().WithMany().HasForeignKey(c => c.AttemptId));
+                    .UsingEntity<CompletedFlashcard>();
                 
                 entity.HasMany(e => e.Properties)
                     .WithMany()
-                    .UsingEntity<AttemptProperty>(
-                        r => r.HasOne<CustomProperty>().WithMany().HasForeignKey(e => e.CustomPropertyId),
-                        l => l.HasOne<Attempt>().WithMany().HasForeignKey(e => e.AttemptId));
+                    .UsingEntity<AttemptProperty>();
 
                 entity.HasMany(e => e.QuizTypes)
                     .WithMany()
-                    .UsingEntity<AttemptQuizType>(
-                        r => r.HasOne<QuizType>().WithMany().HasForeignKey(e => e.QuiTypeId),
-                        l => l.HasOne<Attempt>().WithMany().HasForeignKey(e => e.AttemptId));
+                    .UsingEntity<AttemptQuizType>();
             });
 
             return modelBuilder;

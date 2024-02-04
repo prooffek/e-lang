@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace E_Lang.Domain.Entities
 {
@@ -13,9 +14,11 @@ namespace E_Lang.Domain.Entities
         public string Instruction { get; set; }
         
         public bool IsSelect { get; set; }
-        
-        public bool IsMultiselect { get; set; }
-        
+
+        [DefaultValue(1)]
+        [Range(1, 3)]
+        public int MaxAnswersToSelect { get; set; }
+
         public bool IsSelectCorrect { get; set; }
         
         public bool IsSelectMissing { get; set; }
@@ -27,6 +30,15 @@ namespace E_Lang.Domain.Entities
         public bool IsInput { get; set; }
         
         public bool IsFillInBlank { get; set; }
+
+        /// <summary>
+        /// If true, the quiz is required for any flashcard.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsDefault { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsFirst { get; set; }
 
         public Guid OwnerId { get; set; }
     }

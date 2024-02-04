@@ -26,6 +26,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
     public virtual async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _queryWithIncludes
+            .AsNoTracking()
             .SingleOrDefaultAsync(e => e.Id == id, cancellationToken);
     }
 

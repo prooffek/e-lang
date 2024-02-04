@@ -15,21 +15,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.WebApi", "src\E-Lang
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FBA84B6B-61BE-4971-9873-7C33239DEDE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Tests.Common", "tests\E-Lang.Tests.Common\E-Lang.Tests.Common.csproj", "{0C2355CD-3844-41EF-B06A-8BAAD1A0DED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Tests.Common", "tests\E-Lang.Tests.Common\E-Lang.Tests.Common.csproj", "{0C2355CD-3844-41EF-B06A-8BAAD1A0DED3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Application.UnitTests", "tests\E-Lang.Application.UnitTests\E-Lang.Application.UnitTests.csproj", "{94B50B01-6B20-4A82-862B-2B32F137BB41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Application.UnitTests", "tests\E-Lang.Application.UnitTests\E-Lang.Application.UnitTests.csproj", "{94B50B01-6B20-4A82-862B-2B32F137BB41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Application.IntegrationTests", "tests\E-Lang.Application.IntegrationTests\E-Lang.Application.IntegrationTests.csproj", "{D99DC180-F920-4DC8-8B3F-C303E87B094B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Application.IntegrationTests", "tests\E-Lang.Application.IntegrationTests\E-Lang.Application.IntegrationTests.csproj", "{D99DC180-F920-4DC8-8B3F-C303E87B094B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{0CD3D9D4-6E1C-4DEA-8B23-37CCD5C655DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Seeder", "tools\E-Lang.Seeder\E-Lang.Seeder.csproj", "{2EE78B63-B75D-46DB-B14D-6B1B638FEA2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Seeder", "tools\E-Lang.Seeder\E-Lang.Seeder.csproj", "{2EE78B63-B75D-46DB-B14D-6B1B638FEA2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Builder", "tools\E-Lang.Builder\E-Lang.Builder.csproj", "{DD216550-868D-42A8-8ED7-0FDB87BE4EA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Builder", "tools\E-Lang.Builder\E-Lang.Builder.csproj", "{DD216550-868D-42A8-8ED7-0FDB87BE4EA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Infrastructure", "src\E-Lang.Infrastructure\E-Lang.Infrastructure.csproj", "{EAF7BE07-70C6-487C-B3C5-EC1914664161}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Infrastructure", "src\E-Lang.Infrastructure\E-Lang.Infrastructure.csproj", "{EAF7BE07-70C6-487C-B3C5-EC1914664161}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Infrastructure.UnitTests", "tests\E-Lang.Infrastructure.UnitTests\E-Lang.Infrastructure.UnitTests.csproj", "{A7189B1F-E16B-4FF7-8E9D-E1C3BC5CFBFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Lang.Infrastructure.UnitTests", "tests\E-Lang.Infrastructure.UnitTests\E-Lang.Infrastructure.UnitTests.csproj", "{A7189B1F-E16B-4FF7-8E9D-E1C3BC5CFBFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Lang.Domain.UnitTests", "E-Lang.Domain.UnitTests\E-Lang.Domain.UnitTests.csproj", "{52FEADBB-D8E7-4AA1-BA86-ED0B04A13CE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{A7189B1F-E16B-4FF7-8E9D-E1C3BC5CFBFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7189B1F-E16B-4FF7-8E9D-E1C3BC5CFBFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7189B1F-E16B-4FF7-8E9D-E1C3BC5CFBFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52FEADBB-D8E7-4AA1-BA86-ED0B04A13CE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52FEADBB-D8E7-4AA1-BA86-ED0B04A13CE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52FEADBB-D8E7-4AA1-BA86-ED0B04A13CE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52FEADBB-D8E7-4AA1-BA86-ED0B04A13CE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{DD216550-868D-42A8-8ED7-0FDB87BE4EA5} = {0CD3D9D4-6E1C-4DEA-8B23-37CCD5C655DC}
 		{EAF7BE07-70C6-487C-B3C5-EC1914664161} = {6CE7FF68-8A09-4B84-AC68-AA56D9770173}
 		{A7189B1F-E16B-4FF7-8E9D-E1C3BC5CFBFA} = {FBA84B6B-61BE-4971-9873-7C33239DEDE1}
+		{52FEADBB-D8E7-4AA1-BA86-ED0B04A13CE7} = {FBA84B6B-61BE-4971-9873-7C33239DEDE1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {048B8A68-22E6-4E98-AC35-B9CBB6F6D844}

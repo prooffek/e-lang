@@ -39,12 +39,6 @@ namespace E_Lang.Builder.Builders
             return this;
         }
 
-        public FlashcardBuilder<TParentBuilder> SetStatus(FlashcardStatus status)
-        {
-            _entity.Status = status;
-            return this;
-        }
-
         public FlashcardBuilder<TParentBuilder> SetLastStatusChangedOn(DateTime date)
         {
             _entity.LastStatusChangedOn = date;

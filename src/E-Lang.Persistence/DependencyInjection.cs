@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IAttemptStageRepository, AttemptStageRepository>();
         services.AddScoped<ICompletedFlashcardRepository, CompletedFlashcardRepository>();
         services.AddScoped<IFlashcardStateRepository, FlashcardStateRepository>();
+        services.AddScoped<IQuizTypeRepository, QuizTypeRepository>();
 
         #endregion
 

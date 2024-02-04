@@ -7,6 +7,8 @@ namespace E_Lang.Domain.Enums
         Active,
         Seen,
         Learnt,
-        Inactive
+        Inactive,
+        InProgress,
+        New
     }
 }

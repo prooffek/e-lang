@@ -34,9 +34,6 @@ namespace E_Lang.Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("CurrentStageId")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("IncludeMeanings")
                         .HasColumnType("boolean");
 
@@ -64,7 +61,7 @@ namespace E_Lang.Persistence.Migrations
 
                     b.HasIndex("CollectionId");
 
-                    b.HasIndex("CurrentStageId");
+                    b.HasIndex("Id");
 
                     b.ToTable("Attempts");
                 });
@@ -89,6 +86,10 @@ namespace E_Lang.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AttemptId");
+
+                    b.HasIndex("CustomPropertyId");
+
                     b.ToTable("AttemptProperties");
                 });
 
@@ -107,10 +108,14 @@ namespace E_Lang.Persistence.Migrations
                     b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("QuiTypeId")
+                    b.Property<Guid>("QuizTypeId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AttemptId");
+
+                    b.HasIndex("QuizTypeId");
 
                     b.ToTable("AttemptQuizTypes");
                 });
@@ -118,7 +123,6 @@ namespace E_Lang.Persistence.Migrations
             modelBuilder.Entity("E_Lang.Domain.Entities.AttemptStage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
@@ -132,30 +136,10 @@ namespace E_Lang.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.ToTable("AttemptStages");
-                });
-
-            modelBuilder.Entity("E_Lang.Domain.Entities.AttemptStageFlashcardState", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AttemptStageId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("FlashcardStateId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AttemptStageFlashcardStates");
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.Collection", b =>
@@ -212,6 +196,10 @@ namespace E_Lang.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AttemptId");
+
+                    b.HasIndex("FlashcardId");
+
                     b.ToTable("CompletedFlashcards");
                 });
 
@@ -224,7 +212,7 @@ namespace E_Lang.Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("FlashcardStateId")
+                    b.Property<Guid>("InProgressFlashcardStateId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("ModifiedOn")
@@ -235,6 +223,10 @@ namespace E_Lang.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InProgressFlashcardStateId");
+
+                    b.HasIndex("QuizTypeId");
+
                     b.ToTable("CompletedQuizTypes");
                 });
 
@@ -242,9 +234,6 @@ namespace E_Lang.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AttemptId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
@@ -259,8 +248,6 @@ namespace E_Lang.Persistence.Migrations
                         .HasColumnType("character varying(1000)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AttemptId");
 
                     b.ToTable("CustomProperties");
                 });
@@ -301,9 +288,6 @@ namespace E_Lang.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AttemptId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("CollectionId")
                         .HasColumnType("uuid");
 
@@ -325,12 +309,7 @@ namespace E_Lang.Persistence.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("AttemptId");
 
                     b.HasIndex("CollectionId");
 
@@ -390,6 +369,8 @@ namespace E_Lang.Persistence.Migrations
                     b.HasIndex("AttemptStageId");
 
                     b.HasIndex("FlashcardId");
+
+                    b.HasIndex("Id");
 
                     b.ToTable("FlashcardStates");
 
@@ -461,14 +442,8 @@ namespace E_Lang.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AttemptId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("InProgressFlashcardStateId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("Instruction")
                         .IsRequired()
@@ -478,16 +453,19 @@ namespace E_Lang.Persistence.Migrations
                     b.Property<bool>("IsArrange")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsFillInBlank")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsFirst")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsInput")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsMatch")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsMultiselect")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsSelect")
@@ -498,6 +476,9 @@ namespace E_Lang.Persistence.Migrations
 
                     b.Property<bool>("IsSelectMissing")
                         .HasColumnType("boolean");
+
+                    b.Property<int>("MaxAnswersToSelect")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("timestamp with time zone");
@@ -512,9 +493,9 @@ namespace E_Lang.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AttemptId");
+                    b.HasIndex("Id");
 
-                    b.HasIndex("InProgressFlashcardStateId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("QuizTypes");
                 });
@@ -542,6 +523,33 @@ namespace E_Lang.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RelationTypes");
+                });
+
+            modelBuilder.Entity("E_Lang.Domain.Entities.SeenQuizType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("InProgressFlashcardStateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("QuizTypeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InProgressFlashcardStateId");
+
+                    b.HasIndex("QuizTypeId");
+
+                    b.ToTable("SeenQuizTypes");
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.User", b =>
@@ -577,6 +585,13 @@ namespace E_Lang.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("E_Lang.Domain.Entities.CompletedFlashcardState", b =>
+                {
+                    b.HasBaseType("E_Lang.Domain.Entities.FlashcardState");
+
+                    b.HasDiscriminator().HasValue("CompletedFlashcardState");
+                });
+
             modelBuilder.Entity("E_Lang.Domain.Entities.InProgressFlashcardState", b =>
                 {
                     b.HasBaseType("E_Lang.Domain.Entities.FlashcardState");
@@ -607,13 +622,46 @@ namespace E_Lang.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("E_Lang.Domain.Entities.AttemptStage", "CurrentStage")
-                        .WithMany()
-                        .HasForeignKey("CurrentStageId");
-
                     b.Navigation("Collection");
+                });
 
-                    b.Navigation("CurrentStage");
+            modelBuilder.Entity("E_Lang.Domain.Entities.AttemptProperty", b =>
+                {
+                    b.HasOne("E_Lang.Domain.Entities.Attempt", null)
+                        .WithMany()
+                        .HasForeignKey("AttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Lang.Domain.Entities.CustomProperty", null)
+                        .WithMany()
+                        .HasForeignKey("CustomPropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("E_Lang.Domain.Entities.AttemptQuizType", b =>
+                {
+                    b.HasOne("E_Lang.Domain.Entities.Attempt", null)
+                        .WithMany()
+                        .HasForeignKey("AttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Lang.Domain.Entities.QuizType", null)
+                        .WithMany()
+                        .HasForeignKey("QuizTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("E_Lang.Domain.Entities.AttemptStage", b =>
+                {
+                    b.HasOne("E_Lang.Domain.Entities.Attempt", null)
+                        .WithOne("CurrentStage")
+                        .HasForeignKey("E_Lang.Domain.Entities.AttemptStage", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.Collection", b =>
@@ -625,11 +673,34 @@ namespace E_Lang.Persistence.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("E_Lang.Domain.Entities.CustomProperty", b =>
+            modelBuilder.Entity("E_Lang.Domain.Entities.CompletedFlashcard", b =>
                 {
                     b.HasOne("E_Lang.Domain.Entities.Attempt", null)
-                        .WithMany("Properties")
-                        .HasForeignKey("AttemptId");
+                        .WithMany()
+                        .HasForeignKey("AttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Lang.Domain.Entities.Flashcard", null)
+                        .WithMany()
+                        .HasForeignKey("FlashcardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("E_Lang.Domain.Entities.CompletedQuizType", b =>
+                {
+                    b.HasOne("E_Lang.Domain.Entities.InProgressFlashcardState", null)
+                        .WithMany("CompletedQuizTypes")
+                        .HasForeignKey("InProgressFlashcardStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Lang.Domain.Entities.QuizType", null)
+                        .WithMany()
+                        .HasForeignKey("QuizTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.CustomPropertyRelation", b =>
@@ -651,10 +722,6 @@ namespace E_Lang.Persistence.Migrations
 
             modelBuilder.Entity("E_Lang.Domain.Entities.Flashcard", b =>
                 {
-                    b.HasOne("E_Lang.Domain.Entities.Attempt", null)
-                        .WithMany("CompletedFlashcards")
-                        .HasForeignKey("AttemptId");
-
                     b.HasOne("E_Lang.Domain.Entities.Collection", "Collection")
                         .WithMany("Flashcards")
                         .HasForeignKey("CollectionId")
@@ -676,7 +743,8 @@ namespace E_Lang.Persistence.Migrations
                 {
                     b.HasOne("E_Lang.Domain.Entities.AttemptStage", null)
                         .WithMany("Flashcards")
-                        .HasForeignKey("AttemptStageId");
+                        .HasForeignKey("AttemptStageId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("E_Lang.Domain.Entities.Flashcard", "Flashcard")
                         .WithMany()
@@ -713,15 +781,19 @@ namespace E_Lang.Persistence.Migrations
                     b.Navigation("RelationType");
                 });
 
-            modelBuilder.Entity("E_Lang.Domain.Entities.QuizType", b =>
+            modelBuilder.Entity("E_Lang.Domain.Entities.SeenQuizType", b =>
                 {
-                    b.HasOne("E_Lang.Domain.Entities.Attempt", null)
-                        .WithMany("QuizTypes")
-                        .HasForeignKey("AttemptId");
-
                     b.HasOne("E_Lang.Domain.Entities.InProgressFlashcardState", null)
-                        .WithMany("CompletedQuizTypes")
-                        .HasForeignKey("InProgressFlashcardStateId");
+                        .WithMany("SeenQuizTypes")
+                        .HasForeignKey("InProgressFlashcardStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Lang.Domain.Entities.QuizType", null)
+                        .WithMany()
+                        .HasForeignKey("QuizTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.InProgressFlashcardState", b =>
@@ -735,11 +807,7 @@ namespace E_Lang.Persistence.Migrations
 
             modelBuilder.Entity("E_Lang.Domain.Entities.Attempt", b =>
                 {
-                    b.Navigation("CompletedFlashcards");
-
-                    b.Navigation("Properties");
-
-                    b.Navigation("QuizTypes");
+                    b.Navigation("CurrentStage");
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.AttemptStage", b =>
@@ -771,6 +839,8 @@ namespace E_Lang.Persistence.Migrations
             modelBuilder.Entity("E_Lang.Domain.Entities.InProgressFlashcardState", b =>
                 {
                     b.Navigation("CompletedQuizTypes");
+
+                    b.Navigation("SeenQuizTypes");
                 });
 #pragma warning restore 612, 618
         }

@@ -6,8 +6,18 @@ namespace E_Lang.Domain.Entities
     {
         [Required]
         public Guid QuizTypeId { get; set; }
-        
+
         [Required]
-        public Guid FlashcardStateId { get; set; }
+        public Guid InProgressFlashcardStateId { get; set; }
+
+        public CompletedQuizType()
+        {
+        }
+
+        public CompletedQuizType(Guid flashcardStateId, Guid quizTypeId)
+        {
+            QuizTypeId = quizTypeId;
+            InProgressFlashcardStateId = flashcardStateId;
+        }
     }
 }

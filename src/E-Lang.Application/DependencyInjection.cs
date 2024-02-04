@@ -24,6 +24,7 @@ public static class DependencyInjection
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<IFlashcardService, FlashcardService>();
         services.AddScoped<IAttemptStageService, AttemptStageService>();
+        services.AddScoped<IExerciseService, ExerciseService>();
         services.AddValidatorsFromAssemblyContaining<CreateCollectionDtoValidator>();
         services.AddFluentValidationAutoValidation();
         

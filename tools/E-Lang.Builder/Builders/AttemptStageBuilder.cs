@@ -36,5 +36,28 @@ namespace E_Lang.Builder.Builders
 
             return new FlashcardBuilder<AttemptStageBuilder<TParentBuilder>>(flashcard, this, _context, _dateTimeProvider);
         }
+
+        public InProgressFlashcardStateBuilder<AttemptStageBuilder<TParentBuilder>> AddInProgressFlashcardState(out InProgressFlashcardState flashcardState, QuizType currentQuizType)
+        {
+            flashcardState = Entities.GetInProfressFlashcardState();
+            flashcardState.CurrentQuizTypeId = currentQuizType.Id;
+            flashcardState.CurrentQuizType = currentQuizType;
+
+            _entity.Flashcards.Add(flashcardState);
+
+            return new InProgressFlashcardStateBuilder<AttemptStageBuilder<TParentBuilder>>(flashcardState, this, _context, _dateTimeProvider);
+        }
+
+        public FlashcardBuilder<AttemptStageBuilder<TParentBuilder>> AddCompletedFlashcardState(out Flashcard flashcard, Collection collection)
+        {
+            flashcard = Entities.GetFlashcard(collection.Id, collection.OwnerId);
+
+            if (_entity.Flashcards is null)
+                _entity.Flashcards = new List<FlashcardState>();
+
+            _entity.Flashcards.Add(Entities.GetCompletedFlashcardState(flashcard));
+
+            return new FlashcardBuilder<AttemptStageBuilder<TParentBuilder>>(flashcard, this, _context, _dateTimeProvider);
+        }
     }
 }

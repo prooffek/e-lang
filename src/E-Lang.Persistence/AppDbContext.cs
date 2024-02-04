@@ -19,20 +19,21 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<FlashcardState> FlashcardStates { get; set; }
     public DbSet<InitFlashcardState> InitFlashcardStates { get; set; }
     public DbSet<InProgressFlashcardState> InProgressFlashcardStates { get; set; }
+    public DbSet<CompletedFlashcardState> CompletedFlashcardStates { get; set; }
     public DbSet<MeaningsRelation> MeaningsRelations { get; set; }
     public DbSet<QuizType> QuizTypes { get; set; }
     public DbSet<RelationType> RelationTypes { get; set; }
     public DbSet<AttemptProperty> AttemptProperties { get; set; }
     public DbSet<AttemptQuizType> AttemptQuizTypes { get; set; }
-    public DbSet<AttemptStageFlashcardState> AttemptStageFlashcardStates { get; set; }
     public DbSet<CompletedQuizType> CompletedQuizTypes { get; set; }
+    public DbSet<SeenQuizType> SeenQuizTypes { get; set; }
     public DbSet<CompletedFlashcard> CompletedFlashcards { get; set; }
 
     public AppDbContext(DbContextOptions option, IDateTimeProvider dateTimeProvider) : base(option)
     {
         _dateTimeProvider = dateTimeProvider;
     }
-    
+
     public DbSet<T> GetDbSet<T>() where T : class
     {
         return Set<T>();
@@ -49,7 +50,9 @@ public class AppDbContext : DbContext, IAppDbContext
                     entry.Entity.ModifiedOn = _dateTimeProvider.UtcNow;
                     break;
                 case EntityState.Modified:
-                    entry.Entity.CreatedOn = entry.GetDatabaseValues()!.GetValue<DateTime>(nameof(EntityBase.CreatedOn));
+                    entry.Entity.CreatedOn = entry.Entity.CreatedOn != DateTime.MinValue 
+                        ? entry.Entity.CreatedOn 
+                        : entry.GetDatabaseValues()!.GetValue<DateTime>(nameof(EntityBase.CreatedOn));
                     entry.Entity.ModifiedOn = _dateTimeProvider.UtcNow;
                     break;
             }
@@ -63,7 +66,12 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.ConfigureCollections();
         modelBuilder.ConfigureFlashcards();
         modelBuilder.ConfigureUser();
-        
+        modelBuilder.ConfigureFlashcardState();
+        modelBuilder.ConfigureAttempts();
+        modelBuilder.ConfigureAttemptStage();
+        modelBuilder.ConfigureInProgressFlashcardState();
+        modelBuilder.ConfigureQuizTypes();
+
         base.OnModelCreating(modelBuilder);
     }
 }

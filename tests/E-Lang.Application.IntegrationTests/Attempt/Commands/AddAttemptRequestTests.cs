@@ -6,7 +6,7 @@ using E_Lang.Domain.Enums;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
 
-namespace E_Lang.Application.IntegrationTests.Attempt
+namespace E_Lang.Application.IntegrationTests.Attempt.Commands
 {
     [TestClass]
     public class AddAttemptRequestTests : Setup
@@ -165,15 +165,15 @@ namespace E_Lang.Application.IntegrationTests.Attempt
                 Order = FlashcardOrder.Random,
                 IncludeMeanings = includeMeanings
             };
-            
+
             var request = new AddAttemptRequest()
             {
                 Attempt = addAttemptDto
             };
-            
+
             // Act
             var response = await _mediator.Send(request);
-            
+
             // Assert
             response.Should().NotBeNull();
 
@@ -190,7 +190,7 @@ namespace E_Lang.Application.IntegrationTests.Attempt
             attempt.CollectionId.Should().Be(addAttemptDto.CollectionId);
             attempt.CompletedFlashcards.Should().BeNullOrEmpty();
         }
-        
+
         [TestMethod]
         public async Task AddAttemptRequest_Handle_ShouldCreateInitAttemptStage()
         {
@@ -295,27 +295,27 @@ namespace E_Lang.Application.IntegrationTests.Attempt
                 Order = FlashcardOrder.Random,
                 IncludeMeanings = true
             };
-            
+
             var request = new AddAttemptRequest()
             {
                 Attempt = addAttemptDto
             };
-            
+
             // Act
             var response = await _mediator.Send(request);
-            
+
             // Assert
             response.Should().NotBeNull();
 
             var attempt = await _attemptRepostory.GetByIdAsync(response.Id);
             attempt.Should().NotBeNull();
-            
+
             var stage = attempt.CurrentStage;
             stage.Should().NotBeNull()
                 .And.BeOfType<AttemptStage>();
             stage.Flashcards.Should().NotBeNullOrEmpty();
         }
-        
+
         [TestMethod]
         [DataRow(2)]
         [DataRow(3)]
@@ -428,21 +428,21 @@ namespace E_Lang.Application.IntegrationTests.Attempt
                 Order = FlashcardOrder.Random,
                 IncludeMeanings = true
             };
-            
+
             var request = new AddAttemptRequest()
             {
                 Attempt = addAttemptDto
             };
-            
+
             // Act
             var response = await _mediator.Send(request);
-            
+
             // Assert
             response.Should().NotBeNull();
 
             var attempt = await _attemptRepostory.GetByIdAsync(response.Id);
             attempt.Should().NotBeNull();
-            
+
             var stage = attempt.CurrentStage;
             stage.Should().NotBeNull()
                 .And.BeOfType<AttemptStage>();

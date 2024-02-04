@@ -1,10 +1,12 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Reflection;
+using E_Lang.Application.Common.Interfaces.Repositories;
 using E_Lang.Application.Interfaces;
 using E_Lang.Application.Services;
 using E_Lang.Domain;
 using E_Lang.Persistence;
+using E_Lang.Persistence.Repositories;
 using E_Lang.Seeder.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +42,7 @@ namespace E_Lang.Seeder
                 .AddScoped<ISeederRunner, SeederRunner>()
                 .AddScoped<IDateTimeProvider, DateTimeProvider>()
                 .AddScoped<IUserService, Services.UserService>()
+                .AddScoped<IQuizTypeRepository,QuizTypeRepository>()
                 .AddDomain()
                 .AddPersistence(config.GetConnectionString(AppDbContextFactory.CONNECTION_STRING));
 

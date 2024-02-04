@@ -4,7 +4,6 @@ using E_Lang.Seeder.Interfaces;
 using E_Lang.Seeder.Seeders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using IUserService = E_Lang.Seeder.Interfaces.IUserService;
 
 namespace E_Lang.Seeder;
 
@@ -24,6 +23,7 @@ public class SeederRunner : ISeederRunner
         await new UserSeeder(_serviceProvider).Seed();
         await new CollectionSeeder(_serviceProvider).Seed();
         await new FlashcardsSeeder(_serviceProvider).Seed();
+        await new QuizTypeSeeder(_serviceProvider).Seed();
         await new GreekCollectionSeeder(_serviceProvider).Seed();
     }
 

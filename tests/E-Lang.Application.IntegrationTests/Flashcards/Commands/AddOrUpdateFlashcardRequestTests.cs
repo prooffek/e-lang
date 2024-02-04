@@ -91,7 +91,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         result.Meanings.First().Value.Should().Be(meaning);
         result.CreatedOn.Should().Be(expectedTime);
         result.LastSeenOn.Should().BeNull();
-        result.Status.Should().Be(FlashcardStatus.Active);
     }
 
     [TestMethod]
@@ -134,7 +133,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = await _flashcardRepository.GetByIdAsync(result.Id, default);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -206,7 +204,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -284,7 +281,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -363,7 +359,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -441,7 +436,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -533,7 +527,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -620,7 +613,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -700,7 +692,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = await _flashcardRepository.GetByIdAsync(result.Id, default);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection2.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -783,7 +774,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -865,7 +855,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -946,7 +935,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -1039,7 +1027,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);
@@ -1127,7 +1114,6 @@ public class AddOrUpdateFlashcardRequestTests : Setup
         var flashcard = flashcards.First(f => f.Id == result.Id);
         flashcard.Should().NotBeNull();
         flashcard.CollectionId.Should().Be(collection.Id);
-        flashcard.Status.Should().Be(FlashcardStatus.Active);
         flashcard.LastSeenOn.Should().BeNull();
         flashcard.LastStatusChangedOn.Should().Be(expectedTime);
         flashcard.OwnerId.Should().Be(user.Id);

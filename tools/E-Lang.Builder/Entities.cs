@@ -65,7 +65,6 @@ namespace E_Lang.Builder
                 ModifiedOn = DateTime.UtcNow,
                 CollectionId = collectionId,
                 OwnerId = ownerId,
-                Status = FlashcardStatus.Active,
                 LastStatusChangedOn = DateTime.UtcNow,
                 LastSeenOn = DateTime.UtcNow,
             };
@@ -86,6 +85,7 @@ namespace E_Lang.Builder
                 MinCompletedQuizzesPerCent = 100,
                 Order = FlashcardOrder.Random,
                 IncludeMeanings = true,
+                QuizTypes = new List<QuizType>()
             };
         }
 
@@ -111,19 +111,51 @@ namespace E_Lang.Builder
                 Name = "Test quiz",
                 Instruction = "Chose the right answer",
                 IsSelect = true,
-                IsMultiselect = false,
+                MaxAnswersToSelect = 1,
                 IsSelectCorrect = true,
                 IsSelectMissing = false,
                 IsMatch = false,
                 IsArrange = false,
                 IsInput = false,
-                IsFillInBlank = false
+                IsFillInBlank = false,
+                IsDefault = false,
+                IsFirst = false,
             };
         }
 
         public static FlashcardState GetInitFlashcardState(Flashcard flashcard)
         {
             return new InitFlashcardState(flashcard)
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+            };
+        }
+
+        public static InProgressFlashcardState GetInProfressFlashcardState()
+        {
+            return new InProgressFlashcardState()
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+            };
+        }
+
+        public static InProgressFlashcardState GetInProfressFlashcardState(Flashcard flashcard)
+        {
+            return new InProgressFlashcardState(flashcard)
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+            };
+        }
+
+        public static CompletedFlashcardState GetCompletedFlashcardState(Flashcard flashcard)
+        {
+            return new CompletedFlashcardState(flashcard)
             {
                 Id = Guid.NewGuid(),
                 CreatedOn = DateTime.UtcNow,

@@ -33,7 +33,6 @@ namespace E_Lang.Domain.Entities
         public Guid CollectionId { get; set; }
         public Collection? Collection { get; set; }
 
-        public Guid? CurrentStageId { get; set; }
         public AttemptStage? CurrentStage { get; set; }
 
         public ICollection<Flashcard>? CompletedFlashcards { get; set; }

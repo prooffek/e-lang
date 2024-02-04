@@ -1,6 +1,5 @@
 using E_Lang.Application.Common.Interfaces;
 using E_Lang.Domain.Entities;
-using E_Lang.Domain.Enums;
 using Mapster;
 
 namespace E_Lang.Application.Common.DTOs;
@@ -18,7 +17,6 @@ public record AddOrUpdateFlashcardDto : IMapper<Flashcard>
         config.NewConfig<AddOrUpdateFlashcardDto, Flashcard>()
             .Map(dest => dest.Id, src => src.FlashcardId)
             .Map(dest => dest.CollectionId, src => src.CollectionId)
-            .Map(dest => dest.Status, src => FlashcardStatus.Active)
             .Map(dest => dest.FlashcardBaseId, src => src.FlashcardBaseId)
             .Map(dest => dest.FlashcardBase, src => src);
         

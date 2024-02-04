@@ -6,10 +6,6 @@ namespace E_Lang.Domain.Entities;
 
 public class Flashcard : EntityBase
 {
-    [Required]
-    [DefaultValue(FlashcardStatus.Active)]
-    public FlashcardStatus Status { get; set; }
-
     public DateTime? LastStatusChangedOn { get; set; }
 
     public DateTime? LastSeenOn { get; set; }

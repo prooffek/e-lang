@@ -1,5 +1,6 @@
 using E_Lang.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace E_Lang.Application.Common.Interfaces;
 
@@ -19,11 +20,14 @@ public interface IAppDbContext
     public DbSet<RelationType> RelationTypes { get; }
     public DbSet<AttemptProperty> AttemptProperties { get; }
     public DbSet<AttemptQuizType> AttemptQuizTypes { get; }
-    public DbSet<AttemptStageFlashcardState> AttemptStageFlashcardStates { get; }
     public DbSet<CompletedQuizType> CompletedQuizTypes { get; }
+    public DbSet<SeenQuizType> SeenQuizTypes { get; }
+    public DbSet<CompletedFlashcardState> CompletedFlashcardStates { get; }
 
-    
+
     DbSet<T> GetDbSet<T>() where T : class;
+
+    EntityEntry<T> Entry<T>(T entity) where T : class;
 
     int SaveChanges();
 

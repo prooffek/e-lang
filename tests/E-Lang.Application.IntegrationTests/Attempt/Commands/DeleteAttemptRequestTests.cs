@@ -4,7 +4,7 @@ using E_Lang.Application.Common.Errors;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
 
-namespace E_Lang.Application.IntegrationTests.Attempt;
+namespace E_Lang.Application.IntegrationTests.Attempt.Commands;
 
 [TestClass]
 public class DeleteAttemptRequestTests : Setup
@@ -54,13 +54,15 @@ public class DeleteAttemptRequestTests : Setup
         exception.Message.Should().Be(expectedException.Message);
         exception.StatusCode.Should().Be(expectedException.StatusCode);
     }
-    
+
     [TestMethod]
     public async Task DeleteAttemptRequestTests_Handle_ShouldThrowIfUserNotOwner()
     {
         // Arrange 
         await _testBuilder
             .AddUser(out var user)
+                .Build()
+            .AddQuizType(user.Id, out var quizType)
                 .Build()
             .AddUser(out var user2)
                 .SetUsername("differentUser")
@@ -147,7 +149,7 @@ public class DeleteAttemptRequestTests : Setup
                         .SetValue("Meaning 5")
                         .Build()
                     .Build()
-                .AddAttempt(out var attempt)
+                .AddAttempt(out var attempt, quizType)
                     .AddInitAttemptStageAsCurrentStage(out var initStage)
                         .Build()
                     .Build()
@@ -172,13 +174,15 @@ public class DeleteAttemptRequestTests : Setup
         exception.Message.Should().Be(expectedException.Message);
         exception.StatusCode.Should().Be(expectedException.StatusCode);
     }
-    
+
     [TestMethod]
     public async Task DeleteAttemptRequestTests_Handle_ShouldRemoveAttempt()
     {
         // Arrange 
         await _testBuilder
             .AddUser(out var user)
+                .Build()
+            .AddQuizType(user.Id, out var quizType)
                 .Build()
             .AddCollection(out var collection, user.Id)
                 .AddFlashcard(out var flashcard1)
@@ -261,7 +265,7 @@ public class DeleteAttemptRequestTests : Setup
                         .SetValue("Meaning 10")
                         .Build()
                     .Build()
-                .AddAttempt(out var attempt)
+                .AddAttempt(out var attempt, quizType)
                     .AddInitAttemptStageAsCurrentStage(out var initStage)
                         .Build()
                     .Build()
@@ -282,13 +286,15 @@ public class DeleteAttemptRequestTests : Setup
         var result = await _attemptRepostory.GetByIdAsync(attempt.Id);
         result.Should().BeNull();
     }
-    
+
     [TestMethod]
     public async Task DeleteAttemptRequestTests_Handle_ShouldRemoveAttemptStage()
     {
         // Arrange 
         await _testBuilder
             .AddUser(out var user)
+                .Build()
+            .AddQuizType(user.Id, out var quizType)
                 .Build()
             .AddCollection(out var collection, user.Id)
                 .AddFlashcard(out var flashcard1)
@@ -371,7 +377,7 @@ public class DeleteAttemptRequestTests : Setup
                         .SetValue("Meaning 10")
                         .Build()
                     .Build()
-                .AddAttempt(out var attempt)
+                .AddAttempt(out var attempt, quizType)
                     .AddInitAttemptStageAsCurrentStage(out var initStage)
                         .Build()
                     .Build()
@@ -392,13 +398,15 @@ public class DeleteAttemptRequestTests : Setup
         var result = await _attemptStageRepostory.GetByIdAsync(initStage.Id);
         result.Should().BeNull();
     }
-    
+
     [TestMethod]
     public async Task DeleteAttemptRequestTests_Handle_ShouldRemoveCompletedFlashcards()
     {
         // Arrange 
         await _testBuilder
             .AddUser(out var user)
+                .Build()
+            .AddQuizType(user.Id, out var quizType)
                 .Build()
             .AddCollection(out var collection, user.Id)
                 .AddFlashcard(out var flashcard1)
@@ -481,7 +489,7 @@ public class DeleteAttemptRequestTests : Setup
                         .SetValue("Meaning 10")
                         .Build()
                     .Build()
-                .AddAttempt(out var attempt)
+                .AddAttempt(out var attempt, quizType)
                     .AddInitAttemptStageAsCurrentStage(out var initStage)
                         .Build()
                     .AddCompletedFlashcard(out var flashcard11)
@@ -513,13 +521,15 @@ public class DeleteAttemptRequestTests : Setup
         var flashcard = await _flashcardRepository.GetByIdAsync(flashcard11.Id);
         flashcard.Should().NotBeNull();
     }
-    
+
     [TestMethod]
     public async Task DeleteAttemptRequestTests_Handle_ShouldRemoveRelatedFlashcardStates()
     {
         // Arrange 
         await _testBuilder
             .AddUser(out var user)
+                .Build()
+            .AddQuizType(user.Id, out var quizType)
                 .Build()
             .AddCollection(out var collection, user.Id)
                 .AddFlashcard(out var flashcard1)
@@ -562,7 +572,7 @@ public class DeleteAttemptRequestTests : Setup
                         .SetValue("Meaning 5")
                         .Build()
                     .Build()
-                .AddAttempt(out var attempt)
+                .AddAttempt(out var attempt, quizType)
                     .AddInitAttemptStageAsCurrentStage(out var initStage)
                         .AddFlashcard(out var flashcard6, collection)
                             .AddFlashcardBase(out var flashcardBase6)
@@ -626,7 +636,7 @@ public class DeleteAttemptRequestTests : Setup
         var flashcards = await _flashcardRepository.GetAllAsync();
         flashcards.Should().HaveCount(10);
     }
-    
+
     [TestMethod]
     public async Task DeleteAttemptRequestTests_Handle_ShouldNotRemoveCollection()
     {
@@ -634,8 +644,10 @@ public class DeleteAttemptRequestTests : Setup
         await _testBuilder
             .AddUser(out var user)
                 .Build()
+            .AddQuizType(user.Id, out var quizType)
+                .Build()
             .AddCollection(out var collection, user.Id)
-                .AddAttempt(out var attempt)
+                .AddAttempt(out var attempt, quizType)
                     .AddInitAttemptStageAsCurrentStage(out var initStage)
                         .AddFlashcard(out var flashcard1, collection)
                             .AddFlashcardBase(out var flashcardBase1)
@@ -696,7 +708,7 @@ public class DeleteAttemptRequestTests : Setup
         var result = await _collectionRepository.GetByIdAsync(collection.Id);
         result.Should().NotBeNull();
     }
-    
+
     [TestMethod]
     public async Task DeleteAttemptRequestTests_Handle_ShouldRemoveOnlyOneAttempt()
     {
@@ -704,8 +716,10 @@ public class DeleteAttemptRequestTests : Setup
         await _testBuilder
             .AddUser(out var user)
                 .Build()
+            .AddQuizType(user.Id, out var quizType)
+                .Build()
             .AddCollection(out var collection, user.Id)
-                .AddAttempt(out var attempt)
+                .AddAttempt(out var attempt, quizType)
                     .AddInitAttemptStageAsCurrentStage(out var initStage)
                         .AddFlashcard(out var flashcard1, collection)
                             .AddFlashcardBase(out var flashcardBase1)
@@ -749,7 +763,7 @@ public class DeleteAttemptRequestTests : Setup
                         .Build()
                             .Build()
                         .Build()
-                .AddAttempt(out var attempt2)
+                .AddAttempt(out var attempt2, quizType)
                     .AddInitAttemptStageAsCurrentStage(out var initStage2)
                         .AddFlashcard(out var flashcard6, collection)
                             .AddFlashcardBase(out var flashcardBase6)
@@ -809,7 +823,7 @@ public class DeleteAttemptRequestTests : Setup
         // Assert
         var result = await _attemptRepostory.GetByIdAsync(attempt.Id);
         result.Should().BeNull();
-        
+
         var result2 = await _attemptRepostory.GetByIdAsync(attempt2.Id);
         result2.Should().NotBeNull();
     }

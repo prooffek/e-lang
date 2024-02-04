@@ -57,6 +57,24 @@ public class FlashcardRepository : RepositoryWithDto<Flashcard, FlashcardDto>, I
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<AnswerDto>> GetRadomAnswers(Guid collectionId, IEnumerable<Meaning> meanings, int answersNumber, CancellationToken cancellationToken)
+    {
+        var values = meanings.Select(x => x.Value);
+
+        return _queryWithIncludes
+            .AsNoTracking()
+            .Where(x => x.CollectionId == collectionId)
+            .SelectMany(x => x.FlashcardBase.Meanings)
+            .GroupBy(x => x.Value)
+            .Where(x => !values.Contains(x.Key))
+            .Select(x => x.First())
+            .ToListAsync(cancellationToken)
+            .Result
+            .OrderBy(x => Guid.NewGuid())
+            .Take(answersNumber)
+            .Adapt<IEnumerable<AnswerDto>>();
+    }
+
     protected override IQueryable<Flashcard> GetQueryWithIncludes()
     {
         return _entity

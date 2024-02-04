@@ -1,4 +1,5 @@
 using E_Lang.Application.Common.Interfaces;
+using E_Lang.Application.Common.Interfaces.Repositories;
 using E_Lang.Application.Interfaces;
 using E_Lang.Domain.Entities;
 

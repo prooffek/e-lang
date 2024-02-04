@@ -6,6 +6,7 @@ namespace E_Lang.Application.Common.DTOs
 {
     public class FlashcardStateDto : IMapper<FlashcardState>, IMapper<InitFlashcardState>, IMapper<InProgressFlashcardState>
     {
+        public Guid Id { get; set; }
         public FlashcardDto? Flashcard { get; set; }
 
         public void Map(TypeAdapterConfig config)

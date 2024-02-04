@@ -23,10 +23,10 @@ namespace E_Lang.Builder.Builders
             return this;
         }
 
-        public QuizTypeBuilder SetIsSelect(bool isSelectCorrect = true)
+        public QuizTypeBuilder SetIsSingleSelect(bool isSelectCorrect = true)
         {
             _entity.IsSelect = true;
-            _entity.IsMultiselect = false;
+            _entity.MaxAnswersToSelect = 1;
             _entity.IsSelectCorrect = isSelectCorrect;
             _entity.IsSelectMissing = false;
             _entity.IsMatch = false;
@@ -36,10 +36,10 @@ namespace E_Lang.Builder.Builders
             return this;
         }
 
-        public QuizTypeBuilder SetIsMultiselect(bool isSelectCorrect = true)
+        public QuizTypeBuilder SetIsMultiselect(bool isSelectCorrect = true, int answersNumber = 3)
         {
-            _entity.IsSelect = false;
-            _entity.IsMultiselect = true;
+            _entity.IsSelect = true;
+            _entity.MaxAnswersToSelect = answersNumber;
             _entity.IsSelectCorrect = isSelectCorrect;
             _entity.IsSelectMissing = false;
             _entity.IsMatch = false;
@@ -52,7 +52,7 @@ namespace E_Lang.Builder.Builders
         public QuizTypeBuilder SetIsSelectMissing()
         {
             _entity.IsSelect = false;
-            _entity.IsMultiselect = false;
+            _entity.MaxAnswersToSelect = 1;
             _entity.IsSelectCorrect = true;
             _entity.IsSelectMissing = true;
             _entity.IsMatch = false;
@@ -65,7 +65,6 @@ namespace E_Lang.Builder.Builders
         public QuizTypeBuilder SetIsMatch()
         {
             _entity.IsSelect = false;
-            _entity.IsMultiselect = false;
             _entity.IsSelectCorrect = true;
             _entity.IsSelectMissing = false;
             _entity.IsMatch = true;
@@ -78,7 +77,6 @@ namespace E_Lang.Builder.Builders
         public QuizTypeBuilder SetIsArrange()
         {
             _entity.IsSelect = false;
-            _entity.IsMultiselect = false;
             _entity.IsSelectCorrect = true;
             _entity.IsSelectMissing = false;
             _entity.IsMatch = false;
@@ -91,7 +89,6 @@ namespace E_Lang.Builder.Builders
         public QuizTypeBuilder SetIsInput()
         {
             _entity.IsSelect = false;
-            _entity.IsMultiselect = false;
             _entity.IsSelectCorrect = true;
             _entity.IsSelectMissing = false;
             _entity.IsMatch = false;
@@ -104,13 +101,25 @@ namespace E_Lang.Builder.Builders
         public QuizTypeBuilder SetIsFillInBlank()
         {
             _entity.IsSelect = false;
-            _entity.IsMultiselect = false;
             _entity.IsSelectCorrect = true;
             _entity.IsSelectMissing = false;
             _entity.IsMatch = false;
             _entity.IsArrange = false;
             _entity.IsInput = false;
             _entity.IsFillInBlank = true;
+            return this;
+        }
+
+        public QuizTypeBuilder SetIsFirst()
+        {
+            _entity.IsFirst = true;
+            _entity.IsDefault = true;
+            return this;
+        }
+
+        public QuizTypeBuilder SetIsDefault()
+        {
+            _entity.IsDefault = true;
             return this;
         }
     }

@@ -11,6 +11,14 @@ namespace E_Lang.Persistence.ModelConfigurations
             {
                 entity.HasIndex(x => x.Id);
                 entity.HasIndex(x => x.OwnerId);
+
+                entity.HasMany<CompletedQuizType>()
+                    .WithOne()
+                    .HasForeignKey(x => x.QuizTypeId);
+
+                entity.HasMany<SeenQuizType>()
+                    .WithOne()
+                    .HasForeignKey(x => x.QuizTypeId);
             });
 
             return modelBuilder;

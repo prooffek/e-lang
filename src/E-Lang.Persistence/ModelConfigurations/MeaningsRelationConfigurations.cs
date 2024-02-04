@@ -5,7 +5,7 @@ namespace E_Lang.Persistence.ModelConfigurations;
 
 public static class MeaningsRelationConfigurations
 {
-    public static ModelBuilder ConfigureMeaningCRelations(this ModelBuilder modelBuilder)
+    public static ModelBuilder ConfigureMeaningRelations(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<MeaningsRelation>(entity =>
         {

@@ -1,5 +1,6 @@
 using E_Lang.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace E_Lang.Persistence.ModelConfigurations;
 
@@ -15,10 +16,12 @@ public static class FlashcardStateConfigurations
                 .WithMany()
                 .HasForeignKey(fs => fs.FlashcardId);
             
-            entity.HasDiscriminator<string>($"{nameof(FlashcardState)}_type")
+            entity.HasDiscriminator<string>("Discriminator")
                 .HasValue<InitFlashcardState>(nameof(InitFlashcardState));
         });
-        
+
+        modelBuilder.Entity<FlashcardState>().Property("Discriminator").Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Save);
+
         return modelBuilder;
     }
 }

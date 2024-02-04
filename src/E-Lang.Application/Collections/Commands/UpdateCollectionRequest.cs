@@ -37,6 +37,7 @@ public class UpdateCollectionRequestHandler : IRequestHandler<UpdateCollectionRe
 
         collection.Name = request.UpdateDto.Name;
         collection.ParentId = request.UpdateDto.ParentCollectionId;
+        collection.Parent = null;
         collection.ModifiedOn = _dateTimeProvider.UtcNow;
         
         _collectionRepository.Update(collection);
