@@ -85,7 +85,8 @@ namespace E_Lang.Builder
                 MinCompletedQuizzesPerCent = 100,
                 Order = FlashcardOrder.Random,
                 IncludeMeanings = true,
-                QuizTypes = new List<QuizType>()
+                AttemptQuizTypes = new List<AttemptQuizType>(),
+                AttemptStages = new List<AttemptStage>(),
             };
         }
 

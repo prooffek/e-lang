@@ -209,6 +209,192 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
         }
 
         [TestMethod]
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldReturnStaheIsCompleteIfAllFlashcardStatesComplete()
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType)
+                    .SetIsFirst()
+                    .SetIsSingleSelect(false)
+                    .Build()
+                .AddCollection(out var collection1, user.Id)
+                    .AddAttempt(out var attempt1, quizType)
+                        .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
+                            .AddInProgressFlashcardState(out var flashcardState1, quizType)
+                                .AddFlashcard(out var flashcard1, collection1.Id, user.Id)
+                                    .AddFlashcardBase(out var flashcardBase1)
+                                        .SetWordOrPhrase("Phrase 1")
+                                        .AddMeaning(out var meaning1)
+                                            .SetValue("Phrase 1 Meaning 1")
+                                            .Build()
+                                        .AddMeaning(out var meaning2)
+                                            .SetValue("Phrase 1 Meaning 2")
+                                            .Build()
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard2, collection1)
+                                .AddFlashcardBase(out var flashcardBase2)
+                                    .SetWordOrPhrase("Phrase 2")
+                                    .AddMeaning(out var meaning3)
+                                        .SetValue("Phrase 2 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meanin4)
+                                        .SetValue("Phrase 2 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard3, collection1)
+                                .AddFlashcardBase(out var flashcardBase3)
+                                    .SetWordOrPhrase("Phrase 3")
+                                    .AddMeaning(out var meaning5)
+                                        .SetValue("Phrase 3 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meaning6)
+                                        .SetValue("Phrase 3 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard4, collection1)
+                                .AddFlashcardBase(out var flashcardBase4)
+                                    .SetWordOrPhrase("Phrase 4")
+                                    .AddMeaning(out var meaning7)
+                                        .SetValue("Phrase 4 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meanin8)
+                                        .SetValue("Phrase 4 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard5, collection1)
+                                .AddFlashcardBase(out var flashcardBase5)
+                                    .SetWordOrPhrase("Phrase 5")
+                                    .AddMeaning(out var meaning9)
+                                        .SetValue("Phrase 5 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meanin10)
+                                        .SetValue("Phrase 5 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+
+            var request = new GetNextExerciseRequest()
+            {
+                AttemptId = attempt1.Id,
+                FlashcardStateId = flashcardState1.Id,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var result = await _mediator.Send(request);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.IsStageComplete.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldNotThrowIfLastInProgressFlashcardStateAnsweredIncorrect()
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType)
+                    .SetIsFirst()
+                    .SetIsSingleSelect(false)
+                    .Build()
+                .AddCollection(out var collection1, user.Id)
+                    .AddAttempt(out var attempt1, quizType)
+                        .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
+                            .AddInProgressFlashcardState(out var flashcardState1, quizType)
+                                .AddFlashcard(out var flashcard1, collection1.Id, user.Id)
+                                    .AddFlashcardBase(out var flashcardBase1)
+                                        .SetWordOrPhrase("Phrase 1")
+                                        .AddMeaning(out var meaning1)
+                                            .SetValue("Phrase 1 Meaning 1")
+                                            .Build()
+                                        .AddMeaning(out var meaning2)
+                                            .SetValue("Phrase 1 Meaning 2")
+                                            .Build()
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard2, collection1)
+                                .AddFlashcardBase(out var flashcardBase2)
+                                    .SetWordOrPhrase("Phrase 2")
+                                    .AddMeaning(out var meaning3)
+                                        .SetValue("Phrase 2 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meanin4)
+                                        .SetValue("Phrase 2 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard3, collection1)
+                                .AddFlashcardBase(out var flashcardBase3)
+                                    .SetWordOrPhrase("Phrase 3")
+                                    .AddMeaning(out var meaning5)
+                                        .SetValue("Phrase 3 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meaning6)
+                                        .SetValue("Phrase 3 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard4, collection1)
+                                .AddFlashcardBase(out var flashcardBase4)
+                                    .SetWordOrPhrase("Phrase 4")
+                                    .AddMeaning(out var meaning7)
+                                        .SetValue("Phrase 4 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meanin8)
+                                        .SetValue("Phrase 4 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard5, collection1)
+                                .AddFlashcardBase(out var flashcardBase5)
+                                    .SetWordOrPhrase("Phrase 5")
+                                    .AddMeaning(out var meaning9)
+                                        .SetValue("Phrase 5 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meanin10)
+                                        .SetValue("Phrase 5 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+
+            var request = new GetNextExerciseRequest()
+            {
+                AttemptId = attempt1.Id,
+                FlashcardStateId = flashcardState1.Id,
+                IsAnswerCorrect = false
+            };
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            response.ExerciseDto.Should().NotBeNull();
+            response.IsStageComplete.Should().BeNull();
+        }
+
+        [TestMethod]
         public async Task GetNextExerciseRequestHandler_Handle_ShouldNotReturnNull()
         {
             // Arrange
@@ -292,7 +478,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var response = await _mediator.Send(request);
 
             // Assert
-            response.Should().NotBeNull();
+            response.ExerciseDto.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -440,7 +626,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var response = await _mediator.Send(request);
 
             // Assert
-            var id = response.FlashcardStateId;
+            var id = response.ExerciseDto.FlashcardStateId;
             var flashcardState = await _flashcardStateRepository.GetByIdAsync(id);
             flashcardState.Should().NotBeNull();
             flashcardState.Flashcard.Should().NotBeNull();
@@ -594,7 +780,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             // Assert
             var attempt = await _attemptRepostory.GetByIdAsync(request.AttemptId);
             attempt.CurrentStage.Flashcards
-                .Any(f => f.Id == response.FlashcardStateId)
+                .Any(f => f.Id == response.ExerciseDto.FlashcardStateId)
                 .Should().BeTrue();
         }
 
@@ -978,20 +1164,20 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.FlashcardStateId);
+            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.ExerciseDto.FlashcardStateId);
 
-            result.Should().NotBeNull();
-            result.Instruction.Should().Be(quizType.Instruction);
-            result.WordOrPhrase.Should().Be(flashcardState.Flashcard.FlashcardBase.WordOrPhrase);
-            result.CorrectAnswers.Should().NotBeNull();
-            result.IncorrectAnswers.Should().NotBeNull();
-            result.IsSelect.Should().Be(quizType.IsSelect);
-            result.IsMultiSelect.Should().Be(quizType.MaxAnswersToSelect > 1);
-            result.IsSelectMissing.Should().Be(quizType.IsSelectMissing);
-            result.IsMatch.Should().Be(quizType.IsMatch);
-            result.IsArrange.Should().Be(quizType.IsArrange);
-            result.IsInput.Should().Be(quizType.IsInput);
-            result.IsFillInBlank.Should().Be(quizType.IsFillInBlank);
+            result.ExerciseDto.Should().NotBeNull();
+            result.ExerciseDto.Instruction.Should().Be(quizType.Instruction);
+            result.ExerciseDto.WordOrPhrase.Should().Be(flashcardState.Flashcard.FlashcardBase.WordOrPhrase);
+            result.ExerciseDto.CorrectAnswers.Should().NotBeNull();
+            result.ExerciseDto.IncorrectAnswers.Should().NotBeNull();
+            result.ExerciseDto.IsSelect.Should().Be(quizType.IsSelect);
+            result.ExerciseDto.IsMultiSelect.Should().Be(quizType.MaxAnswersToSelect > 1);
+            result.ExerciseDto.IsSelectMissing.Should().Be(quizType.IsSelectMissing);
+            result.ExerciseDto.IsMatch.Should().Be(quizType.IsMatch);
+            result.ExerciseDto.IsArrange.Should().Be(quizType.IsArrange);
+            result.ExerciseDto.IsInput.Should().Be(quizType.IsInput);
+            result.ExerciseDto.IsFillInBlank.Should().Be(quizType.IsFillInBlank);
         }
 
         [TestMethod]
@@ -1080,10 +1266,10 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            result.CorrectAnswers.Count().Should().Be(quizType.MaxAnswersToSelect);
-            result.IncorrectAnswers.Count().Should().Be(ALL_ANSWERS_NUMBER - quizType.MaxAnswersToSelect);
+            result.ExerciseDto.CorrectAnswers.Count().Should().Be(quizType.MaxAnswersToSelect);
+            result.ExerciseDto.IncorrectAnswers.Count().Should().Be(ALL_ANSWERS_NUMBER - quizType.MaxAnswersToSelect);
 
-            var allAnswers = result.CorrectAnswers.Concat(result.IncorrectAnswers);
+            var allAnswers = result.ExerciseDto.CorrectAnswers.Concat(result.ExerciseDto.IncorrectAnswers);
             allAnswers.Should().HaveCount(ALL_ANSWERS_NUMBER);
         }
 
@@ -1174,11 +1360,11 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.FlashcardStateId);
+            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.ExerciseDto.FlashcardStateId);
             var meanings = flashcardState.Flashcard.FlashcardBase.Meanings.Select(m => m.Value);
 
-            result.CorrectAnswers.Should().HaveCount(1);
-            result.CorrectAnswers.Any(a => meanings.Contains(a.Value)).Should().BeTrue();
+            result.ExerciseDto.CorrectAnswers.Should().HaveCount(1);
+            result.ExerciseDto.CorrectAnswers.Any(a => meanings.Contains(a.Value)).Should().BeTrue();
         }
 
         [TestMethod]
@@ -1268,10 +1454,10 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.FlashcardStateId);
+            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.ExerciseDto.FlashcardStateId);
             var meanings = flashcardState.Flashcard.FlashcardBase.Meanings.Select(m => m.Value);
 
-            result.CorrectAnswers.Any(a => meanings.Contains(a.Value)).Should().BeFalse();
+            result.ExerciseDto.CorrectAnswers.Any(a => meanings.Contains(a.Value)).Should().BeFalse();
         }
 
         [TestMethod]
@@ -1361,11 +1547,11 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.FlashcardStateId);
+            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.ExerciseDto.FlashcardStateId);
             var meanings = flashcardState.Flashcard.FlashcardBase.Meanings.Select(m => m.Value);
 
-            result.IncorrectAnswers.Should().HaveCount(3);
-            result.IncorrectAnswers.Any(a => meanings.Contains(a.Value)).Should().BeFalse();
+            result.ExerciseDto.IncorrectAnswers.Should().HaveCount(3);
+            result.ExerciseDto.IncorrectAnswers.Any(a => meanings.Contains(a.Value)).Should().BeFalse();
         }
 
         [TestMethod]
@@ -1455,10 +1641,10 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.FlashcardStateId);
+            var flashcardState = await _flashcardStateRepository.GetByIdAsync(result.ExerciseDto.FlashcardStateId);
             var meanings = flashcardState.Flashcard.FlashcardBase.Meanings.Select(m => m.Value);
 
-            result.IncorrectAnswers.Any(a => meanings.Contains(a.Value)).Should().BeTrue();
+            result.ExerciseDto.IncorrectAnswers.Any(a => meanings.Contains(a.Value)).Should().BeTrue();
         }
 
         [TestMethod]
@@ -1552,8 +1738,8 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            result.CorrectAnswers.All(a => allMeanings.Contains(a.Value)).Should().BeTrue();
-            result.IncorrectAnswers.All(a => allMeanings.Contains(a.Value)).Should().BeTrue();
+            result.ExerciseDto.CorrectAnswers.All(a => allMeanings.Contains(a.Value)).Should().BeTrue();
+            result.ExerciseDto.IncorrectAnswers.All(a => allMeanings.Contains(a.Value)).Should().BeTrue();
         }
 
         [TestMethod]
@@ -1575,11 +1761,11 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
                                     .SetWordOrPhrase("Phrase 1")
                                     .AddMeaning(out var meaning1)
                                         .SetValue("Phrase 1 Meaning 1")
-                                        .Build()
+                            .Build()
                                     .AddMeaning(out var meaning2)
                                         .SetValue("Phrase 1 Meaning 2")
-                                        .Build()
-                                    .Build()
+                        .Build()
+                    .Build()
                                 .Build()
                             .AddFlashcard(out var flashcard2, collection1)
                                 .AddFlashcardBase(out var flashcardBase2)
@@ -1647,8 +1833,8 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            var correctAnswers = result.CorrectAnswers.Select(v => v.Value);
-            var incorrectAnswers = result.IncorrectAnswers.Select(v => v.Value);
+            var correctAnswers = result.ExerciseDto.CorrectAnswers.Select(v => v.Value);
+            var incorrectAnswers = result.ExerciseDto.IncorrectAnswers.Select(v => v.Value);
 
             correctAnswers
                 .Any(v => incorrectAnswers.Contains(v))
@@ -1749,7 +1935,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            result.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
+            result.ExerciseDto.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
         }
 
         [TestMethod]
@@ -1848,7 +2034,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            result.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
+            result.ExerciseDto.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
         }
 
         [TestMethod]
@@ -2297,7 +2483,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            result.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
+            result.ExerciseDto.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
         }
 
         [TestMethod]
@@ -2308,6 +2494,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
         public async Task GetNextExerciseRequestHandler_Handle_ShouldTakeAgainFlashcardStateWithShowAgainEarlierThenNow(int minutes)
         {
             // Arrange
+            _now = new DateTime(2022, 10, 10, 10, 00, 00);
             var showAgainOn = _dateTimeProvider.UtcNow.AddMinutes(-minutes);
 
             await _testBuilder
@@ -2401,7 +2588,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            result.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
+            result.ExerciseDto.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
         }
 
         [TestMethod]
@@ -2477,7 +2664,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            result.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
+            result.ExerciseDto.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
         }
 
         [TestMethod]
@@ -2546,7 +2733,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            result.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
+            result.ExerciseDto.FlashcardStateId.Should().Be(expectedFlashcardState.Id);
         }
 
         [TestMethod]
@@ -2622,7 +2809,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             var result = await _mediator.Send(request);
 
             // Assert
-            result.FlashcardStateId.Should().Be(flashcardState.Id);
+            result.ExerciseDto.FlashcardStateId.Should().Be(flashcardState.Id);
         }
         
         [TestMethod]
@@ -2673,12 +2860,12 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
 
             // Act
             var response1 = await _mediator.Send(request);
-            request.FlashcardStateId = response1.FlashcardStateId;
+            request.FlashcardStateId = response1.ExerciseDto.FlashcardStateId;
             request.IsAnswerCorrect = true;
             var response2 = await _mediator.Send(request);
 
             // Assert
-            var result = await _flashcardStateRepository.GetByIdAsync(response2.FlashcardStateId);
+            var result = await _flashcardStateRepository.GetByIdAsync(response2.ExerciseDto.FlashcardStateId);
             result.Should().BeOfType<InProgressFlashcardState>();
             var state = (InProgressFlashcardState)result;
             state.CurrentQuizTypeId.Should().Be(quizType2.Id);
@@ -3374,6 +3561,414 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             // Assert
             var flashcardState = await _flashcardStateRepository.GetByIdAsync(flashcardState1.Id);
             flashcardState.Should().BeOfType<InProgressFlashcardState>();
+        }
+
+        [TestMethod]
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldReturnStageCompletedIfNoMoreFlashcardsInAttempt()
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType)
+                    .SetIsFirst()
+                    .SetIsSingleSelect(true)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType2)
+                    .SetIsArrange()
+                    .Build()
+                .AddCollection(out var collection1, user.Id)
+                    .AddAttempt(out var attempt1, quizType)
+                        .AddQuizType(quizType2)
+                        .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
+                            .AddInProgressFlashcardState(out var flashcardState1, quizType2)
+                                .AddCompletedQuizType(quizType)
+                                .AddFlashcard(out var flashcard1, collection1.Id, user.Id)
+                                    .AddFlashcardBase(out var flashcardBase1)
+                                        .SetWordOrPhrase("Phrase 1")
+                                        .AddMeaning(out var meaning1)
+                                            .SetValue("Phrase 1 Meaning 1")
+                                            .Build()
+                                        .AddMeaning(out var meaning2)
+                                            .SetValue("Phrase 1 Meaning 2")
+                                            .Build()
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard2, collection1)
+                                .AddFlashcardBase(out var flashcardBase2)
+                                    .SetWordOrPhrase("Phrase 1")
+                                    .AddMeaning(out var meaning3)
+                                        .SetValue("Phrase 1 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meaning4)
+                                        .SetValue("Phrase 1 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+
+            var request = new GetNextExerciseRequest()
+            {
+                AttemptId = attempt1.Id,
+                FlashcardStateId = flashcardState1.Id,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            response.Should().NotBeNull();
+            response.IsStageComplete.Should().BeTrue();
+            response.ExerciseDto.Should().BeNull();
+        }
+
+        [TestMethod]
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldCompleteCurrentAttemptStage()
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType)
+                    .SetIsFirst()
+                    .SetIsSingleSelect(true)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType2)
+                    .SetIsArrange()
+                    .Build()
+                .AddCollection(out var collection1, user.Id)
+                    .AddAttempt(out var attempt1, quizType)
+                        .AddQuizType(quizType2)
+                        .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
+                            .AddInProgressFlashcardState(out var flashcardState1, quizType2)
+                                .AddCompletedQuizType(quizType)
+                                .AddFlashcard(out var flashcard1, collection1.Id, user.Id)
+                                    .AddFlashcardBase(out var flashcardBase1)
+                                        .SetWordOrPhrase("Phrase 1")
+                                        .AddMeaning(out var meaning1)
+                                            .SetValue("Phrase 1 Meaning 1")
+                                            .Build()
+                                        .AddMeaning(out var meaning2)
+                                            .SetValue("Phrase 1 Meaning 2")
+                                            .Build()
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard2, collection1)
+                                .AddFlashcardBase(out var flashcardBase2)
+                                    .SetWordOrPhrase("Phrase 1")
+                                    .AddMeaning(out var meaning3)
+                                        .SetValue("Phrase 1 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meaning4)
+                                        .SetValue("Phrase 1 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+
+            var request = new GetNextExerciseRequest()
+            {
+                AttemptId = attempt1.Id,
+                FlashcardStateId = flashcardState1.Id,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            var completedAttemptStage = await _attemptStageRepostory.GetByIdAsync(attemptStage1.Id);
+            completedAttemptStage.Stage.Should().Be(AttemptStageType.Complete);
+        }
+
+        [TestMethod]
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldCreateNewAttemptStage()
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType)
+                    .SetIsFirst()
+                    .SetIsSingleSelect(true)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType2)
+                    .SetIsArrange()
+                    .Build()
+                .AddCollection(out var collection1, user.Id)
+                    .AddAttempt(out var attempt1, quizType)
+                        .AddQuizType(quizType2)
+                        .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
+                            .AddInProgressFlashcardState(out var flashcardState1, quizType2)
+                                .AddCompletedQuizType(quizType)
+                                .AddFlashcard(out var flashcard1, collection1.Id, user.Id)
+                                    .AddFlashcardBase(out var flashcardBase1)
+                                        .SetWordOrPhrase("Phrase 1")
+                                        .AddMeaning(out var meaning1)
+                                            .SetValue("Phrase 1 Meaning 1")
+                                            .Build()
+                                        .AddMeaning(out var meaning2)
+                                            .SetValue("Phrase 1 Meaning 2")
+                                            .Build()
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard2, collection1)
+                                .AddFlashcardBase(out var flashcardBase2)
+                                    .SetWordOrPhrase("Phrase 1")
+                                    .AddMeaning(out var meaning3)
+                                        .SetValue("Phrase 1 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meaning4)
+                                        .SetValue("Phrase 1 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard3)
+                        .AddFlashcardBase(out var flashcardBase3)
+                            .SetWordOrPhrase("Phrase 3")
+                            .AddMeaning(out var meaning5)
+                                .SetValue("Phrase 3 Meaning 1")
+                                .Build()
+                            .AddMeaning(out var meaning6)
+                                .SetValue("Phrase 3 Meaning 2")
+                                .Build()
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard4)
+                        .AddFlashcardBase(out var flashcardBase4)
+                            .SetWordOrPhrase("Phrase 4")
+                            .AddMeaning(out var meaning7)
+                                .SetValue("Phrase 4 Meaning 1")
+                                .Build()
+                            .AddMeaning(out var meaning8)
+                                .SetValue("Phrase 4 Meaning 2")
+                                .Build()
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+
+            var request = new GetNextExerciseRequest()
+            {
+                AttemptId = attempt1.Id,
+                FlashcardStateId = flashcardState1.Id,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            var attemptStages = await _attemptStageRepostory.GetAllAsync();
+            var newAttemptStage = attemptStages.FirstOrDefault(x => x.Id != attemptStage1.Id);
+
+            newAttemptStage.Should().NotBeNull();
+            newAttemptStage.Stage.Should().Be(AttemptStageType.Init);
+        }
+
+        [TestMethod]
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldAssignNewAttemptStageToAttempt()
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType)
+                    .SetIsFirst()
+                    .SetIsSingleSelect(true)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType2)
+                    .SetIsArrange()
+                    .Build()
+                .AddCollection(out var collection1, user.Id)
+                    .AddAttempt(out var attempt1, quizType)
+                        .AddQuizType(quizType2)
+                        .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
+                            .AddInProgressFlashcardState(out var flashcardState1, quizType2)
+                                .AddCompletedQuizType(quizType)
+                                .AddFlashcard(out var flashcard1, collection1.Id, user.Id)
+                                    .AddFlashcardBase(out var flashcardBase1)
+                                        .SetWordOrPhrase("Phrase 1")
+                                        .AddMeaning(out var meaning1)
+                                            .SetValue("Phrase 1 Meaning 1")
+                                            .Build()
+                                        .AddMeaning(out var meaning2)
+                                            .SetValue("Phrase 1 Meaning 2")
+                                            .Build()
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard2, collection1)
+                                .AddFlashcardBase(out var flashcardBase2)
+                                    .SetWordOrPhrase("Phrase 1")
+                                    .AddMeaning(out var meaning3)
+                                        .SetValue("Phrase 1 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meaning4)
+                                        .SetValue("Phrase 1 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard3)
+                        .AddFlashcardBase(out var flashcardBase3)
+                            .SetWordOrPhrase("Phrase 3")
+                            .AddMeaning(out var meaning5)
+                                .SetValue("Phrase 3 Meaning 1")
+                                .Build()
+                            .AddMeaning(out var meaning6)
+                                .SetValue("Phrase 3 Meaning 2")
+                                .Build()
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard4)
+                        .AddFlashcardBase(out var flashcardBase4)
+                            .SetWordOrPhrase("Phrase 4")
+                            .AddMeaning(out var meaning7)
+                                .SetValue("Phrase 4 Meaning 1")
+                                .Build()
+                            .AddMeaning(out var meaning8)
+                                .SetValue("Phrase 4 Meaning 2")
+                                .Build()
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+
+            var request = new GetNextExerciseRequest()
+            {
+                AttemptId = attempt1.Id,
+                FlashcardStateId = flashcardState1.Id,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            var attemptStages = await _attemptStageRepostory.GetAllAsync();
+            var newAttemptStage = attemptStages.FirstOrDefault(x => x.Id != attemptStage1.Id);
+
+            var resultAttempt = await _attemptRepostory.GetByIdAsync(attempt1.Id);
+            resultAttempt.CurrentStage.Id.Should().NotBe(attemptStage1.Id)
+                .And.Be(newAttemptStage.Id);
+        }
+
+        [TestMethod]
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldAddFlashcardsOfCompletedAttemptToCompletedFlashcardsList()
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType)
+                    .SetIsFirst()
+                    .SetIsSingleSelect(true)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType2)
+                    .SetIsArrange()
+                    .Build()
+                .AddCollection(out var collection1, user.Id)
+                    .AddAttempt(out var attempt1, quizType)
+                        .AddQuizType(quizType2)
+                        .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
+                            .AddInProgressFlashcardState(out var flashcardState1, quizType2)
+                                .AddCompletedQuizType(quizType)
+                                .AddFlashcard(out var flashcard1, collection1.Id, user.Id)
+                                    .AddFlashcardBase(out var flashcardBase1)
+                                        .SetWordOrPhrase("Phrase 1")
+                                        .AddMeaning(out var meaning1)
+                                            .SetValue("Phrase 1 Meaning 1")
+                                            .Build()
+                                        .AddMeaning(out var meaning2)
+                                            .SetValue("Phrase 1 Meaning 2")
+                                            .Build()
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddCompletedFlashcardState(out var flashcard2, collection1)
+                                .AddFlashcardBase(out var flashcardBase2)
+                                    .SetWordOrPhrase("Phrase 1")
+                                    .AddMeaning(out var meaning3)
+                                        .SetValue("Phrase 1 Meaning 1")
+                                        .Build()
+                                    .AddMeaning(out var meaning4)
+                                        .SetValue("Phrase 1 Meaning 2")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard3)
+                        .AddFlashcardBase(out var flashcardBase3)
+                            .SetWordOrPhrase("Phrase 3")
+                            .AddMeaning(out var meaning5)
+                                .SetValue("Phrase 3 Meaning 1")
+                                .Build()
+                            .AddMeaning(out var meaning6)
+                                .SetValue("Phrase 3 Meaning 2")
+                                .Build()
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard4)
+                        .AddFlashcardBase(out var flashcardBase4)
+                            .SetWordOrPhrase("Phrase 4")
+                            .AddMeaning(out var meaning7)
+                                .SetValue("Phrase 4 Meaning 1")
+                                .Build()
+                            .AddMeaning(out var meaning8)
+                                .SetValue("Phrase 4 Meaning 2")
+                                .Build()
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+
+            var request = new GetNextExerciseRequest()
+            {
+                AttemptId = attempt1.Id,
+                FlashcardStateId = flashcardState1.Id,
+                IsAnswerCorrect = true
+            };
+
+            var completedFlasgcardIds = attempt1
+                .CurrentStage
+                .Flashcards
+                .Select(x => x.FlashcardId)
+                .ToHashSet();
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            var resultAttempt = await _attemptRepostory.GetByIdAsync(attempt1.Id);
+            resultAttempt.CompletedFlashcards.Should().NotBeNullOrEmpty()
+                .And.HaveCount(2);
+            resultAttempt.CompletedFlashcards.All(x => completedFlasgcardIds.Contains(x.Id))
+                .Should().BeTrue();
         }
     }
 }

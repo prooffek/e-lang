@@ -1,5 +1,6 @@
 ﻿using E_Lang.Application.Common.DTOs;
 using E_Lang.Application.Common.Interfaces.Repositories;
+using E_Lang.Application.Interfaces;
 using E_Lang.Application.Models;
 using E_Lang.Application.Services;
 using E_Lang.Builder;
@@ -15,6 +16,8 @@ namespace E_Lang.Application.UnitTests.Services
     {
         private static Mock<IMapper> _mapper;
         private static Mock<IFlashcardRepository> _flashcardRepository;
+        private static Mock<IDateTimeProvider> _dateTimeProvider;
+        private static Mock<IFlashcardStateRepository> _flashcardStateRepository;
 
         [ClassInitialize]
         public static void InitializeClass(TestContext testContext)
@@ -28,6 +31,8 @@ namespace E_Lang.Application.UnitTests.Services
             InitTest();
             _mapper = new Mock<IMapper>();
             _flashcardRepository = new Mock<IFlashcardRepository>();
+            _dateTimeProvider = new Mock<IDateTimeProvider>();
+            _flashcardStateRepository = new Mock<IFlashcardStateRepository>();
         }
 
         [TestCleanup]
@@ -45,7 +50,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .Verifiable();
 
             var quizType = Entities.GetQuizType();
-            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object);
+            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object, _dateTimeProvider.Object, _flashcardStateRepository.Object);
 
             ExerciseData exerciseData = new(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), new FlashcardBase(), quizType);
 
@@ -89,7 +94,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .Returns(Task.FromResult(incorrectAnswers))
                 .Verifiable();
 
-            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object);
+            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object, _dateTimeProvider.Object, _flashcardStateRepository.Object);
             ExerciseData exerciseData = new(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), new FlashcardBase(), quizType);
 
             // Act
@@ -121,7 +126,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .Returns(Task.FromResult(answers))
                 .Verifiable();
 
-            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object);
+            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object, _dateTimeProvider.Object, _flashcardStateRepository.Object);
             ExerciseData exerciseData = new(Guid.NewGuid(), flashcardStateId, collectionId, flashcardBase, quizType);
 
             // Act
@@ -166,7 +171,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .Returns(Task.FromResult(incorrectAnswers))
                 .Verifiable();
 
-            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object);
+            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object, _dateTimeProvider.Object, _flashcardStateRepository.Object);
             ExerciseData exerciseData = new(Guid.NewGuid(), flashcardStateId, collectionId, flashcardBase, quizType);
 
             // Act
@@ -203,7 +208,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .Returns(Task.FromResult(answersFromDb))
                 .Verifiable();
 
-            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object);
+            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object, _dateTimeProvider.Object, _flashcardStateRepository.Object);
             ExerciseData exerciseData = new(Guid.NewGuid(), flashcardStateId, collectionId, flashcardBase, quizType);
 
             // Act
@@ -243,7 +248,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .Returns(Task.FromResult(incorrectAnswers))
                 .Verifiable();
 
-            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object);
+            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object, _dateTimeProvider.Object, _flashcardStateRepository.Object);
             ExerciseData exerciseData = new(Guid.NewGuid(), flashcardStateId, collectionId, flashcardBase, quizType);
 
             // Act

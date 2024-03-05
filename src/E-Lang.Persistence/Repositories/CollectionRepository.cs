@@ -77,9 +77,10 @@ public class CollectionRepository : RepositoryWithDto<Collection, CollectionCard
     {
         return _entity
             .Include(c => c.Flashcards)
-                .ThenInclude(f => f.FlashcardBase)
-                    .ThenInclude(x => x.Meanings)
+            .ThenInclude(f => f.FlashcardBase)
+            .ThenInclude(x => x.Meanings)
             .Include(c => c.Parent)
-            .Include(c => c.Subcollections);
+            .Include(c => c.Subcollections)
+            .Include(c => c.Attempts);
     }
 }

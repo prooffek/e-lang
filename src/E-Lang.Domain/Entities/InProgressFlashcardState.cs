@@ -131,7 +131,7 @@ namespace E_Lang.Domain.Entities
 
         private bool IsCompleted(Attempt attempt)
         {
-            var quizTypesNumber = attempt.QuizTypes?.Count ?? 1;
+            var quizTypesNumber = attempt.QuizTypes?.Count() ?? 1;
             var seenQuizzes = SeenQuizTypes.Count;
             var completedQuizzes = CompletedQuizTypes.Count;
             var correctInPreCent = (int)((float)completedQuizzes / seenQuizzes * 100);

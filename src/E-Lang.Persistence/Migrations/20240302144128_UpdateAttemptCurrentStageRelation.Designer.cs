@@ -3,6 +3,7 @@ using System;
 using E_Lang.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace E_Lang.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240302144128_UpdateAttemptCurrentStageRelation")]
+    partial class UpdateAttemptCurrentStageRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,7 +129,7 @@ namespace E_Lang.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AttemptId")
+                    b.Property<Guid?>("AttemptId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
@@ -179,6 +182,33 @@ namespace E_Lang.Persistence.Migrations
                     b.HasIndex(new[] { "Id", "ParentId" }, "Collection_Id_ParentId");
 
                     b.ToTable("Collections");
+                });
+
+            modelBuilder.Entity("E_Lang.Domain.Entities.CompletedFlashcard", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AttemptId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("FlashcardId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttemptId");
+
+                    b.HasIndex("FlashcardId");
+
+                    b.ToTable("CompletedFlashcards");
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.CompletedQuizType", b =>
@@ -639,9 +669,7 @@ namespace E_Lang.Persistence.Migrations
                 {
                     b.HasOne("E_Lang.Domain.Entities.Attempt", null)
                         .WithMany("AttemptStages")
-                        .HasForeignKey("AttemptId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AttemptId");
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.Collection", b =>
@@ -651,6 +679,21 @@ namespace E_Lang.Persistence.Migrations
                         .HasForeignKey("ParentId");
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("E_Lang.Domain.Entities.CompletedFlashcard", b =>
+                {
+                    b.HasOne("E_Lang.Domain.Entities.Attempt", null)
+                        .WithMany()
+                        .HasForeignKey("AttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Lang.Domain.Entities.Flashcard", null)
+                        .WithMany()
+                        .HasForeignKey("FlashcardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("E_Lang.Domain.Entities.CompletedQuizType", b =>

@@ -29,8 +29,9 @@ namespace E_Lang.Application.IntegrationTests
         protected static IMeaningRepository _meaningRepostory;
         protected static IAttemptRepository _attemptRepostory;
         protected static IAttemptStageRepository _attemptStageRepostory;
-        protected static ICompletedFlashcardRepository _completedFlashcardRepository;
         protected static IFlashcardStateRepository _flashcardStateRepository;
+
+        protected static IAttemptStageService _attemptStageService;
 
         protected static DateTime _now
         {
@@ -65,8 +66,9 @@ namespace E_Lang.Application.IntegrationTests
             _meaningRepostory = _applicationScope.ServiceProvider.GetRequiredService<IMeaningRepository>();
             _attemptRepostory = _applicationScope.ServiceProvider.GetRequiredService<IAttemptRepository>();
             _attemptStageRepostory = _applicationScope.ServiceProvider.GetRequiredService<IAttemptStageRepository>();
-            _completedFlashcardRepository = _applicationScope.ServiceProvider.GetRequiredService<ICompletedFlashcardRepository>();
             _flashcardStateRepository = _applicationScope.ServiceProvider.GetRequiredService<IFlashcardStateRepository>();
+
+            _attemptStageService = _applicationScope.ServiceProvider.GetRequiredService<IAttemptStageService>();
         }
 
         public static void InitTest()

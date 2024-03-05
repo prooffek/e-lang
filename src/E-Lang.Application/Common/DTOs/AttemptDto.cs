@@ -12,7 +12,7 @@ namespace E_Lang.Application.Common.DTOs
         public Guid CollectionId { get; set; }
         public string CollectionName { get; set; }
         public DateTime CreatedOn { get; set; }
-        public AttemptStageDto CurrentStage { get; set; }
+        public AttemptStageDto? CurrentStage { get; set; }
         public int MaxFlashcardsPerStage { get; set; }
         public int MaxQuizTypesPerFlashcard { get; set; }
         public int MinCompletedQuizzesPerCent { get; set; }
@@ -33,7 +33,10 @@ namespace E_Lang.Application.Common.DTOs
                 .Map(dest => dest.MinCompletedQuizzesPerCent, src => src.MinCompletedQuizzesPerCent <= 0 ? 100 : src.MinCompletedQuizzesPerCent)
                 .Map(dest => dest.CompletedFlashcardsCount, src => src.CompletedFlashcards != null ? src.CompletedFlashcards.Count : 0)
                 .Map(dest => dest.AllFlashcardsCount, src => src.Collection != null && src.Collection.Flashcards != null ? src.Collection.Flashcards.Count : 0)
-                .Map(dest => dest.LastSeenOn, src => src.ModifiedOn);
+                .Map(dest => dest.LastSeenOn, src => src.ModifiedOn)
+                .Map(dest => dest.CurrentStage, src => src.AttemptStages != null 
+                    ? src.AttemptStages.FirstOrDefault(a => a.Stage != AttemptStageType.Complete) 
+                    : (AttemptStage?)null);
         }
     }
 }

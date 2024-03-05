@@ -9,5 +9,7 @@ namespace E_Lang.Domain.Entities
         public AttemptStageType Stage { get; set; }
 
         public ICollection<FlashcardState>? Flashcards { get; set; }
+
+        public Guid AttemptId { get; set; }
     }
 }

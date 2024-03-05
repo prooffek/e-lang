@@ -1,19 +1,30 @@
-﻿using E_Lang.Application.Services;
+﻿using E_Lang.Application.Common.Interfaces.Repositories;
+using E_Lang.Application.Services;
 using E_Lang.Builder;
 using E_Lang.Domain.Entities;
 using E_Lang.Domain.Enums;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
+using Moq;
 
 namespace E_Lang.Application.UnitTests.Services
 {
     [TestClass]
     public class AttemptStageServiceTests : Setup
     {
+        private static Mock<IFlashcardRepository> _flashcardRepository;
+        private static Mock<IAttemptStageRepository> _attemptStageRepository;
+        private static Mock<IFlashcardStateRepository> _flashcardStateRepository;
+        private static Mock<IAttemptRepository> _attemptRepository;
+
         [ClassInitialize]
         public static void InitializeClass(TestContext testContext)
         {
             InitClass();
+            _flashcardRepository = new Mock<IFlashcardRepository>();
+            _attemptStageRepository = new Mock<IAttemptStageRepository>();
+            _flashcardStateRepository = new Mock<IFlashcardStateRepository>();
+            _attemptRepository = new Mock<IAttemptRepository>();
         }
 
         [TestInitialize]
@@ -33,11 +44,11 @@ namespace E_Lang.Application.UnitTests.Services
         {
             var flashcards = GetFlashcards(10);
             var order = FlashcardOrder.AlphabeticalAsc;
-            var service = new AttemptStageService();
+            var service = new AttemptStageService(_flashcardRepository.Object, _attemptStageRepository.Object, _flashcardStateRepository.Object, _attemptRepository.Object);
             var maxFlashcardsNumber = 5;
 
             // Act
-            var result = service.GetInitAttemptStage(flashcards, order, maxFlashcardsNumber);
+            var result = service.GetAttemptStage(Guid.NewGuid(), flashcards, order, maxFlashcardsNumber);
 
             // Assert
             result.Should().NotBeNull();
@@ -56,13 +67,13 @@ namespace E_Lang.Application.UnitTests.Services
             // Arrange
             var flashcards = GetFlashcards(10);
             var order = FlashcardOrder.AlphabeticalAsc;
-            var service = new AttemptStageService();
+            var service = new AttemptStageService(_flashcardRepository.Object, _attemptStageRepository.Object, _flashcardStateRepository.Object, _attemptRepository.Object);
             var expectedNumber = maxFlashcardsNumber > flashcards.Count() 
                 ? flashcards.Count() 
                 : maxFlashcardsNumber;
 
             // Act
-            var result = service.GetInitAttemptStage(flashcards, order, maxFlashcardsNumber);
+            var result = service.GetAttemptStage(Guid.NewGuid(), flashcards, order, maxFlashcardsNumber);
 
             // Assert
             result.Should().NotBeNull();
@@ -77,7 +88,7 @@ namespace E_Lang.Application.UnitTests.Services
             // Arrange
             var flashcards = GetFlashcards(10);
             var order = FlashcardOrder.AlphabeticalDesc;
-            var service = new AttemptStageService();
+            var service = new AttemptStageService(_flashcardRepository.Object, _attemptStageRepository.Object, _flashcardStateRepository.Object, _attemptRepository.Object);
             var maxFlashcards = 5;
 
             var expectedResult = flashcards
@@ -87,7 +98,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .ToList();
 
             // Act
-            var result = service.GetInitAttemptStage(flashcards, order, maxFlashcards);
+            var result = service.GetAttemptStage(Guid.NewGuid(), flashcards, order, maxFlashcards);
 
             // Assert
             result.Should().NotBeNull();
@@ -103,7 +114,7 @@ namespace E_Lang.Application.UnitTests.Services
             // Arrange
             var flashcards = GetFlashcards(10);
             var order = FlashcardOrder.AlphabeticalAsc;
-            var service = new AttemptStageService();
+            var service = new AttemptStageService(_flashcardRepository.Object, _attemptStageRepository.Object, _flashcardStateRepository.Object, _attemptRepository.Object);
             var maxFlashcards = 5;
 
             var expectedResult = flashcards
@@ -113,7 +124,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .ToList();
 
             // Act
-            var result = service.GetInitAttemptStage(flashcards, order, maxFlashcards);
+            var result = service.GetAttemptStage(Guid.NewGuid(), flashcards, order, maxFlashcards);
 
             // Assert
             result.Should().NotBeNull();
@@ -129,7 +140,7 @@ namespace E_Lang.Application.UnitTests.Services
             // Arrange
             var flashcards = GetFlashcards(10);
             var order = FlashcardOrder.CreationDateDesc;
-            var service = new AttemptStageService();
+            var service = new AttemptStageService(_flashcardRepository.Object, _attemptStageRepository.Object, _flashcardStateRepository.Object, _attemptRepository.Object);
             var maxFlashcards = 5;
 
             var expectedResult = flashcards
@@ -139,7 +150,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .ToList();
 
             // Act
-            var result = service.GetInitAttemptStage(flashcards, order, maxFlashcards);
+            var result = service.GetAttemptStage(Guid.NewGuid(), flashcards, order, maxFlashcards);
 
             // Assert
             result.Should().NotBeNull();
@@ -155,7 +166,7 @@ namespace E_Lang.Application.UnitTests.Services
             // Arrange
             var flashcards = GetFlashcards(10);
             var order = FlashcardOrder.CreationDateAsc;
-            var service = new AttemptStageService();
+            var service = new AttemptStageService(_flashcardRepository.Object, _attemptStageRepository.Object, _flashcardStateRepository.Object, _attemptRepository.Object);
             var maxFlashcards = 5;
 
             var expectedResult = flashcards
@@ -165,7 +176,7 @@ namespace E_Lang.Application.UnitTests.Services
                 .ToList();
 
             // Act
-            var result = service.GetInitAttemptStage(flashcards, order, maxFlashcards);
+            var result = service.GetAttemptStage(Guid.NewGuid(), flashcards, order, maxFlashcards);
 
             // Assert
             result.Should().NotBeNull();
@@ -181,7 +192,7 @@ namespace E_Lang.Application.UnitTests.Services
             // Arrange
             var flashcards = GetFlashcards(10);
             var order = FlashcardOrder.Random;
-            var service = new AttemptStageService();
+            var service = new AttemptStageService(_flashcardRepository.Object, _attemptStageRepository.Object, _flashcardStateRepository.Object, _attemptRepository.Object);
             var maxFlashcards = 5;
 
             var orderByCreatedOnAsc = flashcards
@@ -202,8 +213,8 @@ namespace E_Lang.Application.UnitTests.Services
                 .ToList();
 
             // Act
-            var result1 = service.GetInitAttemptStage(flashcards, order, maxFlashcards);
-            var result2 = service.GetInitAttemptStage(flashcards, order, maxFlashcards);
+            var result1 = service.GetAttemptStage(Guid.NewGuid(), flashcards, order, maxFlashcards);
+            var result2 = service.GetAttemptStage(Guid.NewGuid(), flashcards, order, maxFlashcards);
 
             // Assert
             result1.Should().NotBeNull();
@@ -217,13 +228,70 @@ namespace E_Lang.Application.UnitTests.Services
                 .And.NotBeEquivalentTo(orderByWordOrPhraseDesc)
                 .And.NotBeEquivalentTo(flashcards.Take(maxFlashcards))
                 .And.NotBeEquivalentTo(result2.Flashcards);
-
         }
 
-        private IEnumerable<Flashcard> GetFlashcards(int counter = 10)
+        [TestMethod]
+        public async Task AttemptStageService_GetNextAttemptStage_ShouldExcludeCompletedFlashcards()
+        {
+            // Arrange
+            var collection = Entities.GetCollection(Guid.NewGuid());
+            var attempt = Entities.GetAttempt(collection);
+            var incompleteFlashcards = GetFlashcards(5, collection);
+
+            _flashcardRepository.Setup(m =>
+                    m.GetFlashcardsByCollectionId(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult((IEnumerable<Flashcard>)collection.Flashcards))
+                .Verifiable();
+
+            var service = new AttemptStageService(_flashcardRepository.Object, _attemptStageRepository.Object, _flashcardStateRepository.Object, _attemptRepository.Object);
+
+            // Act
+            var result = await service.GetNextAttemptStage(attempt, default);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Stage = AttemptStageType.Init;
+            result.Flashcards.Should().NotBeNullOrEmpty()
+                .And.HaveCount(incompleteFlashcards.Count());
+            result.Flashcards.All(x => 
+                incompleteFlashcards
+                    .Select(x => x.Id)
+                    .ToHashSet()
+                    .Contains(x.Flashcard.Id))
+                .Should().BeTrue();
+            result.Flashcards.Any(x =>
+                    attempt.CompletedFlashcards
+                        .Select(x => x.Id)
+                        .ToHashSet()
+                        .Contains(x.Flashcard.Id))
+                .Should().BeFalse();
+        }
+
+        [TestMethod]
+        public async Task AttemptStageService_GetNextAttemptStage_ShouldReturnNullIfAllFlashcardsCompleted()
+        {
+            // Arrange
+            var collection = Entities.GetCollection(Guid.NewGuid());
+            var attempt = Entities.GetAttempt(collection);
+
+            _flashcardRepository.Setup(m =>
+                    m.GetFlashcardsByCollectionId(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult((IEnumerable<Flashcard>)collection.Flashcards))
+                .Verifiable();
+
+            var service = new AttemptStageService(_flashcardRepository.Object, _attemptStageRepository.Object, _flashcardStateRepository.Object, _attemptRepository.Object);
+
+            // Act
+            var result = await service.GetNextAttemptStage(attempt, default);
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        private IEnumerable<Flashcard> GetFlashcards(int counter = 10, Collection? collection = null)
         {
             var user = Entities.GetUser();
-            var collection = Entities.GetCollection(user.Id);
+            collection ??= Entities.GetCollection(user.Id);
             var dateTimeProvider = MockDateTimeProvider.GetInstance();
             MockDateTimeProvider.MockNow = new DateTime(2022, 10, 10, 10, 00, 00);
 
@@ -252,6 +320,7 @@ namespace E_Lang.Application.UnitTests.Services
             flashcard.Collection = collection;
             flashcard.FlashcardBase = flashcardBase;
             flashcard.FlashcardBaseId = flashcardBase.Id;
+            collection.Flashcards.Add(flashcard);
 
             return flashcard;
         }

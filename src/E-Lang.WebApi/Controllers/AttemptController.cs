@@ -28,7 +28,7 @@ namespace E_Lang.WebApi.Controllers
         }
 
         [HttpPost("get-exercise")]
-        public async Task<ActionResult<ExerciseDto>> GetExercise([FromBody] Guid attemptId, Guid? flashcardStateId,
+        public async Task<ActionResult<NextExerciseDto>> GetExercise([FromBody] Guid attemptId, Guid? flashcardStateId,
             bool? isAnswerCorrect)
         {
             GetNextExerciseRequest request = new()

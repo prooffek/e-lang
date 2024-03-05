@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IFlashcardService, FlashcardService>();
         services.AddScoped<IAttemptStageService, AttemptStageService>();
         services.AddScoped<IExerciseService, ExerciseService>();
+        services.AddScoped<IFlashcardStateService, FlashcardStateService>();
         services.AddValidatorsFromAssemblyContaining<CreateCollectionDtoValidator>();
         services.AddFluentValidationAutoValidation();
         

@@ -4,7 +4,7 @@ using E_Lang.Application.Common.Errors;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
 
-namespace E_Lang.Application.IntegrationTests.Attempt.Commands;
+namespace E_Lang.Application.IntegrationTests.Attempts.Commands;
 
 [TestClass]
 public class DeleteAttemptRequestTests : Setup
@@ -378,7 +378,7 @@ public class DeleteAttemptRequestTests : Setup
                         .Build()
                     .Build()
                 .AddAttempt(out var attempt, quizType)
-                    .AddInitAttemptStageAsCurrentStage(out var initStage)
+                    .AddAttemptStage(out var initStage)
                         .Build()
                     .Build()
                 .Build()
@@ -397,129 +397,6 @@ public class DeleteAttemptRequestTests : Setup
         // Assert
         var result = await _attemptStageRepostory.GetByIdAsync(initStage.Id);
         result.Should().BeNull();
-    }
-
-    [TestMethod]
-    public async Task DeleteAttemptRequestTests_Handle_ShouldRemoveCompletedFlashcards()
-    {
-        // Arrange 
-        await _testBuilder
-            .AddUser(out var user)
-                .Build()
-            .AddQuizType(user.Id, out var quizType)
-                .Build()
-            .AddCollection(out var collection, user.Id)
-                .AddFlashcard(out var flashcard1)
-                    .AddFlashcardBase(out var flashcardBase1)
-                        .SetWordOrPhrase("Word 1")
-                        .Build()
-                    .AddMeaning(out var meaning1, flashcardBase1.Id)
-                        .SetValue("Meaning 1")
-                        .Build()
-                    .Build()
-                .AddFlashcard(out var flashcard2)
-                    .AddFlashcardBase(out var flashcardBase2)
-                        .SetWordOrPhrase("Word 2")
-                        .Build()
-                    .AddMeaning(out var meaning2, flashcardBase1.Id)
-                        .SetValue("Meaning 2")
-                        .Build()
-                    .Build()
-                .AddFlashcard(out var flashcard3)
-                    .AddFlashcardBase(out var flashcardBase3)
-                        .SetWordOrPhrase("Word 3")
-                        .Build()
-                    .AddMeaning(out var meaning3, flashcardBase3.Id)
-                        .SetValue("Meaning 3")
-                        .Build()
-                    .Build()
-                .AddFlashcard(out var flashcard4)
-                    .AddFlashcardBase(out var flashcardBase4)
-                        .SetWordOrPhrase("Word 4")
-                        .Build()
-                    .AddMeaning(out var meaning4, flashcardBase4.Id)
-                        .SetValue("Meaning 4")
-                        .Build()
-                    .Build()
-                .AddFlashcard(out var flashcard5)
-                    .AddFlashcardBase(out var flashcardBase5)
-                        .SetWordOrPhrase("Word 5")
-                        .Build()
-                    .AddMeaning(out var meaning5, flashcardBase5.Id)
-                        .SetValue("Meaning 5")
-                        .Build()
-                    .Build()
-                .AddFlashcard(out var flashcard6)
-                    .AddFlashcardBase(out var flashcardBase6)
-                        .SetWordOrPhrase("Word 6")
-                        .Build()
-                    .AddMeaning(out var meaning6, flashcardBase6.Id)
-                        .SetValue("Meaning 6")
-                        .Build()
-                    .Build()
-                .AddFlashcard(out var flashcard7)
-                    .AddFlashcardBase(out var flashcardBase7)
-                        .SetWordOrPhrase("Word 7")
-                        .Build()
-                    .AddMeaning(out var meaning7, flashcardBase7.Id)
-                        .SetValue("Meaning 7")
-                        .Build()
-                    .Build()
-                .AddFlashcard(out var flashcard8)
-                    .AddFlashcardBase(out var flashcardBase8)
-                        .SetWordOrPhrase("Word 8")
-                        .Build()
-                    .AddMeaning(out var meaning8, flashcardBase8.Id)
-                        .SetValue("Meaning 8")
-                        .Build()
-                    .Build()
-                .AddFlashcard(out var flashcard9)
-                    .AddFlashcardBase(out var flashcardBase9)
-                        .SetWordOrPhrase("Word 9")
-                        .Build()
-                    .AddMeaning(out var meaning9, flashcardBase9.Id)
-                        .SetValue("Meaning 9")
-                        .Build()
-                    .Build()
-                .AddFlashcard(out var flashcard10)
-                    .AddFlashcardBase(out var flashcardBase10)
-                        .SetWordOrPhrase("Word 10")
-                        .Build()
-                    .AddMeaning(out var meaning10, flashcardBase10.Id)
-                        .SetValue("Meaning 10")
-                        .Build()
-                    .Build()
-                .AddAttempt(out var attempt, quizType)
-                    .AddInitAttemptStageAsCurrentStage(out var initStage)
-                        .Build()
-                    .AddCompletedFlashcard(out var flashcard11)
-                        .AddFlashcardBase(out var flashcardBase11)
-                            .SetWordOrPhrase("Word 11")
-                            .Build()
-                        .AddMeaning(out var meaning11, flashcardBase11.Id)
-                            .SetValue("Meaning 11")
-                            .Build()
-                        .Build()
-                    .Build()
-                .Build()
-            .SaveAsync();
-
-        MockUserService.CurrentUser = user;
-
-        var request = new DeleteAttemptRequest()
-        {
-            AttemptId = attempt.Id,
-        };
-
-        // Act
-        await _mediator.Send(request);
-
-        // Assert
-        var result = await _completedFlashcardRepository.GetAllAsync();
-        result.Should().BeNullOrEmpty();
-
-        var flashcard = await _flashcardRepository.GetByIdAsync(flashcard11.Id);
-        flashcard.Should().NotBeNull();
     }
 
     [TestMethod]
@@ -573,7 +450,7 @@ public class DeleteAttemptRequestTests : Setup
                         .Build()
                     .Build()
                 .AddAttempt(out var attempt, quizType)
-                    .AddInitAttemptStageAsCurrentStage(out var initStage)
+                    .AddAttemptStage(out var initStage)
                         .AddFlashcard(out var flashcard6, collection)
                             .AddFlashcardBase(out var flashcardBase6)
                                 .SetWordOrPhrase("Word 6")

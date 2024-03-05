@@ -1,5 +1,6 @@
 ﻿using E_Lang.Domain.Entities;
 using E_Lang.Domain.Enums;
+using E_Lang.Domain.Interfaces;
 using E_Lang.Domain.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -39,7 +40,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var quiz = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz);
+            AddQuizType(attempt, quiz);
             var flashcardState = GetFlashcardState<InitFlashcardState>();
             var data = new NextStateData()
             {
@@ -101,7 +102,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var quiz = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz);
+            AddQuizType(attempt, quiz);
             var flashcardState = GetFlashcardState<InitFlashcardState>();
             var data = new NextStateData()
             {
@@ -128,7 +129,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var quiz = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz);
+            AddQuizType(attempt, quiz);
             var flashcardState = GetFlashcardState<InitFlashcardState>();
             var data = new NextStateData()
             {
@@ -156,8 +157,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = GetFlashcardState<InitFlashcardState>();
             var data = new NextStateData()
             {
@@ -185,8 +186,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = GetFlashcardState<InitFlashcardState>();
             var data = new NextStateData()
             {
@@ -233,8 +234,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = GetFlashcardState<InitFlashcardState>();
             var data = new NextStateData()
             {
@@ -261,8 +262,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = GetFlashcardState<InitFlashcardState>();
             var data = new NextStateData()
             {
@@ -292,8 +293,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = GetFlashcardState<InitFlashcardState>();
             var data = new NextStateData()
             {
@@ -322,8 +323,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = GetFlashcardState<InitFlashcardState>();
             var data = new NextStateData()
             {
@@ -394,8 +395,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = GetFlashcardState<InProgressFlashcardState>();
             var data = new NextStateData()
             {
@@ -421,8 +422,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = GetFlashcardState<InProgressFlashcardState>();
             var data = new NextStateData()
             {
@@ -450,8 +451,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = GetFlashcardState<InProgressFlashcardState>();
             var data = new NextStateData()
             {
@@ -479,8 +480,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = (InProgressFlashcardState) GetFlashcardState<InProgressFlashcardState>();
             flashcardState.CurrentQuizType = quiz1;
             flashcardState.CurrentQuizTypeId = quiz1.Id;
@@ -510,8 +511,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
             flashcardState.CurrentQuizType = quiz1;
             flashcardState.CurrentQuizTypeId = quiz1.Id;
@@ -541,8 +542,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
             flashcardState.CurrentQuizType = quiz1;
             flashcardState.CurrentQuizTypeId = quiz1.Id;
@@ -580,7 +581,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = minResult;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
             int take = minResult / 10 - 1;
 
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
@@ -622,7 +623,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = minResult;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
             int take = minResult / 10 - 3;
 
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
@@ -656,8 +657,8 @@ namespace E_Lang.Domain.UnitTests.Entities
             quiz1.IsFirst = true;
             var quiz2 = Builder.Entities.GetQuizType();
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes.Add(quiz1);
-            attempt.QuizTypes.Add(quiz2);
+            AddQuizType(attempt, quiz1);
+            AddQuizType(attempt, quiz2);
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
             flashcardState.CurrentQuizType = quiz1;
             flashcardState.CurrentQuizTypeId = quiz1.Id;
@@ -685,7 +686,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
 
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
 
@@ -716,7 +717,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
 
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
             flashcardState.SeenQuizTypes.Add(new SeenQuizType(flashcardState.Id, firstQuiz.Id));
@@ -748,7 +749,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
 
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
             flashcardState.SeenQuizTypes = defaultQuizzes.Select(x => (new SeenQuizType(flashcardState.Id, x.Id))).ToList();
@@ -779,7 +780,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
             var take = quizzes.Count - 1;
             var completedQuizzes = quizzes.Take(take).ToList();
 
@@ -815,7 +816,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
             var take = quizzes.Count - 1;
             var completedQuizzes = quizzes.Take(take).ToList();
 
@@ -850,7 +851,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
             var take = quizzes.Count - 1;
             var completedQuizzes = quizzes.Take(take).ToList();
 
@@ -935,7 +936,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var firstQuiz = quizzes.First(x => x.IsFirst);
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
 
             var flashcardState = GetFlashcardState<InitFlashcardState>();
 
@@ -953,7 +954,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var quizzes = GetQuizzes(10).Where(x => !x.IsFirst).ToList();
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
 
             var flashcardState = GetFlashcardState<InitFlashcardState>();
 
@@ -973,7 +974,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
 
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
 
@@ -1005,7 +1006,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
 
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
             flashcardState.SeenQuizTypes.Add(new SeenQuizType(flashcardState.Id, firstQuiz.Id));
@@ -1038,7 +1039,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
 
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
             flashcardState.SeenQuizTypes = defaultQuizzes.Select(x => (new SeenQuizType(flashcardState.Id, x.Id))).ToList();
@@ -1070,7 +1071,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
             var take = quizzes.Count - 1;
             var completedQuizzes = quizzes.Take(take).ToList();
 
@@ -1107,7 +1108,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
             var take = quizzes.Count - 1;
             var completedQuizzes = quizzes.Take(take).ToList();
 
@@ -1143,7 +1144,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
-            attempt.QuizTypes = quizzes;
+            AddQuizTypes(attempt, quizzes);
             var take = quizzes.Count - 1;
             var completedQuizzes = quizzes.Take(take).ToList();
 
@@ -1199,6 +1200,29 @@ namespace E_Lang.Domain.UnitTests.Entities
             }
 
             return quizzes;
+        }
+
+        private void AddQuizType(Attempt attempt, QuizType quizType)
+        {
+            if (attempt.AttemptQuizTypes is null)
+                attempt.AttemptQuizTypes = new List<AttemptQuizType>();
+
+            var attemptQuizType = new AttemptQuizType
+            {
+                AttemptId = attempt.Id,
+                QuizTypeId = quizType.Id,
+                QuizType = quizType
+            };
+
+            attempt.AttemptQuizTypes.Add(attemptQuizType);
+        }
+
+        private void AddQuizTypes(Attempt attempt, IEnumerable<QuizType> quizTypes)
+        {
+            foreach (var quizType in quizTypes)
+            {
+                AddQuizType(attempt, quizType);
+            }
         }
     }
 }

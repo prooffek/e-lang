@@ -16,26 +16,30 @@ public class AttemptRepository : RepositoryWithDto<Attempt, AttemptDto>, IAttemp
 
     public override async Task<IEnumerable<AttemptDto>> GetAllAsDtoAsync(CancellationToken cancellationToken = default)
     {
-        return await _queryWithIncludes
-            .ProjectToType<AttemptDto>()
-            .ToListAsync(cancellationToken);
+        return (await _queryWithIncludes
+            .ToListAsync(cancellationToken))
+            .Adapt<IEnumerable<AttemptDto>>();
     }
 
     public override async Task<AttemptDto?> GetByIdAsDtoAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _queryWithIncludes
-            .ProjectToType<AttemptDto>()
-            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+        return (await _queryWithIncludes
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken))
+            .Adapt<AttemptDto>();
     }
 
     protected override IQueryable<Attempt> GetQueryWithIncludes()
     {
         return _entity
             .Include(a => a.Properties)
-            .Include(a => a.QuizTypes)
-            .Include(a => a.CompletedFlashcards)
+            .Include(a => a.AttemptQuizTypes)
+                .ThenInclude(qt => qt.QuizType)
             .Include(a => a.Collection)
-            .Include(a => a.CurrentStage)
-                .ThenInclude(s => s.Flashcards);
+                .ThenInclude(x => x.Flashcards)
+            .Include(a => a.AttemptStages)
+                .ThenInclude(s => s.Flashcards)
+                    .ThenInclude(fs => fs.Flashcard)
+                        .ThenInclude(f => f.FlashcardBase)
+                            .ThenInclude(fb => fb.Meanings);
     }
 }

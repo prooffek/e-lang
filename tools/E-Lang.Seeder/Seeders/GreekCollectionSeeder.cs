@@ -9,6 +9,7 @@ namespace E_Lang.Seeder.Seeders
     {
         private readonly Guid _userId;
         private readonly IQuizTypeRepository _quizTypeRepository;
+        private readonly IAttemptRepository _attemptRepository;
 
         private Collection? _unit10;
 
@@ -16,6 +17,7 @@ namespace E_Lang.Seeder.Seeders
         {
             _userId = _userService.GetUserId();
             _quizTypeRepository = serviceProvider.GetRequiredService<IQuizTypeRepository>();
+            _attemptRepository = serviceProvider.GetRequiredService<IAttemptRepository>();
         }
 
         public override async Task Seed()
@@ -41,12 +43,12 @@ namespace E_Lang.Seeder.Seeders
                         .SetName("Modern Greek - A1")
                         .AddSubcollection(out _unit10)
                             .SetName("Unit 10")
-                            .AddAttempt(out var _, firstQuiz)
+                            .AddAttempt(out var attempt, firstQuiz)
                                 .SetName("Default attempt")
                                 .SetMaxFlashcardsPerStage(5)
                                 .AddQuizType(secondQuiz)
-                                .AddInitAttemptStageAsCurrentStage(out var _)
-                                    .AddFlashcard(out var _, collection)
+                                .AddInitAttemptStageAsCurrentStage(out var currentStage)
+                                    .AddFlashcard(out var _, _unit10)
                                         .AddFlashcardBase(out var _)
                                             .SetWordOrPhrase("σήμερα")
                                             .AddMeaning(out Meaning _)
@@ -57,7 +59,7 @@ namespace E_Lang.Seeder.Seeders
                                                 .Build()
                                             .Build()
                                         .Build()
-                                    .AddFlashcard(out var _, collection)
+                                    .AddFlashcard(out var _, _unit10)
                                         .AddFlashcardBase(out var _)
                                             .SetWordOrPhrase("νούμερο")
                                             .AddMeaning(out Meaning _)
@@ -68,7 +70,7 @@ namespace E_Lang.Seeder.Seeders
                                                 .Build()
                                             .Build()
                                         .Build()
-                                    .AddFlashcard(out var _, collection)
+                                    .AddFlashcard(out var _, _unit10)
                                         .AddFlashcardBase(out var _)
                                             .SetWordOrPhrase("περίοδος")
                                             .AddMeaning(out Meaning _)
@@ -79,7 +81,7 @@ namespace E_Lang.Seeder.Seeders
                                                 .Build()
                                             .Build()
                                         .Build()
-                                    .AddFlashcard(out var _, collection)
+                                    .AddFlashcard(out var _, _unit10)
                                         .AddFlashcardBase(out var _)
                                             .SetWordOrPhrase("μέσο")
                                             .AddMeaning(out Meaning _)
@@ -90,7 +92,7 @@ namespace E_Lang.Seeder.Seeders
                                                 .Build()
                                             .Build()
                                         .Build()
-                                    .AddFlashcard(out var _, collection)
+                                    .AddFlashcard(out var _, _unit10)
                                         .AddFlashcardBase(out var _)
                                             .SetWordOrPhrase("οδηγός")
                                             .AddMeaning(out Meaning _)
@@ -110,6 +112,10 @@ namespace E_Lang.Seeder.Seeders
                         .Build()
                     .Build()
                 .SaveAsync();
+
+            attempt.AttemptStages ??= new List<AttemptStage>();
+            attempt.AttemptStages.Add(currentStage);
+            await _attemptRepository.SaveAsync(default);
         }
 
         private async Task SeedFlashcards()

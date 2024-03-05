@@ -6,7 +6,7 @@ using E_Lang.Domain.Enums;
 using E_Lang.Tests.Common.Mocks;
 using FluentAssertions;
 
-namespace E_Lang.Application.IntegrationTests.Attempt.Commands
+namespace E_Lang.Application.IntegrationTests.Attempts.Commands
 {
     [TestClass]
     public class AddAttemptRequestTests : Setup

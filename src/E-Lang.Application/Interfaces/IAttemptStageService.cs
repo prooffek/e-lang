@@ -5,6 +5,8 @@ namespace E_Lang.Application.Interfaces
 {
     public interface IAttemptStageService
     {
-        AttemptStage GetInitAttemptStage(IEnumerable<Flashcard> allFlashcards, FlashcardOrder order, int maxFlashcards);
+        AttemptStage GetAttemptStage(Guid attemptId, IEnumerable<Flashcard> allFlashcards, FlashcardOrder order, int maxFlashcards);
+        Task<AttemptStage?> GetNextAttemptStage(Attempt attempt, CancellationToken cancellationToken);
+        Task CompleteAttemptStage(Attempt attempt, CancellationToken cancellationToken);
     }
 }

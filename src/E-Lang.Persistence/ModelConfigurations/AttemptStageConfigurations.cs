@@ -11,11 +11,6 @@ public static class AttemptStageConfigurations
         {
             entity.HasIndex(e => e.Id);
 
-            entity.HasOne<Attempt>()
-                    .WithOne(a => a.CurrentStage)
-                    .HasForeignKey<AttemptStage>()
-                    .OnDelete(DeleteBehavior.Cascade);
-
             entity.HasMany(a => a.Flashcards)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);

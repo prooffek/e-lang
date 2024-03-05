@@ -16,10 +16,6 @@ namespace E_Lang.Persistence.ModelConfigurations
                     .WithMany(c => c.Attempts)
                     .HasForeignKey(a => a.CollectionId);
 
-                entity.HasMany(a => a.CompletedFlashcards)
-                    .WithMany()
-                    .UsingEntity<CompletedFlashcard>();
-                
                 entity.HasMany(e => e.Properties)
                     .WithMany()
                     .UsingEntity<AttemptProperty>();

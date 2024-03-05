@@ -41,18 +41,24 @@ namespace E_Lang.Application.Attempts.Commands
 
             var flashcards = await _flashcardRepository.GetFlashcardsByCollectionId(request.Attempt.CollectionId, cancellationToken);
 
-            var attemptStage = _attemptStageService.GetInitAttemptStage(flashcards, request.Attempt.Order, request.Attempt.MaxFlashcardsPerStage);
-
             var attempt = _mapper.Map<Attempt>(request.Attempt)
-                ?? throw new Exception($"Cannot convert from {nameof(AddAttemptDto)} to {nameof(Attempt)}");
+                          ?? throw new Exception($"Cannot convert from {nameof(AddAttemptDto)} to {nameof(Attempt)}");
 
-            attempt.CurrentStage = attemptStage;
+            var attemptStage = _attemptStageService.GetAttemptStage(attempt.Id, flashcards, request.Attempt.Order, request.Attempt.MaxFlashcardsPerStage);
 
-            _attemptRepository.Add(attempt);
-            await _attemptRepository.SaveAsync();
+            await UpdateAttempt(attempt, attemptStage, cancellationToken);
 
             return await _attemptRepository.GetByIdAsDtoAsync(attempt.Id, cancellationToken)
                 ?? throw new NullOrEmptyValidationException(nameof(Attempt), nameof(Attempt.Id), ActionTypes.Get);
+        }
+
+        private async Task UpdateAttempt(Attempt attempt, AttemptStage attemptStage, CancellationToken cancellationToken)
+        {
+            attempt.AttemptStages ??= new List<AttemptStage>();
+            attempt.AttemptStages.Add(attemptStage);
+            _attemptRepository.Add(attempt);
+
+            await _attemptRepository.SaveAsync(cancellationToken);
         }
     }
 }
