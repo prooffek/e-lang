@@ -33,12 +33,12 @@ namespace E_Lang.Seeder.Seeders
                 ?? throw new NullReferenceException("First quiz not found.");
 
             var secondQuiz = (await _quizTypeRepository.GetAllAsync())
-                .FirstOrDefault(x => x.IsSelect && x.MaxAnswersToSelect != 1)
+                .FirstOrDefault(x => x.IsSelect && x.MaxAnswersToSelect > 1)
                 ?? throw new NullReferenceException("First quiz not found.");
 
             var thirdQuiz = (await _quizTypeRepository.GetAllAsync())
-                             .FirstOrDefault(x => x is {IsSelect: true, MaxAnswersToSelect: 1, IsSelectCorrect: false})
-                             ?? throw new NullReferenceException("First quiz not found.");
+                .FirstOrDefault(x => x.IsInput)
+                ?? throw new NullReferenceException("First quiz not found.");
 
             await Builder
                 .AddCollection(out var collection, _userId)
@@ -51,6 +51,7 @@ namespace E_Lang.Seeder.Seeders
                                 .SetName("Default attempt")
                                 .SetMaxFlashcardsPerStage(5)
                                 .AddQuizType(secondQuiz)
+                                .AddQuizType(thirdQuiz)
                                 .AddInitAttemptStageAsCurrentStage(out var currentStage)
                                     .AddInProgressFlashcardState(out var _, secondQuiz)
                                         .AddCompletedQuizType(firstQuiz)

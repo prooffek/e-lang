@@ -37,8 +37,12 @@ namespace E_Lang.Application.Services
             exercise.AttemptId = data.AttemptId;
             exercise.FlashcardStateId = data.FlashcardStateId;
             exercise.WordOrPhrase = data.FlashcardBase.WordOrPhrase;
-            await SetAnswers(exercise, data.CollectionId, data.FlashcardBase.Meanings, data.QuizType, cancellationToken);
 
+            if (data.QuizType.IsSelect)
+            {
+                await SetAnswers(exercise, data.CollectionId, data.FlashcardBase.Meanings, data.QuizType, cancellationToken);
+            }
+            
             return exercise;
         }
 

@@ -14,9 +14,9 @@ public class ExerciseDto : IMapper<QuizType>
     
     public string WordOrPhrase { get; set; }
     
-    public IEnumerable<AnswerDto> CorrectAnswers { get; set; }
+    public IEnumerable<AnswerDto>? CorrectAnswers { get; set; }
     
-    public IEnumerable<AnswerDto> IncorrectAnswers { get; set; }
+    public IEnumerable<AnswerDto>? IncorrectAnswers { get; set; }
     
     public bool IsSingleSelect { get; set; }
 

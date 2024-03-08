@@ -135,7 +135,7 @@ namespace E_Lang.Domain.Entities
 
             var quiz = availableQuizzes?.FirstOrDefault(x => x.IsFirst)
                        ?? availableQuizzes?.FirstOrDefault(x => x.IsDefault)
-                       ?? availableQuizzes?.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+                       ?? availableQuizzes?.MinBy(x => Guid.NewGuid());
 
             CurrentQuizTypeId = quiz?.Id;
             CurrentQuizType = quiz;

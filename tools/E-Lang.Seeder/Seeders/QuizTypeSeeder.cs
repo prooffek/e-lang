@@ -50,6 +50,11 @@ namespace E_Lang.Seeder.Seeders
                     .SetInstruction("Put words in the correct order to create the correct phrase.")
                     .SetIsArrange()
                     .Build()
+                .AddQuizType(_userId, out var _)
+                    .SetName("Input.")
+                    .SetInstruction("Enter the correct answer.")
+                    .SetIsInput()
+                    .Build()
                 .SaveAsync();
         }
     }
