@@ -17,8 +17,8 @@ public class ExerciseDto : IMapper<QuizType>
     public IEnumerable<AnswerDto> CorrectAnswers { get; set; }
     
     public IEnumerable<AnswerDto> IncorrectAnswers { get; set; }
-
-    public bool IsSelect { get; set; }
+    
+    public bool IsSingleSelect { get; set; }
 
     public bool IsMultiSelect { get; set; }
 
@@ -35,6 +35,7 @@ public class ExerciseDto : IMapper<QuizType>
     public void Map(TypeAdapterConfig config)
     {
         config.NewConfig<QuizType, ExerciseDto>()
-            .Map(dest => dest.IsMultiSelect, src => src.MaxAnswersToSelect > 1);
+            .Map(dest => dest.IsSingleSelect, src => src.IsSelect && src.MaxAnswersToSelect == 1)
+            .Map(dest => dest.IsMultiSelect, src => src.IsSelect && src.MaxAnswersToSelect > 1);
     }
 }

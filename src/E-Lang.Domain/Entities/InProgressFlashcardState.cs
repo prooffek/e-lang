@@ -72,22 +72,22 @@ namespace E_Lang.Domain.Entities
             }
 
             if (CurrentQuizType is not null && data.IsAnswerCorrect.Value 
-                && !CompletedQuizTypes.Any(q => q.QuizTypeId == CurrentQuizTypeId))
+                && CompletedQuizTypes.All(q => q.QuizTypeId != CurrentQuizTypeId))
             {
                 var quizType = new CompletedQuizType(Id, CurrentQuizType.Id);
                 CompletedQuizTypes.Add(quizType);
             }
 
-            if (CurrentQuizType is not null && !SeenQuizTypes.Any(q => q.QuizTypeId == CurrentQuizTypeId))
+            if (CurrentQuizType is not null && SeenQuizTypes.All(q => q.QuizTypeId != CurrentQuizTypeId))
             {
                 var quizType = new SeenQuizType(Id, CurrentQuizType.Id);
                 SeenQuizTypes.Add(quizType);
             }
 
+            SetNewCurrentQuiz(data.Attempt.QuizTypes);
+
             if (data.Attempt is not null && IsCompleted(data.Attempt))
                 return new CompletedFlashcardState(this, data.UtcNow);
-
-            SetNewCurrentQuiz(data.Attempt.QuizTypes);
 
             return this;
         }
@@ -95,6 +95,17 @@ namespace E_Lang.Domain.Entities
         public override QuizType GetQuiz(Attempt attempt)
         {
             return CurrentQuizType;
+        }
+
+
+        public bool IsCompleted(Attempt attempt)
+        {
+            var quizTypesNumber = attempt.QuizTypes?.Count() ?? 1;
+            var seenQuizzes = SeenQuizTypes.Count;
+            var completedQuizzes = CompletedQuizTypes.Count;
+            var correctInPreCent = (int)((float)completedQuizzes / seenQuizzes * 100);
+
+            return seenQuizzes == quizTypesNumber && correctInPreCent >= attempt.MinCompletedQuizzesPerCent;
         }
 
         private void SetInitQuizType(Attempt attempt, bool? isAnswerCorrect)
@@ -111,32 +122,54 @@ namespace E_Lang.Domain.Entities
                 CompletedQuizTypes.Add(new CompletedQuizType(Id, quiz.Id));
             }
 
+            CompleteMultiselectQuizType(attempt);
+
             SetNewCurrentQuiz(attempt.QuizTypes);
         }
 
         private void SetNewCurrentQuiz(IEnumerable<QuizType> quizzes)
         {
             var completedQuizIds = CompletedQuizTypes.Select(x => x.QuizTypeId).ToHashSet();
-            var availableQuizzes = quizzes.Where(x => !completedQuizIds.Contains(x.Id));
+            var availableQuizzes = quizzes.Where(x => !completedQuizIds.Contains(x.Id) && (x.MaxAnswersToSelect == 1 || Flashcard.FlashcardBase.Meanings.Count > 1));
 
 
             var quiz = availableQuizzes?.FirstOrDefault(x => x.IsFirst)
-                ?? availableQuizzes?.FirstOrDefault(x => x.IsDefault)
-                ?? availableQuizzes?.OrderBy(x => Guid.NewGuid()).FirstOrDefault()
-                ?? throw new NullReferenceException("Next quiz not found.");
+                       ?? availableQuizzes?.FirstOrDefault(x => x.IsDefault)
+                       ?? availableQuizzes?.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
 
-            CurrentQuizTypeId = quiz.Id;
+            CurrentQuizTypeId = quiz?.Id;
             CurrentQuizType = quiz;
         }
 
-        private bool IsCompleted(Attempt attempt)
+        private void CompleteMultiselectQuizType(Attempt attempt)
         {
-            var quizTypesNumber = attempt.QuizTypes?.Count() ?? 1;
-            var seenQuizzes = SeenQuizTypes.Count;
-            var completedQuizzes = CompletedQuizTypes.Count;
-            var correctInPreCent = (int)((float)completedQuizzes / seenQuizzes * 100);
+            var meanings = Flashcard?.FlashcardBase?.Meanings;
 
-            return seenQuizzes == quizTypesNumber && correctInPreCent >= attempt.MinCompletedQuizzesPerCent;
+            if (meanings is null)
+                return;
+
+            if (meanings.Count == 1)
+            {
+                var multiselectQuizzes = attempt.QuizTypes
+                    .Where(x => x is {IsSelectCorrect: true, MaxAnswersToSelect: > 1});
+
+                CompleteMultiselectQuizzes(multiselectQuizzes);
+                SetMultiselectQuizzesAsSeen(multiselectQuizzes);
+            }
+        }
+
+        private void CompleteMultiselectQuizzes(IEnumerable<QuizType> multiselectQuizzes)
+        {
+            var completedQuizzes = CompletedQuizTypes.ToList();
+            completedQuizzes.AddRange(multiselectQuizzes.Select(x => new CompletedQuizType(Id, x.Id)));
+            CompletedQuizTypes = completedQuizzes;
+        }
+
+        private void SetMultiselectQuizzesAsSeen(IEnumerable<QuizType> multiselectQuizzes)
+        {
+            var seenQuizzes = SeenQuizTypes.ToList();
+            seenQuizzes.AddRange(multiselectQuizzes.Select(x => new SeenQuizType(Id, x.Id)));
+            SeenQuizTypes = seenQuizzes;
         }
     }
 }

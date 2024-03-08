@@ -344,7 +344,7 @@ namespace E_Lang.Domain.UnitTests.Entities
         [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
-        public void InitFlashcardState_GetNextState_ShouldThrowIfQuizNotFound(bool isAnswerCorrect)
+        public void InitFlashcardState_GetNextState_ShouldSetCurrentQuizToNullQuizNotFound(bool isAnswerCorrect)
         {
             // Arrange
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
@@ -357,11 +357,126 @@ namespace E_Lang.Domain.UnitTests.Entities
                 IsAnswerCorrect = isAnswerCorrect
             };
 
-            var exception = Assert.ThrowsException<NullReferenceException>(() => flashcardState.GetNextState(data));
+            var result = flashcardState.GetNextState(data);
 
             // Assert
-            exception.Should().NotBeNull();
-            exception.Message.Should().Be("Next quiz not found.");
+            result.Should().BeOfType<InProgressFlashcardState>();
+
+            var resultFlashcardState = (InProgressFlashcardState) result;
+            resultFlashcardState.CurrentQuizTypeId.Should().BeNull();
+            resultFlashcardState.CurrentQuizType.Should().BeNull();
+        }
+
+        [TestMethod]
+        [DataRow(2)]
+        [DataRow(3)]
+        public void
+        InitFlashcardState_GetNextState_ShouldCompleteMultiselectQuizzesIfOnlyOneMeaning(int maxAnswersCount)
+        {
+            // Arrange
+            var quizzes = GetQuizzes(3).ToList();
+            var secondQuiz = quizzes.First(x => !x.IsFirst);
+            secondQuiz.MaxAnswersToSelect = maxAnswersCount;
+            var collection = Builder.Entities.GetCollection(Guid.NewGuid());
+            var attempt = Builder.Entities.GetAttempt(collection);
+            attempt.MinCompletedQuizzesPerCent = 100;
+            AddQuizTypes(attempt, quizzes);
+
+            var flashcardState = GetFlashcardState<InitFlashcardState>();
+            flashcardState?.Flashcard?.FlashcardBase?.Meanings.Add(Builder.Entities.GetMeaning(flashcardState.Flashcard.FlashcardBaseId));
+
+            var data = new NextStateData()
+            {
+                UtcNow = DateTime.Now,
+                Attempt = attempt,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var result = flashcardState?.GetNextState(data);
+
+            // Assert
+            result.Should().NotBeNull()
+                .And.BeOfType<InProgressFlashcardState>();
+
+            var inProgressFlashcardState = (InProgressFlashcardState) result;
+            inProgressFlashcardState.CompletedQuizTypes.Should().NotBeNullOrEmpty();
+            inProgressFlashcardState.CompletedQuizTypes.Any(x => x.QuizTypeId == secondQuiz.Id);
+        }
+
+        [TestMethod]
+        [DataRow(2)]
+        [DataRow(3)]
+        public void
+            InitFlashcardState_GetNextState_ShouldSetMultiselectQuizzesAsSeenIfOnlyOneMeaning(int maxAnswersCount)
+        {
+            // Arrange
+            var quizzes = GetQuizzes(3).ToList();
+            var secondQuiz = quizzes.First(x => !x.IsFirst);
+            secondQuiz.MaxAnswersToSelect = maxAnswersCount;
+            var collection = Builder.Entities.GetCollection(Guid.NewGuid());
+            var attempt = Builder.Entities.GetAttempt(collection);
+            attempt.MinCompletedQuizzesPerCent = 100;
+            AddQuizTypes(attempt, quizzes);
+
+            var flashcardState = GetFlashcardState<InitFlashcardState>();
+            flashcardState?.Flashcard?.FlashcardBase?.Meanings.Add(Builder.Entities.GetMeaning(flashcardState.Flashcard.FlashcardBaseId));
+
+            var data = new NextStateData()
+            {
+                UtcNow = DateTime.Now,
+                Attempt = attempt,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var result = flashcardState?.GetNextState(data);
+
+            // Assert
+            result.Should().NotBeNull()
+                .And.BeOfType<InProgressFlashcardState>();
+
+            var inProgressFlashcardState = (InProgressFlashcardState)result;
+            inProgressFlashcardState.SeenQuizTypes.Should().NotBeNullOrEmpty();
+            inProgressFlashcardState.SeenQuizTypes.Any(x => x.QuizTypeId == secondQuiz.Id);
+        }
+
+        [TestMethod]
+        [DataRow(2)]
+        [DataRow(3)]
+        public void
+            InitFlashcardState_GetNextState_ShouldAllowMultiselectExerciseWithSelectionOfIncorrectAnswers(int maxAnswersCount)
+        {
+            // Arrange
+            var quizzes = GetQuizzes(3).ToList();
+            var secondQuiz = quizzes.First(x => !x.IsFirst);
+            secondQuiz.MaxAnswersToSelect = maxAnswersCount;
+            secondQuiz.IsSelectCorrect = false;
+            var collection = Builder.Entities.GetCollection(Guid.NewGuid());
+            var attempt = Builder.Entities.GetAttempt(collection);
+            attempt.MinCompletedQuizzesPerCent = 100;
+            AddQuizTypes(attempt, quizzes);
+
+            var flashcardState = GetFlashcardState<InitFlashcardState>();
+            flashcardState?.Flashcard?.FlashcardBase?.Meanings.Add(Builder.Entities.GetMeaning(flashcardState.Flashcard.FlashcardBaseId));
+
+            var data = new NextStateData()
+            {
+                UtcNow = DateTime.Now,
+                Attempt = attempt,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var result = flashcardState?.GetNextState(data);
+
+            // Assert
+            result.Should().NotBeNull()
+                .And.BeOfType<InProgressFlashcardState>();
+
+            var inProgressFlashcardState = (InProgressFlashcardState)result;
+            inProgressFlashcardState.CompletedQuizTypes.FirstOrDefault(x => x.QuizTypeId == secondQuiz.Id).Should().BeNull();
+            inProgressFlashcardState.SeenQuizTypes.FirstOrDefault(x => x.QuizTypeId == secondQuiz.Id).Should().BeNull();
         }
 
         #endregion
@@ -1170,12 +1285,56 @@ namespace E_Lang.Domain.UnitTests.Entities
             result.Should().Be(secondQuiz);
         }
 
+
+        [TestMethod]
+        [DataRow(2)]
+        [DataRow(3)]
+        public void InProgressFlashcardState_GetQuiz_ShouldNotReturnMultiselectIfFlashcardWithOnlyOneMeaning(int maxAnswersCount)
+        {
+            // Arrange
+            var quizzes = GetQuizzes(3).ToList();
+            var firstQuiz = quizzes.First(x => x.IsFirst);
+            var secondQuiz = quizzes.First(x => !x.IsFirst);
+            secondQuiz.MaxAnswersToSelect = maxAnswersCount;
+            var lastQuiz = quizzes.First(x => !x.IsFirst && x.Id != secondQuiz.Id);
+            var collection = Builder.Entities.GetCollection(Guid.NewGuid());
+            var attempt = Builder.Entities.GetAttempt(collection);
+            attempt.MinCompletedQuizzesPerCent = 100;
+            AddQuizTypes(attempt, quizzes);
+
+            var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
+            flashcardState.CurrentQuizTypeId = firstQuiz.Id;
+            flashcardState.CurrentQuizType = firstQuiz;
+            flashcardState.Flashcard.FlashcardBase.Meanings.Add(Builder.Entities.GetMeaning(flashcardState.Flashcard.FlashcardBaseId));
+
+            var data = new NextStateData()
+            {
+                UtcNow = DateTime.Now,
+                Attempt = attempt,
+                IsAnswerCorrect = true
+            };
+
+            var _ = flashcardState.GetNextState(data);
+
+            // Act
+            var result = flashcardState.GetQuiz(attempt);
+
+            // Assert
+            result.Should().Be(lastQuiz);
+        }
+
         #endregion
+
+        #region Auxiliary Methods
+
+
 
 
         private FlashcardState GetFlashcardState<T>() where T : FlashcardState
         {
             var flashcard = Builder.Entities.GetFlashcard(Guid.NewGuid(), Guid.NewGuid());
+            flashcard.FlashcardBase = Builder.Entities.GetFlashcardBase();
+            flashcard.FlashcardBaseId = flashcard.FlashcardBase.Id;
 
             return typeof(T).Name switch
             {
@@ -1224,5 +1383,7 @@ namespace E_Lang.Domain.UnitTests.Entities
                 AddQuizType(attempt, quizType);
             }
         }
+
+        #endregion
     }
 }

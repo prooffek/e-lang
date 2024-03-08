@@ -18,8 +18,13 @@ public class InitFlashcardState : FlashcardState
 
     public override FlashcardState GetNextState(NextStateData data)
     {
-        return data.IsAnswerCorrect.HasValue 
-            ? new InProgressFlashcardState(this, data) 
-            : new InProgressFlashcardState(this, data.UtcNow);
+        if (!data.IsAnswerCorrect.HasValue || data.Attempt is null)
+            return new InProgressFlashcardState(this, data.UtcNow);
+
+        var flashcardState = new InProgressFlashcardState(this, data);
+
+        return flashcardState.IsCompleted(data.Attempt)
+            ? new CompletedFlashcardState(flashcardState, data.UtcNow)
+            : flashcardState;
     }
 }

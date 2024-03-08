@@ -59,7 +59,7 @@ namespace E_Lang.Application.Services
         private async Task SetAnswers(ExerciseDto exercise, Guid collectionId, IEnumerable<Meaning> meanings, QuizType quizType, CancellationToken cancellationToken)
         {
             var meaningsFromFlashcard = GetAnswers(meanings, quizType.MaxAnswersToSelect);
-            var meaningsFromDb = await _flashcardRepository.GetRadomAnswers(collectionId, meanings, ALL_ANSWERS_NUMBER - quizType.MaxAnswersToSelect, cancellationToken);
+            var meaningsFromDb = await _flashcardRepository.GetRadomAnswers(collectionId, meanings, ALL_ANSWERS_NUMBER - meaningsFromFlashcard.Count(), cancellationToken);
 
             exercise.CorrectAnswers = quizType.IsSelectCorrect ? meaningsFromFlashcard : meaningsFromDb;
             exercise.IncorrectAnswers = quizType.IsSelectCorrect ? meaningsFromDb : meaningsFromFlashcard;

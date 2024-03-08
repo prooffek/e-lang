@@ -1171,7 +1171,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             result.ExerciseDto.WordOrPhrase.Should().Be(flashcardState.Flashcard.FlashcardBase.WordOrPhrase);
             result.ExerciseDto.CorrectAnswers.Should().NotBeNull();
             result.ExerciseDto.IncorrectAnswers.Should().NotBeNull();
-            result.ExerciseDto.IsSelect.Should().Be(quizType.IsSelect);
+            result.ExerciseDto.IsSingleSelect.Should().Be(quizType.IsSelect && quizType.MaxAnswersToSelect == 1);
             result.ExerciseDto.IsMultiSelect.Should().Be(quizType.MaxAnswersToSelect > 1);
             result.ExerciseDto.IsSelectMissing.Should().Be(quizType.IsSelectMissing);
             result.ExerciseDto.IsMatch.Should().Be(quizType.IsMatch);
@@ -3969,6 +3969,142 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
                 .And.HaveCount(2);
             resultAttempt.CompletedFlashcards.All(x => completedFlasgcardIds.Contains(x.Id))
                 .Should().BeTrue();
+        }
+
+        [TestMethod]
+        [DataRow(2)]
+        [DataRow(3)]
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldCompleteMultiselectQuizzesIfOnlyOnMeaning(int maxAnswersToSelect)
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType)
+                    .SetIsFirst()
+                    .SetIsSingleSelect(true)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType2)
+                    .SetIsArrange()
+                    .Build()
+                .AddQuizType(user.Id, out var quizType3)
+                    .SetIsMultiselect(true, maxAnswersToSelect)
+                    .Build()
+                .AddCollection(out var collection1, user.Id)
+                    .AddAttempt(out var attempt1, quizType)
+                        .AddQuizType(quizType2)
+                        .AddQuizType(quizType3)
+                        .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
+                            .AddFlashcard(out var flashcard1, collection1)
+                                .AddFlashcardBase(out var flashcardBase1)
+                                    .SetWordOrPhrase("Phrase 1")
+                                    .AddMeaning(out var meaning1)
+                                        .SetValue("Phrase 1 Meaning 1")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddFlashcard(out var flashcard2, collection1)
+                                .AddFlashcardBase(out var flashcardBase2)
+                                    .SetWordOrPhrase("Phrase 1")
+                                    .AddMeaning(out var meaning3)
+                                        .SetValue("Phrase 1 Meaning 1")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+
+            var flashcardState = attemptStage1.Flashcards.First(x => x.FlashcardId == flashcard1.Id);
+
+            var request = new GetNextExerciseRequest()
+            {
+                AttemptId = attempt1.Id,
+                FlashcardStateId = flashcardState.Id,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            var resultFlashcardSate = await _flashcardStateRepository.GetByIdAsync(flashcardState.Id);
+            resultFlashcardSate.Should().BeOfType<InProgressFlashcardState>();
+
+            var result = (InProgressFlashcardState) resultFlashcardSate;
+            result.CompletedQuizTypes.Should().NotBeNullOrEmpty();
+            result.CompletedQuizTypes.Any(x => x.QuizTypeId == quizType3.Id).Should().BeTrue();
+        }
+
+        [TestMethod]
+        [DataRow(2)]
+        [DataRow(3)]
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldSetMultiselectQuizzesAsSeenIfOnlyOnMeaning(int maxAnswersToSelect)
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType)
+                    .SetIsFirst()
+                    .SetIsSingleSelect(true)
+                    .Build()
+                .AddQuizType(user.Id, out var quizType2)
+                    .SetIsArrange()
+                    .Build()
+                .AddQuizType(user.Id, out var quizType3)
+                    .SetIsMultiselect(true, maxAnswersToSelect)
+                    .Build()
+                .AddCollection(out var collection1, user.Id)
+                    .AddAttempt(out var attempt1, quizType)
+                        .AddQuizType(quizType2)
+                        .AddQuizType(quizType3)
+                        .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
+                            .AddFlashcard(out var flashcard1, collection1)
+                                .AddFlashcardBase(out var flashcardBase1)
+                                    .SetWordOrPhrase("Phrase 1")
+                                    .AddMeaning(out var meaning1)
+                                        .SetValue("Phrase 1 Meaning 1")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .AddFlashcard(out var flashcard2, collection1)
+                                .AddFlashcardBase(out var flashcardBase2)
+                                    .SetWordOrPhrase("Phrase 1")
+                                    .AddMeaning(out var meaning3)
+                                        .SetValue("Phrase 1 Meaning 1")
+                                        .Build()
+                                    .Build()
+                                .Build()
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+
+            var flashcardState = attemptStage1.Flashcards.First(x => x.FlashcardId == flashcard1.Id);
+
+            var request = new GetNextExerciseRequest()
+            {
+                AttemptId = attempt1.Id,
+                FlashcardStateId = flashcardState.Id,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            var resultFlashcardSate = await _flashcardStateRepository.GetByIdAsync(flashcardState.Id);
+            resultFlashcardSate.Should().BeOfType<InProgressFlashcardState>();
+
+            var result = (InProgressFlashcardState)resultFlashcardSate;
+            result.SeenQuizTypes.Should().NotBeNullOrEmpty();
+            result.SeenQuizTypes.Any(x => x.QuizTypeId == quizType3.Id).Should().BeTrue();
         }
     }
 }

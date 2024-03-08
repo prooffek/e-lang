@@ -140,7 +140,7 @@ namespace E_Lang.Application.UnitTests.Services
             result.WordOrPhrase.Should().Be(flashcardBase.WordOrPhrase);
             result.CorrectAnswers.Should().NotBeNull();
             result.IncorrectAnswers.Should().NotBeNull();
-            result.IsSelect.Should().Be(quizType.IsSelect);
+            result.IsSingleSelect.Should().Be(quizType.IsSelect);
             result.IsMultiSelect.Should().Be(quizType.MaxAnswersToSelect > 1);
             result.IsSelectMissing.Should().Be(quizType.IsSelectMissing);
             result.IsMatch.Should().Be(quizType.IsMatch);
@@ -261,12 +261,49 @@ namespace E_Lang.Application.UnitTests.Services
             answers.Should().HaveCount(4);
         }
 
+        [TestMethod]
+        [DataRow(2)]
+        [DataRow(3)]
+        public async Task ExerciseService_GetExercise_ShouldShouldAdjustNumberOfAnswersToMeaningsNumber(int meaningsCount)
+        {
+            // Arrange
+            var flashcardStateId = Guid.NewGuid();
+            var collectionId = Guid.NewGuid();
+            var quizType = Entities.GetQuizType();
+            quizType.MaxAnswersToSelect = 3;
+            var exerciseDto = GetExerciseDto();
+            var flashcardBase = GetFlashcardBase(meaningsCount);
+            var correctAnswers = GetAnswers(flashcardBase.Meanings);
+            var incorrectAnswers = GetAnswers(GetMeanings(Entities.GetFlashcardBase(), 4 - meaningsCount));
+
+            _mapper.Setup(m => m.Map<ExerciseDto>(It.IsAny<QuizType>()))
+                .Returns(exerciseDto)
+                .Verifiable();
+
+            _flashcardRepository.Setup(r =>
+                    r.GetRadomAnswers(It.IsAny<Guid>(), It.IsAny<IEnumerable<Meaning>>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(incorrectAnswers))
+                .Verifiable();
+
+            var service = new ExerciseService(_mapper.Object, _flashcardRepository.Object, _dateTimeProvider.Object, _flashcardStateRepository.Object);
+            ExerciseData exerciseData = new(Guid.NewGuid(), flashcardStateId, collectionId, flashcardBase, quizType);
+
+            // Act
+            var result = await service.GetExercise(exerciseData, default);
+
+            // Assert
+            result.CorrectAnswers.Should().HaveCount(meaningsCount);
+
+            var answers = result.CorrectAnswers.Concat(incorrectAnswers);
+            answers.Should().HaveCount(4);
+        }
+
         private ExerciseDto GetExerciseDto()
         {
             return new ExerciseDto
             {
                 Instruction = "Chose the right answer",
-                IsSelect = true,
+                IsSingleSelect = true,
                 IsSelectMissing = false,
                 IsMatch = false,
                 IsArrange = false,
