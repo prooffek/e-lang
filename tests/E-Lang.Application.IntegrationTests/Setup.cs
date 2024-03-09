@@ -4,6 +4,7 @@ using E_Lang.Application.Interfaces;
 using E_Lang.Builder.Builders;
 using E_Lang.Persistence;
 using E_Lang.Tests.Common.Mocks;
+using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,7 @@ namespace E_Lang.Application.IntegrationTests
         protected static BaseBuilder _testBuilder;
         protected static AppDbContext _appDbContext;
         protected static IMediator _mediator;
+        protected static IMapper _mapper;
         protected static IDateTimeProvider _dateTimeProvider;
 
         protected static ICollectionRepository _collectionRepository;
@@ -58,6 +60,7 @@ namespace E_Lang.Application.IntegrationTests
 
             _applicationScope = scopeFactory.CreateScope();
             _mediator = _applicationScope.ServiceProvider.GetRequiredService<IMediator>();
+            _mapper = _applicationScope.ServiceProvider.GetRequiredService<IMapper>();
             _dateTimeProvider = _applicationScope.ServiceProvider.GetRequiredService<IDateTimeProvider>();
             
             _collectionRepository = _applicationScope.ServiceProvider.GetRequiredService<ICollectionRepository>();

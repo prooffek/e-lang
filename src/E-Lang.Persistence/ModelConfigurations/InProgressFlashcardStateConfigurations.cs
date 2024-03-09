@@ -20,6 +20,10 @@ namespace E_Lang.Persistence.ModelConfigurations
                 entity.HasMany(fs => fs.SeenQuizTypes)
                     .WithOne()
                     .HasForeignKey(x => x.InProgressFlashcardStateId);
+
+                entity.HasMany(x => x.ExcludedQuizTypes)
+                    .WithOne()
+                    .HasForeignKey(x => x.InProgressFlashcardStateId);
             });
 
             return modelBuilder;

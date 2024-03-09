@@ -5,6 +5,7 @@ namespace E_Lang.Application.Common.DTOs
 {
     public class QuizTypeDto : IMapper<QuizType>
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         
         public string Instruction { get; set; }

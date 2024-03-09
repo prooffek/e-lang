@@ -5,8 +5,6 @@ namespace E_Lang.Domain.Entities
     public class InProgressFlashcardState : FlashcardState
     {
         private const int SEE_AGAIN_IN_MINUTES = 1;
-
-        private ICollection<SeenQuizType> _seenQuizTypes;
         
         public Guid? CurrentQuizTypeId { get; set; }
         public QuizType? CurrentQuizType { get; set; }
@@ -17,16 +15,20 @@ namespace E_Lang.Domain.Entities
         
         public ICollection<CompletedQuizType> CompletedQuizTypes { get; set; }
 
+        public ICollection<ExcludedQuizType> ExcludedQuizTypes { get; set; }
+
         public InProgressFlashcardState()
         {
             SeenQuizTypes = new List<SeenQuizType>();
             CompletedQuizTypes = new List<CompletedQuizType>();
+            ExcludedQuizTypes = new List<ExcludedQuizType>();
         }
 
         public InProgressFlashcardState(Flashcard flashcard) : base(flashcard)
         {
             SeenQuizTypes = new List<SeenQuizType>();
             CompletedQuizTypes = new List<CompletedQuizType>();
+            ExcludedQuizTypes = new List<ExcludedQuizType>();
         }
 
         public InProgressFlashcardState(FlashcardState flashcardState, DateTime utcNow)
@@ -40,6 +42,7 @@ namespace E_Lang.Domain.Entities
             Flashcard.LastStatusChangedOn = utcNow;
             SeenQuizTypes = new List<SeenQuizType>();
             CompletedQuizTypes = new List<CompletedQuizType>();
+            ExcludedQuizTypes = new List<ExcludedQuizType>();
         }
 
         public InProgressFlashcardState(FlashcardState flashcardState, NextStateData data)
@@ -84,7 +87,7 @@ namespace E_Lang.Domain.Entities
                 SeenQuizTypes.Add(quizType);
             }
 
-            SetNewCurrentQuiz(data.Attempt.QuizTypes);
+            SetNewCurrentQuiz(data.Attempt.QuizTypes, data.Attempt.MaxQuizTypesPerFlashcard);
 
             if (data.Attempt is not null && IsCompleted(data.Attempt))
                 return new CompletedFlashcardState(this, data.UtcNow);
@@ -101,11 +104,13 @@ namespace E_Lang.Domain.Entities
         public bool IsCompleted(Attempt attempt)
         {
             var quizTypesNumber = attempt.QuizTypes?.Count() ?? 1;
-            var seenQuizzes = SeenQuizTypes.Count;
-            var completedQuizzes = CompletedQuizTypes.Count;
-            var correctInPreCent = (int)((float)completedQuizzes / seenQuizzes * 100);
+            var seenQuizzesNumber = SeenQuizTypes.Count;
+            var completedQuizzesNumber = CompletedQuizTypes.Count;
+            var excludedQuizzesNumber = ExcludedQuizTypes.Count;
+            var correctInPreCent = (int)((float)completedQuizzesNumber / seenQuizzesNumber * 100);
 
-            return seenQuizzes == quizTypesNumber && correctInPreCent >= attempt.MinCompletedQuizzesPerCent;
+            return (seenQuizzesNumber + excludedQuizzesNumber == quizTypesNumber || seenQuizzesNumber == attempt.MaxQuizTypesPerFlashcard)
+                   && correctInPreCent >= attempt.MinCompletedQuizzesPerCent;
         }
 
         private void SetInitQuizType(Attempt attempt, bool? isAnswerCorrect)
@@ -122,54 +127,85 @@ namespace E_Lang.Domain.Entities
                 CompletedQuizTypes.Add(new CompletedQuizType(Id, quiz.Id));
             }
 
-            CompleteMultiselectQuizType(attempt);
+            ExcludeQuizzes(attempt);
 
-            SetNewCurrentQuiz(attempt.QuizTypes);
+            SetNewCurrentQuiz(attempt.QuizTypes, attempt.MaxQuizTypesPerFlashcard);
         }
 
-        private void SetNewCurrentQuiz(IEnumerable<QuizType> quizzes)
+        private void SetNewCurrentQuiz(IEnumerable<QuizType> quizzes, int maxQuizzesPerFlashcard)
         {
+            IEnumerable<QuizType> availableQuizzes;
             var completedQuizIds = CompletedQuizTypes.Select(x => x.QuizTypeId).ToHashSet();
-            var availableQuizzes = quizzes.Where(x => !completedQuizIds.Contains(x.Id) && (x.MaxAnswersToSelect == 1 || Flashcard.FlashcardBase.Meanings.Count > 1));
+            var incompleteQuizzes = quizzes.Where(x => !completedQuizIds.Contains(x.Id));
 
+            if (SeenQuizTypes.Count == maxQuizzesPerFlashcard)
+            {
+                var seenQuizzesIds = SeenQuizTypes.Select(x => x.QuizTypeId).ToHashSet();
+                availableQuizzes = incompleteQuizzes.Where(x => seenQuizzesIds.Contains(x.Id));
+            }
+            else
+            {
+                var excludedQuizIds = ExcludedQuizTypes.Select(x => x.QuizTypeId).ToHashSet();
+                availableQuizzes = incompleteQuizzes.Where(x => !excludedQuizIds.Contains(x.Id));
+            }
 
             var quiz = availableQuizzes?.FirstOrDefault(x => x.IsFirst)
-                       ?? availableQuizzes?.FirstOrDefault(x => x.IsDefault)
+                       ?? availableQuizzes?.Where(x => x.IsDefault).MinBy(x => Guid.NewGuid())
                        ?? availableQuizzes?.MinBy(x => Guid.NewGuid());
 
             CurrentQuizTypeId = quiz?.Id;
             CurrentQuizType = quiz;
         }
 
-        private void CompleteMultiselectQuizType(Attempt attempt)
+        private void ExcludeQuizzes(Attempt attempt)
+        {
+            ExcludeSingleSelectQuizzes(attempt);
+            ExcludeMultiselectQuizType(attempt);
+            ExcludeMultiWordQuizzes(attempt);
+        }
+
+        private void ExcludeSingleSelectQuizzes(Attempt attempt)
         {
             var meanings = Flashcard?.FlashcardBase?.Meanings;
 
-            if (meanings is null)
+            if (meanings is null || meanings.Count == 3)
                 return;
 
-            if (meanings.Count == 1)
-            {
-                var multiselectQuizzes = attempt.QuizTypes
-                    .Where(x => x is {IsSelectCorrect: true, MaxAnswersToSelect: > 1});
+            var quizzesToExclude = attempt.QuizTypes
+                .Where(x => x is { IsSelect: true, IsSelectCorrect: false, MaxAnswersToSelect: 1 });
 
-                CompleteMultiselectQuizzes(multiselectQuizzes);
-                SetMultiselectQuizzesAsSeen(multiselectQuizzes);
-            }
+            var excludedQuizzes = ExcludedQuizTypes.ToList();
+            excludedQuizzes.AddRange(quizzesToExclude.Select(x => new ExcludedQuizType(Id, x.Id)));
+            ExcludedQuizTypes = excludedQuizzes;
         }
 
-        private void CompleteMultiselectQuizzes(IEnumerable<QuizType> multiselectQuizzes)
+        private void ExcludeMultiselectQuizType(Attempt attempt)
         {
-            var completedQuizzes = CompletedQuizTypes.ToList();
-            completedQuizzes.AddRange(multiselectQuizzes.Select(x => new CompletedQuizType(Id, x.Id)));
-            CompletedQuizTypes = completedQuizzes;
+            var meanings = Flashcard?.FlashcardBase?.Meanings;
+
+            if (meanings is null || meanings.Count > 1)
+                return;
+
+            var multiselectQuizzes = attempt.QuizTypes
+                .Where(x => x is {IsSelect: true, IsSelectCorrect: true, MaxAnswersToSelect: > 1});
+
+            var excludedQuizzes = ExcludedQuizTypes.ToList();
+            excludedQuizzes.AddRange(multiselectQuizzes.Select(x => new ExcludedQuizType(Id, x.Id)));
+            ExcludedQuizTypes = excludedQuizzes;
         }
 
-        private void SetMultiselectQuizzesAsSeen(IEnumerable<QuizType> multiselectQuizzes)
+        private void ExcludeMultiWordQuizzes(Attempt attempt)
         {
-            var seenQuizzes = SeenQuizTypes.ToList();
-            seenQuizzes.AddRange(multiselectQuizzes.Select(x => new SeenQuizType(Id, x.Id)));
-            SeenQuizTypes = seenQuizzes;
+            if (Flashcard.FlashcardBase.WordOrPhrase.Split(' ').Length > 1)
+                return;
+
+            var multiWordQuizzes = attempt.QuizTypes
+                .Where(x => x.IsArrange || x.IsFillInBlank)
+                .Select(x => new ExcludedQuizType(Id, x.Id));
+            
+            var excludedQuizTypes = ExcludedQuizTypes.ToList();
+            excludedQuizTypes.AddRange(multiWordQuizzes);
+            ExcludedQuizTypes = excludedQuizTypes;
         }
     }
 }

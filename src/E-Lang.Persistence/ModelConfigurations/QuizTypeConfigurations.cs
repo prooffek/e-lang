@@ -19,6 +19,10 @@ namespace E_Lang.Persistence.ModelConfigurations
                 entity.HasMany<SeenQuizType>()
                     .WithOne()
                     .HasForeignKey(x => x.QuizTypeId);
+
+                entity.HasMany<ExcludedQuizType>()
+                    .WithOne()
+                    .HasForeignKey(x => x.QuizTypeId);
             });
 
             return modelBuilder;

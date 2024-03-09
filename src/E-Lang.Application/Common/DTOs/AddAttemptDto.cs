@@ -13,7 +13,7 @@ namespace E_Lang.Application.Common.DTOs
         public int MinCompletedQuizzesPerCent { get; set; }
         public FlashcardOrder Order { get; set; }
         public bool IncludeMeanings { get; set; }
-        public ICollection<CustomPropertyDto>? Properties { get; set; }
-        public ICollection<QuizTypeDto>? QuizTypes { get; set; }
+        public IEnumerable<CustomPropertyDto>? Properties { get; set; }
+        public IEnumerable<QuizTypeDto>? QuizTypes { get; set; }
     }
 }

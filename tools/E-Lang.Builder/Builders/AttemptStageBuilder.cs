@@ -39,7 +39,7 @@ namespace E_Lang.Builder.Builders
 
         public InProgressFlashcardStateBuilder<AttemptStageBuilder<TParentBuilder>> AddInProgressFlashcardState(out InProgressFlashcardState flashcardState, QuizType currentQuizType)
         {
-            flashcardState = Entities.GetInProfressFlashcardState();
+            flashcardState = Entities.GetInProgressFlashcardState();
             flashcardState.CurrentQuizTypeId = currentQuizType.Id;
             flashcardState.CurrentQuizType = currentQuizType;
 

@@ -2277,10 +2277,10 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
                     .Build()
                 .AddQuizType(user.Id, out var quizType)
                     .SetIsFirst()
-                    .SetIsSingleSelect(false)
+                    .SetIsSingleSelect()
                     .Build()
                 .AddQuizType(user.Id, out var quizType2)
-                    .SetIsArrange()
+                    .SetIsInput()
                     .Build()
                 .AddCollection(out var collection1, user.Id)
                     .AddAttempt(out var attempt1, quizType)
@@ -3974,7 +3974,7 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
         [TestMethod]
         [DataRow(2)]
         [DataRow(3)]
-        public async Task GetNextExerciseRequestHandler_Handle_ShouldCompleteMultiselectQuizzesIfOnlyOnMeaning(int maxAnswersToSelect)
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldExcludeMultiselectQuizzesIfOnlyOnMeaning(int maxAnswersToSelect)
         {
             // Arrange
             await _testBuilder
@@ -4035,14 +4035,12 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             resultFlashcardSate.Should().BeOfType<InProgressFlashcardState>();
 
             var result = (InProgressFlashcardState) resultFlashcardSate;
-            result.CompletedQuizTypes.Should().NotBeNullOrEmpty();
-            result.CompletedQuizTypes.Any(x => x.QuizTypeId == quizType3.Id).Should().BeTrue();
+            result.ExcludedQuizTypes.Should().NotBeNullOrEmpty();
+            result.ExcludedQuizTypes.Any(x => x.QuizTypeId == quizType3.Id).Should().BeTrue();
         }
 
         [TestMethod]
-        [DataRow(2)]
-        [DataRow(3)]
-        public async Task GetNextExerciseRequestHandler_Handle_ShouldSetMultiselectQuizzesAsSeenIfOnlyOnMeaning(int maxAnswersToSelect)
+        public async Task GetNextExerciseRequestHandler_Handle_ShouldExcludeMultiWordQuizzesIfOnlyOneWord()
         {
             // Arrange
             await _testBuilder
@@ -4056,26 +4054,30 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
                     .SetIsArrange()
                     .Build()
                 .AddQuizType(user.Id, out var quizType3)
-                    .SetIsMultiselect(true, maxAnswersToSelect)
+                    .SetIsFillInBlank()
+                    .Build()
+                .AddQuizType(user.Id, out var quizType4)
+                    .SetIsInput()
                     .Build()
                 .AddCollection(out var collection1, user.Id)
                     .AddAttempt(out var attempt1, quizType)
                         .AddQuizType(quizType2)
                         .AddQuizType(quizType3)
+                        .AddQuizType(quizType4)
                         .AddInitAttemptStageAsCurrentStage(out var attemptStage1)
                             .AddFlashcard(out var flashcard1, collection1)
                                 .AddFlashcardBase(out var flashcardBase1)
-                                    .SetWordOrPhrase("Phrase 1")
+                                    .SetWordOrPhrase("Phrase1")
                                     .AddMeaning(out var meaning1)
-                                        .SetValue("Phrase 1 Meaning 1")
+                                        .SetValue("Phrase1")
                                         .Build()
                                     .Build()
                                 .Build()
                             .AddFlashcard(out var flashcard2, collection1)
                                 .AddFlashcardBase(out var flashcardBase2)
-                                    .SetWordOrPhrase("Phrase 1")
+                                    .SetWordOrPhrase("Phrase2 ")
                                     .AddMeaning(out var meaning3)
-                                        .SetValue("Phrase 1 Meaning 1")
+                                        .SetValue("Phrase2")
                                         .Build()
                                     .Build()
                                 .Build()
@@ -4103,8 +4105,10 @@ namespace E_Lang.Application.IntegrationTests.Exercises.Requests
             resultFlashcardSate.Should().BeOfType<InProgressFlashcardState>();
 
             var result = (InProgressFlashcardState)resultFlashcardSate;
-            result.SeenQuizTypes.Should().NotBeNullOrEmpty();
-            result.SeenQuizTypes.Any(x => x.QuizTypeId == quizType3.Id).Should().BeTrue();
+            result.ExcludedQuizTypes.Should().NotBeNullOrEmpty()
+                .And.HaveCount(2);
+            result.ExcludedQuizTypes.Any(x => x.QuizTypeId == quizType2.Id).Should().BeTrue();
+            result.ExcludedQuizTypes.Any(x => x.QuizTypeId == quizType3.Id).Should().BeTrue();
         }
     }
 }

@@ -68,6 +68,12 @@ namespace E_Lang.Application.IntegrationTests.Attempts.Commands
             await _testBuilder
                 .AddUser(out var user)
                     .Build()
+                .AddQuizType(user.Id, out var quiz1)
+                    .SetName("Quiz 1")
+                    .SetInstruction("Quiz 1")
+                    .SetIsFirst()
+                    .SetIsSingleSelect()
+                    .Build()
                 .AddCollection(out var collection, user.Id)
                     .AddFlashcard(out var flashcard1)
                         .AddFlashcardBase(out var flashcardBase1)
@@ -186,7 +192,7 @@ namespace E_Lang.Application.IntegrationTests.Attempts.Commands
             attempt.Order.Should().Be(addAttemptDto.Order);
             attempt.IncludeMeanings.Should().Be(addAttemptDto.IncludeMeanings);
             attempt.Properties.Should().BeNullOrEmpty();
-            attempt.QuizTypes.Should().BeNullOrEmpty();
+            attempt.QuizTypes.Should().NotBeNullOrEmpty();
             attempt.CollectionId.Should().Be(addAttemptDto.CollectionId);
             attempt.CompletedFlashcards.Should().BeNullOrEmpty();
         }
@@ -197,6 +203,12 @@ namespace E_Lang.Application.IntegrationTests.Attempts.Commands
             // Arrange
             await _testBuilder
                 .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quiz1)
+                    .SetName("Quiz 1")
+                    .SetInstruction("Quiz 1")
+                    .SetIsFirst()
+                    .SetIsSingleSelect()
                     .Build()
                 .AddCollection(out var collection, user.Id)
                     .AddFlashcard(out var flashcard1)
@@ -329,6 +341,12 @@ namespace E_Lang.Application.IntegrationTests.Attempts.Commands
             await _testBuilder
                 .AddUser(out var user)
                     .Build()
+                .AddQuizType(user.Id, out var quiz1)
+                    .SetName("Quiz 1")
+                    .SetInstruction("Quiz 1")
+                    .SetIsFirst()
+                    .SetIsSingleSelect()
+                    .Build()
                 .AddCollection(out var collection, user.Id)
                     .AddFlashcard(out var flashcard1)
                         .AddFlashcardBase(out var flashcardBase1)
@@ -448,6 +466,492 @@ namespace E_Lang.Application.IntegrationTests.Attempts.Commands
                 .And.BeOfType<AttemptStage>();
             stage.Flashcards.Should().NotBeNullOrEmpty()
                 .And.HaveCount(expectedNumberOfFlashcards);
+        }
+
+        [TestMethod]
+        [DataRow(3)]
+        [DataRow(4)]
+        [DataRow(5)]
+        [DataRow(6)]
+        [DataRow(10)]
+        public async Task AddAttemptRequest_Handle_ShouldAddAllQuizTypesFromDbIfNoQuizzesSpecifiedInRequest(int maxQuizTypes)
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quiz1)
+                    .SetName("Quiz 1")
+                    .SetInstruction("Quiz 1")
+                    .SetIsFirst()
+                    .SetIsSingleSelect()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz2)
+                    .SetName("Quiz 2")
+                    .SetInstruction("Quiz 2")
+                    .SetIsMultiselect()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz3)
+                    .SetName("Quiz 3")
+                    .SetInstruction("Quiz 3")
+                    .SetIsInput()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz4)
+                    .SetName("Quiz 4")
+                    .SetInstruction("Quiz 4")
+                    .SetIsFillInBlank()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz5)
+                    .SetName("Quiz 5")
+                    .SetInstruction("Quiz 5")
+                    .SetIsArrange()
+                    .Build()
+                .AddCollection(out var collection, user.Id)
+                    .AddFlashcard(out var flashcard1)
+                        .AddFlashcardBase(out var flashcardBase1)
+                            .SetWordOrPhrase("Word 1")
+                            .Build()
+                        .AddMeaning(out var meaning1, flashcardBase1.Id)
+                            .SetValue("Meaning 1")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard2)
+                        .AddFlashcardBase(out var flashcardBase2)
+                            .SetWordOrPhrase("Word 2")
+                            .Build()
+                        .AddMeaning(out var meaning2, flashcardBase1.Id)
+                            .SetValue("Meaning 2")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard3)
+                        .AddFlashcardBase(out var flashcardBase3)
+                            .SetWordOrPhrase("Word 3")
+                            .Build()
+                        .AddMeaning(out var meaning3, flashcardBase3.Id)
+                            .SetValue("Meaning 3")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard4)
+                        .AddFlashcardBase(out var flashcardBase4)
+                            .SetWordOrPhrase("Word 4")
+                            .Build()
+                        .AddMeaning(out var meaning4, flashcardBase4.Id)
+                            .SetValue("Meaning 4")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard5)
+                        .AddFlashcardBase(out var flashcardBase5)
+                            .SetWordOrPhrase("Word 5")
+                            .Build()
+                        .AddMeaning(out var meaning5, flashcardBase5.Id)
+                            .SetValue("Meaning 5")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard6)
+                        .AddFlashcardBase(out var flashcardBase6)
+                            .SetWordOrPhrase("Word 6")
+                            .Build()
+                        .AddMeaning(out var meaning6, flashcardBase6.Id)
+                            .SetValue("Meaning 6")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard7)
+                        .AddFlashcardBase(out var flashcardBase7)
+                            .SetWordOrPhrase("Word 7")
+                            .Build()
+                        .AddMeaning(out var meaning7, flashcardBase7.Id)
+                            .SetValue("Meaning 7")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard8)
+                        .AddFlashcardBase(out var flashcardBase8)
+                            .SetWordOrPhrase("Word 8")
+                            .Build()
+                        .AddMeaning(out var meaning8, flashcardBase8.Id)
+                            .SetValue("Meaning 8")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard9)
+                        .AddFlashcardBase(out var flashcardBase9)
+                            .SetWordOrPhrase("Word 9")
+                            .Build()
+                        .AddMeaning(out var meaning9, flashcardBase9.Id)
+                            .SetValue("Meaning 9")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard10)
+                        .AddFlashcardBase(out var flashcardBase10)
+                            .SetWordOrPhrase("Word 10")
+                            .Build()
+                        .AddMeaning(out var meaning10, flashcardBase10.Id)
+                            .SetValue("Meaning 10")
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+            _now = new DateTime(2022, 10, 10, 10, 00, 00);
+
+            var expectedNumberOfQuizzes = 5;
+
+            var addAttemptDto = new AddAttemptDto()
+            {
+                Name = "New attempt",
+                CollectionId = collection.Id,
+                MaxFlashcardsPerStage = 5,
+                MaxQuizTypesPerFlashcard = maxQuizTypes,
+                MinCompletedQuizzesPerCent = 100,
+                Order = FlashcardOrder.Random,
+                IncludeMeanings = true
+            };
+
+            var request = new AddAttemptRequest()
+            {
+                Attempt = addAttemptDto
+            };
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            response.Should().NotBeNull();
+            response.QuizTypes.Should().NotBeNullOrEmpty()
+                .And.HaveCount(expectedNumberOfQuizzes);
+
+            var attempt = await _attemptRepostory.GetByIdAsync(response.Id);
+            attempt.Should().NotBeNull();
+            attempt.QuizTypes.Should().NotBeNullOrEmpty()
+                .And.HaveCount(expectedNumberOfQuizzes);
+        }
+
+        [TestMethod]
+        [DataRow(3)]
+        [DataRow(4)]
+        [DataRow(5)]
+        [DataRow(6)]
+        [DataRow(10)]
+        public async Task AddAttemptRequest_Handle_ShouldAddQuizTypesSpecifiedInRequest(int maxQuizTypes)
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quiz1)
+                    .SetName("Quiz 1")
+                    .SetInstruction("Quiz 1")
+                    .SetIsFirst()
+                    .SetIsSingleSelect()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz2)
+                    .SetName("Quiz 2")
+                    .SetInstruction("Quiz 2")
+                    .SetIsMultiselect()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz3)
+                    .SetName("Quiz 3")
+                    .SetInstruction("Quiz 3")
+                    .SetIsInput()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz4)
+                    .SetName("Quiz 4")
+                    .SetInstruction("Quiz 4")
+                    .SetIsFillInBlank()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz5)
+                    .SetName("Quiz 5")
+                    .SetInstruction("Quiz 5")
+                    .SetIsArrange()
+                    .Build()
+                .AddCollection(out var collection, user.Id)
+                    .AddFlashcard(out var flashcard1)
+                        .AddFlashcardBase(out var flashcardBase1)
+                            .SetWordOrPhrase("Word 1")
+                            .Build()
+                        .AddMeaning(out var meaning1, flashcardBase1.Id)
+                            .SetValue("Meaning 1")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard2)
+                        .AddFlashcardBase(out var flashcardBase2)
+                            .SetWordOrPhrase("Word 2")
+                            .Build()
+                        .AddMeaning(out var meaning2, flashcardBase1.Id)
+                            .SetValue("Meaning 2")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard3)
+                        .AddFlashcardBase(out var flashcardBase3)
+                            .SetWordOrPhrase("Word 3")
+                            .Build()
+                        .AddMeaning(out var meaning3, flashcardBase3.Id)
+                            .SetValue("Meaning 3")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard4)
+                        .AddFlashcardBase(out var flashcardBase4)
+                            .SetWordOrPhrase("Word 4")
+                            .Build()
+                        .AddMeaning(out var meaning4, flashcardBase4.Id)
+                            .SetValue("Meaning 4")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard5)
+                        .AddFlashcardBase(out var flashcardBase5)
+                            .SetWordOrPhrase("Word 5")
+                            .Build()
+                        .AddMeaning(out var meaning5, flashcardBase5.Id)
+                            .SetValue("Meaning 5")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard6)
+                        .AddFlashcardBase(out var flashcardBase6)
+                            .SetWordOrPhrase("Word 6")
+                            .Build()
+                        .AddMeaning(out var meaning6, flashcardBase6.Id)
+                            .SetValue("Meaning 6")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard7)
+                        .AddFlashcardBase(out var flashcardBase7)
+                            .SetWordOrPhrase("Word 7")
+                            .Build()
+                        .AddMeaning(out var meaning7, flashcardBase7.Id)
+                            .SetValue("Meaning 7")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard8)
+                        .AddFlashcardBase(out var flashcardBase8)
+                            .SetWordOrPhrase("Word 8")
+                            .Build()
+                        .AddMeaning(out var meaning8, flashcardBase8.Id)
+                            .SetValue("Meaning 8")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard9)
+                        .AddFlashcardBase(out var flashcardBase9)
+                            .SetWordOrPhrase("Word 9")
+                            .Build()
+                        .AddMeaning(out var meaning9, flashcardBase9.Id)
+                            .SetValue("Meaning 9")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard10)
+                        .AddFlashcardBase(out var flashcardBase10)
+                            .SetWordOrPhrase("Word 10")
+                            .Build()
+                        .AddMeaning(out var meaning10, flashcardBase10.Id)
+                            .SetValue("Meaning 10")
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+            _now = new DateTime(2022, 10, 10, 10, 00, 00);
+
+            var selectedQuizTypes = new List<QuizType>()
+            {
+                quiz1, 
+                quiz2, 
+                quiz3, 
+                quiz4
+            };
+
+            var addAttemptDto = new AddAttemptDto()
+            {
+                Name = "New attempt",
+                CollectionId = collection.Id,
+                MaxFlashcardsPerStage = 5,
+                MaxQuizTypesPerFlashcard = maxQuizTypes,
+                MinCompletedQuizzesPerCent = 100,
+                Order = FlashcardOrder.Random,
+                IncludeMeanings = true,
+                QuizTypes = _mapper.Map<IEnumerable<QuizTypeDto>>(selectedQuizTypes)
+            };
+
+            var request = new AddAttemptRequest()
+            {
+                Attempt = addAttemptDto
+            };
+
+            var expectedNumberOfQuizzes = selectedQuizTypes.Count;
+            var selectedQuizzesIds = selectedQuizTypes.Select(x => x.Id).ToHashSet();
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            response.Should().NotBeNull();
+            response.QuizTypes.Should().NotBeNullOrEmpty()
+                .And.HaveCount(expectedNumberOfQuizzes);
+
+            var attempt = await _attemptRepostory.GetByIdAsync(response.Id);
+            attempt.Should().NotBeNull();
+            attempt.QuizTypes.Should().NotBeNullOrEmpty()
+                .And.HaveCount(expectedNumberOfQuizzes);
+            attempt.QuizTypes.Any(x => !selectedQuizzesIds.Contains(x.Id)).Should().BeFalse();
+        }
+
+        [TestMethod]
+        [DataRow(3)]
+        [DataRow(4)]
+        [DataRow(5)]
+        [DataRow(6)]
+        [DataRow(10)]
+        public async Task AddAttemptRequest_Handle_ShouldIncludeQuizWuithFlagIsFirstIfNotSpecifiedInRequest(int maxQuizTypes)
+        {
+            // Arrange
+            await _testBuilder
+                .AddUser(out var user)
+                    .Build()
+                .AddQuizType(user.Id, out var quiz1)
+                    .SetName("Quiz 1")
+                    .SetInstruction("Quiz 1")
+                    .SetIsFirst()
+                    .SetIsSingleSelect()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz2)
+                    .SetName("Quiz 2")
+                    .SetInstruction("Quiz 2")
+                    .SetIsMultiselect()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz3)
+                    .SetName("Quiz 3")
+                    .SetInstruction("Quiz 3")
+                    .SetIsInput()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz4)
+                    .SetName("Quiz 4")
+                    .SetInstruction("Quiz 4")
+                    .SetIsFillInBlank()
+                    .Build()
+                .AddQuizType(user.Id, out var quiz5)
+                    .SetName("Quiz 5")
+                    .SetInstruction("Quiz 5")
+                    .SetIsArrange()
+                    .Build()
+                .AddCollection(out var collection, user.Id)
+                    .AddFlashcard(out var flashcard1)
+                        .AddFlashcardBase(out var flashcardBase1)
+                            .SetWordOrPhrase("Word 1")
+                            .Build()
+                        .AddMeaning(out var meaning1, flashcardBase1.Id)
+                            .SetValue("Meaning 1")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard2)
+                        .AddFlashcardBase(out var flashcardBase2)
+                            .SetWordOrPhrase("Word 2")
+                            .Build()
+                        .AddMeaning(out var meaning2, flashcardBase1.Id)
+                            .SetValue("Meaning 2")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard3)
+                        .AddFlashcardBase(out var flashcardBase3)
+                            .SetWordOrPhrase("Word 3")
+                            .Build()
+                        .AddMeaning(out var meaning3, flashcardBase3.Id)
+                            .SetValue("Meaning 3")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard4)
+                        .AddFlashcardBase(out var flashcardBase4)
+                            .SetWordOrPhrase("Word 4")
+                            .Build()
+                        .AddMeaning(out var meaning4, flashcardBase4.Id)
+                            .SetValue("Meaning 4")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard5)
+                        .AddFlashcardBase(out var flashcardBase5)
+                            .SetWordOrPhrase("Word 5")
+                            .Build()
+                        .AddMeaning(out var meaning5, flashcardBase5.Id)
+                            .SetValue("Meaning 5")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard6)
+                        .AddFlashcardBase(out var flashcardBase6)
+                            .SetWordOrPhrase("Word 6")
+                            .Build()
+                        .AddMeaning(out var meaning6, flashcardBase6.Id)
+                            .SetValue("Meaning 6")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard7)
+                        .AddFlashcardBase(out var flashcardBase7)
+                            .SetWordOrPhrase("Word 7")
+                            .Build()
+                        .AddMeaning(out var meaning7, flashcardBase7.Id)
+                            .SetValue("Meaning 7")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard8)
+                        .AddFlashcardBase(out var flashcardBase8)
+                            .SetWordOrPhrase("Word 8")
+                            .Build()
+                        .AddMeaning(out var meaning8, flashcardBase8.Id)
+                            .SetValue("Meaning 8")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard9)
+                        .AddFlashcardBase(out var flashcardBase9)
+                            .SetWordOrPhrase("Word 9")
+                            .Build()
+                        .AddMeaning(out var meaning9, flashcardBase9.Id)
+                            .SetValue("Meaning 9")
+                            .Build()
+                        .Build()
+                    .AddFlashcard(out var flashcard10)
+                        .AddFlashcardBase(out var flashcardBase10)
+                            .SetWordOrPhrase("Word 10")
+                            .Build()
+                        .AddMeaning(out var meaning10, flashcardBase10.Id)
+                            .SetValue("Meaning 10")
+                            .Build()
+                        .Build()
+                    .Build()
+                .SaveAsync();
+
+            MockUserService.CurrentUser = user;
+            _now = new DateTime(2022, 10, 10, 10, 00, 00);
+
+            var selectedQuizTypes = new List<QuizType>()
+            {
+                quiz2,
+                quiz3,
+                quiz4
+            };
+
+            var addAttemptDto = new AddAttemptDto()
+            {
+                Name = "New attempt",
+                CollectionId = collection.Id,
+                MaxFlashcardsPerStage = 5,
+                MaxQuizTypesPerFlashcard = maxQuizTypes,
+                MinCompletedQuizzesPerCent = 100,
+                Order = FlashcardOrder.Random,
+                IncludeMeanings = true,
+                QuizTypes = _mapper.Map<IEnumerable<QuizTypeDto>>(selectedQuizTypes)
+            };
+
+            var request = new AddAttemptRequest()
+            {
+                Attempt = addAttemptDto
+            };
+
+            // Act
+            var response = await _mediator.Send(request);
+
+            // Assert
+            var attempt = await _attemptRepostory.GetByIdAsync(response.Id);
+            attempt.Should().NotBeNull();
+            attempt.QuizTypes.Where(x => x.IsFirst).ToList()
+                .Should().NotBeNullOrEmpty()
+                .And.HaveCount(1);
+            attempt.QuizTypes.First(x => x.IsFirst).Should().BeEquivalentTo(quiz1);
         }
     }
 }

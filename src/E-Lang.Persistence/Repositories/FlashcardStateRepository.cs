@@ -28,6 +28,7 @@ public class FlashcardStateRepository : Repository<FlashcardState>, IFlashcardSt
             .Include(nameof(InProgressFlashcardState.CurrentQuizType))
             .Include(nameof(InProgressFlashcardState.CompletedQuizTypes))
             .Include(nameof(InProgressFlashcardState.SeenQuizTypes))
+            .Include(nameof(InProgressFlashcardState.ExcludedQuizTypes))
             .AsQueryable();
     }
 

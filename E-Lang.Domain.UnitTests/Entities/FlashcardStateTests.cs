@@ -371,10 +371,11 @@ namespace E_Lang.Domain.UnitTests.Entities
         [DataRow(2)]
         [DataRow(3)]
         public void
-        InitFlashcardState_GetNextState_ShouldCompleteMultiselectQuizzesIfOnlyOneMeaning(int maxAnswersCount)
+        InitFlashcardState_GetNextState_ShouldExcludeMultiselectQuizzesIfOnlyOneMeaning(int maxAnswersCount)
         {
             // Arrange
             var quizzes = GetQuizzes(3).ToList();
+            quizzes.Add(Builder.Entities.GetInputQuizType());
             var secondQuiz = quizzes.First(x => !x.IsFirst);
             secondQuiz.MaxAnswersToSelect = maxAnswersCount;
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
@@ -400,20 +401,27 @@ namespace E_Lang.Domain.UnitTests.Entities
                 .And.BeOfType<InProgressFlashcardState>();
 
             var inProgressFlashcardState = (InProgressFlashcardState) result;
-            inProgressFlashcardState.CompletedQuizTypes.Should().NotBeNullOrEmpty();
-            inProgressFlashcardState.CompletedQuizTypes.Any(x => x.QuizTypeId == secondQuiz.Id);
+            inProgressFlashcardState.ExcludedQuizTypes.Should().NotBeNullOrEmpty();
+            inProgressFlashcardState.ExcludedQuizTypes.Any(x => x.QuizTypeId == secondQuiz.Id)
+                .Should().BeTrue();
         }
 
         [TestMethod]
-        [DataRow(2)]
-        [DataRow(3)]
         public void
-            InitFlashcardState_GetNextState_ShouldSetMultiselectQuizzesAsSeenIfOnlyOneMeaning(int maxAnswersCount)
+            InitFlashcardState_GetNextState_ShouldExcludeMultiSelectQuizzesIfOnlyOneWord()
         {
             // Arrange
-            var quizzes = GetQuizzes(3).ToList();
-            var secondQuiz = quizzes.First(x => !x.IsFirst);
-            secondQuiz.MaxAnswersToSelect = maxAnswersCount;
+            var firstQuiz = Builder.Entities.GetQuizType();
+            firstQuiz.IsFirst = true;
+            var fillInBlankQuiz = Builder.Entities.GetFillInQuizType();
+            var arrangeQuiz = Builder.Entities.GetArrangeQuizType();
+            var quizzes = new List<QuizType>
+            {
+                firstQuiz,
+                fillInBlankQuiz,
+                arrangeQuiz,
+                Builder.Entities.GetInputQuizType()
+            };
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
@@ -437,8 +445,12 @@ namespace E_Lang.Domain.UnitTests.Entities
                 .And.BeOfType<InProgressFlashcardState>();
 
             var inProgressFlashcardState = (InProgressFlashcardState)result;
-            inProgressFlashcardState.SeenQuizTypes.Should().NotBeNullOrEmpty();
-            inProgressFlashcardState.SeenQuizTypes.Any(x => x.QuizTypeId == secondQuiz.Id);
+            inProgressFlashcardState.ExcludedQuizTypes.Should().NotBeNullOrEmpty()
+                .And.HaveCount(2);
+            inProgressFlashcardState.ExcludedQuizTypes.Any(x => x.QuizTypeId == fillInBlankQuiz.Id)
+                .Should().BeTrue();
+            inProgressFlashcardState.ExcludedQuizTypes.Any(x => x.QuizTypeId == arrangeQuiz.Id)
+                .Should().BeTrue();
         }
 
         [TestMethod]
@@ -737,6 +749,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var lastQuiz = quizzes.Last();
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
+            attempt.MaxQuizTypesPerFlashcard = quizzes.Count;
             attempt.MinCompletedQuizzesPerCent = minResult;
             AddQuizTypes(attempt, quizzes);
             int take = minResult / 10 - 3;
@@ -863,6 +876,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var defaultQuizzes = quizzes.Where(x => x.IsDefault);
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
+            attempt.MaxQuizTypesPerFlashcard = quizzes.Count;
             attempt.MinCompletedQuizzesPerCent = 100;
             AddQuizTypes(attempt, quizzes);
 
@@ -989,6 +1003,38 @@ namespace E_Lang.Domain.UnitTests.Entities
             // Assert
             result.CurrentQuizTypeId.Should().Be(secondQuiz.Id);
             result.CurrentQuizType.Should().Be(secondQuiz);
+        }
+
+        [TestMethod]
+        [DataRow(2)]
+        [DataRow(3)]
+        public void InProgressFlashcardState_GetNextState_ShouldCompleteIfEnoughQuizzesCompleted(int maxAnswersCount)
+        {
+            // Arrange
+            var quizzes = GetQuizzes(10).ToList();
+            var defaultQuizzes = quizzes.Where(x => x.IsDefault);
+            var collection = Builder.Entities.GetCollection(Guid.NewGuid());
+            var attempt = Builder.Entities.GetAttempt(collection);
+            attempt.MaxQuizTypesPerFlashcard = defaultQuizzes.Count();
+            attempt.MinCompletedQuizzesPerCent = 100;
+            AddQuizTypes(attempt, quizzes);
+
+            var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
+            flashcardState.SeenQuizTypes = defaultQuizzes.Select(x => (new SeenQuizType(flashcardState.Id, x.Id))).ToList();
+            flashcardState.CompletedQuizTypes = defaultQuizzes.Select(x => (new CompletedQuizType(flashcardState.Id, x.Id))).ToList();
+
+            var data = new NextStateData()
+            {
+                UtcNow = DateTime.Now,
+                Attempt = attempt,
+                IsAnswerCorrect = true
+            };
+
+            // Act
+            var result = flashcardState.GetNextState(data);
+
+            // Assert
+            result.Should().BeOfType<CompletedFlashcardState>();
         }
 
         #endregion
@@ -1154,6 +1200,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             var collection = Builder.Entities.GetCollection(Guid.NewGuid());
             var attempt = Builder.Entities.GetAttempt(collection);
             attempt.MinCompletedQuizzesPerCent = 100;
+            attempt.MaxQuizTypesPerFlashcard = quizzes.Count;
             AddQuizTypes(attempt, quizzes);
 
             var flashcardState = (InProgressFlashcardState)GetFlashcardState<InProgressFlashcardState>();
@@ -1306,6 +1353,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             flashcardState.CurrentQuizTypeId = firstQuiz.Id;
             flashcardState.CurrentQuizType = firstQuiz;
             flashcardState.Flashcard.FlashcardBase.Meanings.Add(Builder.Entities.GetMeaning(flashcardState.Flashcard.FlashcardBaseId));
+            flashcardState.ExcludedQuizTypes.Add(new ExcludedQuizType(flashcardState.Id, secondQuiz.Id));
 
             var data = new NextStateData()
             {
@@ -1339,7 +1387,7 @@ namespace E_Lang.Domain.UnitTests.Entities
             return typeof(T).Name switch
             {
                 nameof(InitFlashcardState) => Builder.Entities.GetInitFlashcardState(flashcard),
-                nameof(InProgressFlashcardState) => Builder.Entities.GetInProfressFlashcardState(flashcard),
+                nameof(InProgressFlashcardState) => Builder.Entities.GetInProgressFlashcardState(flashcard),
                 nameof(CompletedFlashcardState) => Builder.Entities.GetCompletedFlashcardState(flashcard),
                 _ => throw new InvalidOperationException($"Flascard state '{typeof(T).Name}' does not exist.")
 

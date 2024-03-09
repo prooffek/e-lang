@@ -124,6 +124,72 @@ namespace E_Lang.Builder
             };
         }
 
+        public static QuizType GetInputQuizType()
+        {
+            return new QuizType()
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+                Name = "Test quiz",
+                Instruction = "Chose the right answer",
+                IsSelect = false,
+                MaxAnswersToSelect = 1,
+                IsSelectCorrect = true,
+                IsSelectMissing = false,
+                IsMatch = false,
+                IsArrange = false,
+                IsInput = true,
+                IsFillInBlank = false,
+                IsDefault = false,
+                IsFirst = false,
+            };
+        }
+
+        public static QuizType GetFillInQuizType()
+        {
+            return new QuizType()
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+                Name = "Test quiz",
+                Instruction = "Chose the right answer",
+                IsSelect = false,
+                MaxAnswersToSelect = 1,
+                IsSelectCorrect = true,
+                IsSelectMissing = false,
+                IsMatch = false,
+                IsArrange = false,
+                IsInput = false,
+                IsFillInBlank = true,
+                IsDefault = false,
+                IsFirst = false,
+            };
+        }
+
+        public static QuizType GetArrangeQuizType()
+        {
+            return new QuizType()
+            {
+                Id = Guid.NewGuid(),
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+                Name = "Test quiz",
+                Instruction = "Chose the right answer",
+                IsSelect = false,
+                MaxAnswersToSelect = 1,
+                IsSelectCorrect = true,
+                IsSelectMissing = false,
+                IsMatch = false,
+                IsArrange = true,
+                IsInput = false,
+                IsFillInBlank = false,
+                IsDefault = false,
+                IsFirst = false,
+            };
+        }
+
         public static FlashcardState GetInitFlashcardState(Flashcard flashcard)
         {
             return new InitFlashcardState(flashcard)
@@ -134,7 +200,7 @@ namespace E_Lang.Builder
             };
         }
 
-        public static InProgressFlashcardState GetInProfressFlashcardState()
+        public static InProgressFlashcardState GetInProgressFlashcardState()
         {
             return new InProgressFlashcardState()
             {
@@ -144,7 +210,7 @@ namespace E_Lang.Builder
             };
         }
 
-        public static InProgressFlashcardState GetInProfressFlashcardState(Flashcard flashcard)
+        public static InProgressFlashcardState GetInProgressFlashcardState(Flashcard flashcard)
         {
             return new InProgressFlashcardState(flashcard)
             {

@@ -27,6 +27,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<AttemptQuizType> AttemptQuizTypes { get; set; }
     public DbSet<CompletedQuizType> CompletedQuizTypes { get; set; }
     public DbSet<SeenQuizType> SeenQuizTypes { get; set; }
+    public DbSet<ExcludedQuizType> ExcludedQuizTypes { get; set; }
 
     public AppDbContext(DbContextOptions option, IDateTimeProvider dateTimeProvider) : base(option)
     {
